@@ -1,7 +1,7 @@
-# Placeholder content for testing
+---
+title: "About Us"
+---
 
-# About page
----
-title: About
----
-This is the about page for Kubecoin.
+# About Us
+
+Learn more about Kubecoin and our mission.

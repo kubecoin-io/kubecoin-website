@@ -1,35 +1,50 @@
-# pelicanconf.py
+AUTHOR = 'Kubecoin'
+SITENAME = 'kubecoin.io'
+SITEURL = "http://localhost:8000"
 
-# Basic settings
-AUTHOR = 'Kubecoin Team'
-SITENAME = 'Kubecoin'
-SITEURL = ''
+SUBTITLE = 'Kubecoin'
+SUBTEXT = 'Kubernetes-powered Crypto Platform'
 
-# Paths
-PATH = 'content'
+PATH = "content"
 PAGE_PATHS = ['pages']
 ARTICLE_PATHS = ['posts']
-STATIC_PATHS = ['images', 'extra', 'admin']
-
-# Theme and plugins
 THEME = 'themes/papyrus'
 THEME_STATIC_PATHS = ['static']
 PLUGIN_PATHS = ['pelican-plugins']
-PLUGINS = ['readtime', 'search', 'neighbors', 'pelican-toc']
+PLUGINS = ['pelican-toc']  # Remove 'readtime', 'search', 'neighbors' as they might not be installed
+STATIC_PATHS = ['images', 'extra', 'admin']
+DISPLAY_PAGES_ON_MENU = True
+DISPLAY_CATEGORIES_ON_MENU = False
 
-# Timezone and language
+# Required for the Papyrus theme
+DIRECT_TEMPLATES = ['index', 'tags', 'categories', 'authors', 'archives', 'search']
+
 TIMEZONE = 'UTC'
-DEFAULT_LANG = 'en'
 
-# Development settings
+DEFAULT_LANG = 'EN'
+
+# Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
 CATEGORY_FEED_ATOM = None
 TRANSLATION_FEED_ATOM = None
 AUTHOR_FEED_ATOM = None
 AUTHOR_FEED_RSS = None
 
-# URL settings
-ARTICLE_URL = 'posts/{slug}/'
-ARTICLE_SAVE_AS = 'posts/{slug}/index.html'
-PAGE_URL = '{slug}/'
-PAGE_SAVE_AS = '{slug}/index.html'
+# Blogroll
+LINKS = (
+    ("Pelican", "https://getpelican.com/"),
+    ("Python.org", "https://www.python.org/"),
+    ("Jinja2", "https://palletsprojects.com/p/jinja/"),
+    ("You can modify those links in your config file", "#"),
+)
+
+# Social widget
+SOCIAL = (
+    ("You can add links in your config file", "#"),
+    ("Another social link", "#"),
+)
+
+DEFAULT_PAGINATION = 10
+
+# Uncomment following line if you want document-relative URLs when developing
+# RELATIVE_URLS = True
