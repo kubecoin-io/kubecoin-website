@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kubecoin CMS</title>
+    <title>Decap CMS</title>
     <style>
       /* Fix for CMS UI issues */
       body {
@@ -24,12 +24,19 @@
         margin-top: 20px;
       }
     </style>
+    <!-- Disable automatic init to avoid DOM conflicts -->
+    <script>
+      window.CMS_MANUAL_INIT = true;
+    </script>
   </head>
   <body>
-    <div id="status">Initializing Kubecoin CMS...</div>
+    <div id="status">Initializing Decap CMS...</div>
     
-    <!-- Load a specific version of Decap CMS that works better -->
-    <script src="https://unpkg.com/netlify-cms@2.10.192/dist/netlify-cms.js"></script>
+    <!-- Single mount point for the CMS -->
+    <div id="nc-root"></div>
+    
+    <!-- Use the latest Decap CMS build -->
+    <script src="https://unpkg.com/decap-cms@latest/dist/decap-cms.js"></script>
     
     <script>
       // Function to display status messages
@@ -46,15 +53,44 @@
         const errorDiv = document.createElement('div');
         errorDiv.className = 'error-message';
         errorDiv.innerHTML = `<h3>Something went wrong</h3>
-          <p>We're using Netlify CMS (which is the same as Decap CMS) to avoid DOM errors.</p>
+          <p>We're using Decap CMS to avoid DOM errors.</p>
           <p>Check the console for more details.</p>`;
         document.body.appendChild(errorDiv);
         
         return true; // Prevent default error handling
       };
       
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', () => {
         updateStatus('Loading CMS...');
+        
+        // Initialize Decap CMS
+        CMS.init({
+          config: {
+            backend: {
+              name: 'github',
+              repo: 'kubecoin-io/kubecoin-website',
+              branch: 'main',
+              auth_endpoint: 'api/auth'
+            },
+            media_folder: 'content/images',
+            public_folder: '/images',
+            // Disable previews to reduce DOM issues
+            collections: [
+              {
+                name: 'posts',
+                label: 'Blog Posts',
+                folder: 'content/posts',
+                create: true,
+                format: 'frontmatter',
+                editor: { preview: false },
+                fields: [
+                  { label: 'Title', name: 'title', widget: 'string' },
+                  { label: 'Body', name: 'body', widget: 'markdown' }
+                ]
+              }
+            ]
+          }
+        });
         
         // If authentication was successful, refresh the page once to clear any cached errors
         if (window.location.hash && window.location.hash.includes('token')) {
