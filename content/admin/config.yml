@@ -4,9 +4,21 @@ backend:
   branch: main
   base_url: https://kubecoin.io
   auth_endpoint: api/auth
+  open_authoring: true
 
+# These settings define where media files go
 media_folder: "content/images"
 public_folder: "/images"
+
+# Set the locale for the CMS
+locale: en
+
+# Editorial workflow gives better control over published content
+publish_mode: editorial_workflow
+
+# Display URL options for better content preview
+site_url: https://kubecoin.io
+display_url: https://kubecoin.io
 
 collections:
   - name: "posts"
@@ -16,6 +28,7 @@ collections:
     format: "frontmatter"
     extension: "md"
     slug: "{{slug}}"
+    preview_path: "posts/{{slug}}"
     fields:
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD" }
@@ -29,6 +42,7 @@ collections:
     format: "frontmatter"
     extension: "md"
     slug: "{{slug}}"
+    preview_path: "pages/{{slug}}"
     fields:
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Body", name: "body", widget: "markdown" }
