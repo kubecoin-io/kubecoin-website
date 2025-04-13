@@ -6,16 +6,7 @@
     <title>Kubecoin CMS</title>
   </head>
   <body>
-    <!-- Load Decap CMS -->
-    <script src="https://unpkg.com/decap-cms@^3/dist/decap-cms.js"></script>
-    <script>
-      // Fix for the removeChild error by ensuring the DOM is fully loaded
-      document.addEventListener('DOMContentLoaded', function() {
-        // Clear any existing root element to prevent DOM manipulation errors
-        if (document.querySelector('#nc-root')) {
-          document.querySelector('#nc-root').innerHTML = '';
-        }
-      });
-    </script>
+    <!-- Include the script that builds the page and powers Decap CMS -->
+    <script src="https://unpkg.com/netlify-cms@^2.0.0/dist/netlify-cms.js"></script>
   </body>
 </html>

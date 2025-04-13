@@ -1,34 +1,28 @@
+// GitHub OAuth callback handler for Netlify CMS
 export async function onRequest(context) {
   const { request, env } = context;
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
   
-  // Get the state cookie for validation
+  // Get the stored state cookie
   const cookies = request.headers.get("Cookie") || "";
   const cookieState = cookies.split("; ")
     .find(cookie => cookie.startsWith("gh-state="))
     ?.split("=")[1];
   
-  // Check if code is present
   if (!code) {
-    return new Response("Error: No code provided by GitHub", { 
-      status: 400,
-      headers: { "Content-Type": "text/html" }
-    });
+    return new Response("No code received from GitHub", { status: 400 });
   }
   
-  // Validate state if present (CSRF protection)
+  // Validate state if present
   if (cookieState && state !== cookieState) {
-    console.error("State mismatch - potential CSRF attack");
-    return new Response("Error: State validation failed", { 
-      status: 403,
-      headers: { "Content-Type": "text/html" }
-    });
+    console.error("State mismatch - CSRF attack possible");
+    return new Response("Invalid state parameter", { status: 403 });
   }
   
   try {
-    // Exchange the code for an access token
+    // Exchange code for access token
     const tokenResponse = await fetch("https://github.com/login/oauth/access_token", {
       method: "POST",
       headers: {
@@ -43,7 +37,7 @@ export async function onRequest(context) {
     });
     
     if (!tokenResponse.ok) {
-      throw new Error(`GitHub token exchange failed: ${tokenResponse.status}`);
+      throw new Error(`GitHub token request failed: ${tokenResponse.status}`);
     }
     
     const tokenData = await tokenResponse.json();
@@ -52,34 +46,36 @@ export async function onRequest(context) {
       throw new Error(`GitHub error: ${tokenData.error_description || tokenData.error}`);
     }
     
-    // Important: The format of this message MUST match exactly what Decap CMS expects
-    const htmlContent = `
+    // Create HTML with script to pass token back to opener window (Netlify CMS)
+    const htmlResponse = `
       <!DOCTYPE html>
       <html>
         <head>
-          <meta charset="utf-8" />
-          <title>Authorization Complete</title>
+          <title>Authenticating...</title>
           <script>
             (function() {
-              // The token format required by Decap CMS
-              const token = "${tokenData.access_token}";
+              function receiveMessage(e) {
+                console.log("receiveMessage %o", e);
+                // verify origin
+                window.opener.postMessage(
+                  'authorization:github:success:${JSON.stringify({
+                    provider: "github",
+                    token: tokenData.access_token
+                  })}',
+                  e.origin
+                );
+              }
+              window.addEventListener("message", receiveMessage, false);
               
-              // Post the message in the specific format Decap CMS expects
-              window.opener.postMessage(
-                'authorization:github:success:{"token":"' + token + '","provider":"github"}',
-                "*"
-              );
-              
-              // Close the popup after passing the token
-              setTimeout(function() {
-                window.close();
-              }, 100);
+              // Start handshake with parent
+              console.log("Sending message to opener");
+              window.opener.postMessage("ready", "*");
             })();
           </script>
         </head>
         <body>
-          <h1>Authorization Successful</h1>
-          <p>This window will close automatically. If it doesn't, you can close it manually.</p>
+          <h1>Authenticating with GitHub...</h1>
+          <p>This window should close automatically. If it doesn't, you can close it manually.</p>
         </body>
       </html>
     `;
@@ -87,9 +83,8 @@ export async function onRequest(context) {
     // Clear the state cookie
     const clearStateCookie = "gh-state=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0";
     
-    // Return the HTML page with the authentication script
-    return new Response(htmlContent, {
-      headers: { 
+    return new Response(htmlResponse, {
+      headers: {
         "Content-Type": "text/html",
         "Set-Cookie": clearStateCookie
       }
@@ -98,27 +93,23 @@ export async function onRequest(context) {
   } catch (error) {
     console.error("Authentication error:", error);
     
-    // Return an error page that also closes the popup
     return new Response(`
       <!DOCTYPE html>
       <html>
         <head>
-          <meta charset="utf-8" />
           <title>Authentication Error</title>
           <script>
-            window.opener.postMessage(
+            console.error("Authentication error:", ${JSON.stringify(error.message)});
+            window.opener && window.opener.postMessage(
               'authorization:github:error:${JSON.stringify({ error: error.message })}',
               "*"
             );
-            setTimeout(function() {
-              window.close();
-            }, 1500);
           </script>
         </head>
         <body>
           <h1>Authentication Error</h1>
           <p>${error.message}</p>
-          <p>This window will close automatically.</p>
+          <p>Please close this window and try again.</p>
         </body>
       </html>
     `, {
