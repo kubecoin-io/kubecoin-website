@@ -9,26 +9,13 @@
     <!-- Load Decap CMS -->
     <script src="https://unpkg.com/decap-cms@^3/dist/decap-cms.js"></script>
     <script>
-      CMS.init();
+      // Fix for the removeChild error by ensuring the DOM is fully loaded
+      document.addEventListener('DOMContentLoaded', function() {
+        // Clear any existing root element to prevent DOM manipulation errors
+        if (document.querySelector('#nc-root')) {
+          document.querySelector('#nc-root').innerHTML = '';
+        }
+      });
     </script>
-
-    <footer>
-      <a href="/dashboard/" class="google-login-button">Login with Google</a>
-    </footer>
-
-    <style>
-      .google-login-button {
-        display: inline-block;
-        padding: 10px 20px;
-        background-color: #4285F4;
-        color: white;
-        text-decoration: none;
-        border-radius: 5px;
-        font-family: Arial, sans-serif;
-      }
-      .google-login-button:hover {
-        background-color: #357AE8;
-      }
-    </style>
   </body>
 </html>

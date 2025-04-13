@@ -3,7 +3,7 @@ backend:
   repo: kubecoin-io/kubecoin-website
   branch: main
   base_url: https://kubecoin.io
-  auth_endpoint: /api/auth
+  auth_endpoint: api/auth
 
 media_folder: "content/images"
 public_folder: "/images"
