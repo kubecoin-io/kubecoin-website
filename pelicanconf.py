@@ -16,6 +16,9 @@ STATIC_PATHS = ['images', 'extra', 'admin']
 DISPLAY_PAGES_ON_MENU = True
 DISPLAY_CATEGORIES_ON_MENU = False
 
+# Custom templates directory to override theme templates
+THEME_TEMPLATES_OVERRIDES = ['templates']
+
 # Required for the Papyrus theme
 DIRECT_TEMPLATES = ['index', 'tags', 'categories', 'authors', 'archives', 'search']
 
