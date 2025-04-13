@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# Upgrade pip to latest version
+# Upgrade pip to latest version to eliminate warnings
 pip install --upgrade pip
 
 # Install dependencies
