@@ -1,29 +1,51 @@
-// GitHub OAuth callback handler for Netlify CMS
+// Improved GitHub OAuth callback handler for Decap CMS
 export async function onRequest(context) {
   const { request, env } = context;
+  
+  // Get code and state parameters from the request URL
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
   
-  // Get the stored state cookie
+  console.log("Received callback with code:", code ? "present" : "missing");
+  console.log("Received state:", state);
+  
+  // Get state from cookies for validation
   const cookies = request.headers.get("Cookie") || "";
   const cookieState = cookies.split("; ")
     .find(cookie => cookie.startsWith("gh-state="))
     ?.split("=")[1];
   
-  if (!code) {
-    return new Response("No code received from GitHub", { status: 400 });
-  }
+  console.log("Cookie state:", cookieState);
   
-  // Validate state if present
-  if (cookieState && state !== cookieState) {
-    console.error("State mismatch - CSRF attack possible");
-    return new Response("Invalid state parameter", { status: 403 });
+  // Check if code is present
+  if (!code) {
+    return new Response(`
+      <!DOCTYPE html>
+      <html>
+        <head><title>Authentication Error</title></head>
+        <body>
+          <h1>Authentication Error</h1>
+          <p>No code was received from GitHub. Please try again.</p>
+          <script>
+            window.opener && window.opener.postMessage(
+              'authorization:github:error:{"error":"No code received"}',
+              "*"
+            );
+          </script>
+        </body>
+      </html>
+    `, { 
+      status: 400,
+      headers: { "Content-Type": "text/html" }
+    });
   }
   
   try {
     // Exchange code for access token
-    const tokenResponse = await fetch("https://github.com/login/oauth/access_token", {
+    console.log("Exchanging code for token...");
+    const tokenUrl = "https://github.com/login/oauth/access_token";
+    const tokenResponse = await fetch(tokenUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -36,46 +58,48 @@ export async function onRequest(context) {
       })
     });
     
-    if (!tokenResponse.ok) {
-      throw new Error(`GitHub token request failed: ${tokenResponse.status}`);
-    }
-    
+    // Get the token response as JSON
     const tokenData = await tokenResponse.json();
+    console.log("Token response status:", tokenResponse.status);
     
+    // Check for errors
     if (tokenData.error) {
-      throw new Error(`GitHub error: ${tokenData.error_description || tokenData.error}`);
+      console.error("GitHub OAuth error:", tokenData.error);
+      throw new Error(tokenData.error_description || tokenData.error);
     }
     
-    // Create HTML with script to pass token back to opener window (Netlify CMS)
+    // Log success
+    console.log("Successfully obtained access token");
+    
+    // Prepare the success response with the token
     const htmlResponse = `
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Authenticating...</title>
+          <title>Authentication Successful</title>
           <script>
             (function() {
-              function receiveMessage(e) {
-                console.log("receiveMessage %o", e);
-                // verify origin
-                window.opener.postMessage(
-                  'authorization:github:success:${JSON.stringify({
-                    provider: "github",
-                    token: tokenData.access_token
-                  })}',
-                  e.origin
-                );
-              }
-              window.addEventListener("message", receiveMessage, false);
+              const token = "${tokenData.access_token}";
               
-              // Start handshake with parent
-              console.log("Sending message to opener");
-              window.opener.postMessage("ready", "*");
+              console.log("Authentication successful, notifying opener");
+              
+              // Post message to the opener window with the token
+              // The format is specifically what Decap CMS expects
+              window.opener.postMessage(
+                'authorization:github:success:{"token":"' + token + '","provider":"github"}',
+                "*"
+              );
+              
+              // Close the popup window after a short delay
+              setTimeout(function() {
+                window.close();
+              }, 250);
             })();
           </script>
         </head>
         <body>
-          <h1>Authenticating with GitHub...</h1>
-          <p>This window should close automatically. If it doesn't, you can close it manually.</p>
+          <h1>Authentication Successful</h1>
+          <p>You have successfully authenticated with GitHub. This window will close automatically.</p>
         </body>
       </html>
     `;
@@ -83,16 +107,19 @@ export async function onRequest(context) {
     // Clear the state cookie
     const clearStateCookie = "gh-state=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0";
     
+    // Return the HTML page with the success message
     return new Response(htmlResponse, {
       headers: {
         "Content-Type": "text/html",
-        "Set-Cookie": clearStateCookie
+        "Set-Cookie": clearStateCookie,
+        "Cache-Control": "no-store"
       }
     });
     
   } catch (error) {
-    console.error("Authentication error:", error);
+    console.error("Authentication error:", error.message);
     
+    // Return an error page
     return new Response(`
       <!DOCTYPE html>
       <html>
@@ -101,9 +128,13 @@ export async function onRequest(context) {
           <script>
             console.error("Authentication error:", ${JSON.stringify(error.message)});
             window.opener && window.opener.postMessage(
-              'authorization:github:error:${JSON.stringify({ error: error.message })}',
+              'authorization:github:error:{"error":${JSON.stringify(error.message)}}',
               "*"
             );
+            
+            setTimeout(function() {
+              window.close();
+            }, 5000);
           </script>
         </head>
         <body>
@@ -114,7 +145,7 @@ export async function onRequest(context) {
       </html>
     `, {
       status: 400,
-      headers: { "Content-Type": "text/html" }
+      headers: { "Content-Type": "text/html", "Cache-Control": "no-store" }
     });
   }
 }

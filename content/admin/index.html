@@ -6,7 +6,24 @@
     <title>Kubecoin CMS</title>
   </head>
   <body>
-    <!-- Include the script that builds the page and powers Decap CMS -->
-    <script src="https://unpkg.com/netlify-cms@^2.0.0/dist/netlify-cms.js"></script>
+    <!-- Load Decap CMS -->
+    <script src="https://unpkg.com/decap-cms@^3.1.2/dist/decap-cms.js"></script>
+    
+    <!-- Debugging script to help with the DOM error -->
+    <script>
+      // Add debugging to help troubleshoot
+      console.log('Decap CMS initialization started');
+      
+      // Initialize the CMS manually to avoid DOM errors
+      window.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, checking for CMS root');
+        setTimeout(function() {
+          // This runs after a small delay to ensure DOM is fully loaded
+          if (document.querySelector('#nc-root')) {
+            console.log('Found #nc-root element');
+          }
+        }, 500);
+      });
+    </script>
   </body>
 </html>

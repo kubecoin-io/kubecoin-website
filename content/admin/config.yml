@@ -13,6 +13,8 @@ collections:
     label: "Blog Posts"
     folder: "content/posts"
     create: true
+    format: "frontmatter"
+    extension: "md"
     slug: "{{slug}}"
     fields:
       - { label: "Title", name: "title", widget: "string" }
@@ -24,6 +26,8 @@ collections:
     label: "Pages"
     folder: "content/pages"
     create: true
+    format: "frontmatter"
+    extension: "md"
     slug: "{{slug}}"
     fields:
       - { label: "Title", name: "title", widget: "string" }
