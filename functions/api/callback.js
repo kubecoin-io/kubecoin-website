@@ -149,3 +149,71 @@ export async function onRequest(context) {
     });
   }
 }
+
+// Decap CMS initialization page
+export const decapCMSPage = `
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Decap CMS</title>
+    <!-- Remove any extra scripts/styles to ensure Decap is the only controller -->
+    <!-- e.g. NO netlify identity, NO loading spinners, etc. -->
+    <script>
+      // We still need manual init to avoid DOM conflicts
+      window.CMS_MANUAL_INIT = true;
+    </script>
+  </head>
+  <body>
+    <!-- Single mount point for Decap CMS, no extra overlays/containers -->
+    <div id="nc-root"></div>
+
+    <!-- Load Decap CMS at latest version -->
+    <script src="https://unpkg.com/decap-cms@latest/dist/decap-cms.js"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        CMS.init({
+          config: {
+            load_config_file: false,
+            backend: {
+              name: 'github',
+              repo: 'kubecoin-io/kubecoin-website',
+              branch: 'main',
+              auth_endpoint: 'api/auth'
+            },
+            media_folder: 'content/images',
+            public_folder: '/images',
+            collections: [
+              {
+                name: "posts",
+                label: "Blog Posts",
+                folder: "content/posts",
+                create: true,
+                format: "frontmatter",
+                editor: { preview: false },
+                fields: [
+                  { label: "Title", name: "title", widget: "string" },
+                  { label: "Body", name: "body", widget: "markdown" }
+                ]
+              },
+              {
+                name: "pages",
+                label: "Pages",
+                folder: "content/pages",
+                create: true,
+                format: "frontmatter",
+                editor: { preview: false },
+                fields: [
+                  { label: "Title", name: "title", widget: "string" },
+                  { label: "Body", name: "body", widget: "markdown" }
+                ]
+              }
+            ]
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
+`;

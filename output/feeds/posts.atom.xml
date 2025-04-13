@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>kubecoin.io - posts</title><link href="/" rel="alternate"></link><link href="/feeds/posts.atom.xml" rel="self"></link><id>/</id><updated>2025-04-12T00:00:00+00:00</updated><entry><title>"Hello World"</title><link href="/hello-world.html" rel="alternate"></link><published>2025-04-12T00:00:00+00:00</published><updated>2025-04-12T00:00:00+00:00</updated><author><name>Kubecoin</name></author><id>tag:None,2025-04-12:/hello-world.html</id><content type="html">&lt;h1 id="hello-world"&gt;Hello World&lt;/h1&gt;
+&lt;p&gt;Welcome to the Kubecoin blog! This is the first post.&lt;/p&gt;</content><category term="posts"></category></entry></feed>

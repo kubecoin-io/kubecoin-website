@@ -2,26 +2,32 @@ backend:
   name: github
   repo: kubecoin-io/kubecoin-website
   branch: main
+  # base_url and auth_endpoint will be added later when we configure OAuth
 
-media_folder: static/images/uploads
-public_folder: /images/uploads
+media_folder: "content/images"
+public_folder: "/images"
 
 collections:
-  - name: posts
-    label: Blog Posts
-    folder: posts
+  - name: "posts"
+    label: "Blog Posts"
+    folder: "content/posts"
     create: true
+    format: "markdown"
+    extension: "md"
     slug: "{{slug}}"
     fields:
-      - {label: Title, name: title, widget: string}
-      - {label: Date, name: date, widget: datetime}
-      - {label: Body, name: body, widget: markdown}
-
-  - name: pages
-    label: Pages
-    folder: pages
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD HH:mm" }
+      - { label: "Category", name: "category", widget: "string", required: false }
+      - { label: "Tags", name: "tags", widget: "list", required: false }
+      - { label: "Body", name: "body", widget: "markdown" }
+  - name: "pages"
+    label: "Pages"
+    folder: "content/pages"
     create: true
+    format: "markdown"
+    extension: "md"
     slug: "{{slug}}"
     fields:
-      - {label: Title, name: title, widget: string}
-      - {label: Body, name: body, widget: markdown}
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Body", name: "body", widget: "markdown" }
