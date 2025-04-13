@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# Upgrade pip to latest version
+pip install --upgrade pip
+
 # Install dependencies
 pip install -r requirements.txt
 
