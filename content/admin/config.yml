@@ -5,11 +5,11 @@ backend:
   base_url: https://kubecoin.io
   auth_endpoint: api/auth
   commit_messages:
-    create: "Create {{collection}} "{{slug}}""
-    update: "Update {{collection}} "{{slug}}""
-    delete: "Delete {{collection}} "{{slug}}""
-    uploadMedia: "Upload "{{path}}""
-    deleteMedia: "Delete "{{path}}""
+    create: 'Create {{collection}} "{{slug}}"'
+    update: 'Update {{collection}} "{{slug}}"'
+    delete: 'Delete {{collection}} "{{slug}}"'
+    uploadMedia: 'Upload "{{path}}"'
+    deleteMedia: 'Delete "{{path}}"'
 
 # Media configuration
 media_folder: "content/images"
