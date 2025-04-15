@@ -2,25 +2,9 @@ backend:
   name: github
   repo: kubecoin-io/kubecoin-website
   branch: main
-  base_url: https://kubecoin.io
-  auth_endpoint: api/auth
-  commit_messages:
-    create: 'Create {{collection}} "{{slug}}"'
-    update: 'Update {{collection}} "{{slug}}"'
-    delete: 'Delete {{collection}} "{{slug}}"'
-    uploadMedia: 'Upload "{{path}}"'
-    deleteMedia: 'Delete "{{path}}"'
 
-# Media configuration
 media_folder: "static/uploads"
 public_folder: "/static/uploads"
-
-# Set the locale for the CMS
-locale: en
-
-# Display URL options for better content preview
-site_url: https://kubecoin.io
-display_url: https://kubecoin.io
 
 collections:
   - name: blog
@@ -32,7 +16,6 @@ collections:
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Date", name: "date", widget: "datetime" }
       - { label: "Body", name: "body", widget: "markdown" }
-
   - name: pages
     label: Pages
     folder: "content/pages"
