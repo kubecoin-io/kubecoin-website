@@ -12,8 +12,8 @@ backend:
     deleteMedia: 'Delete "{{path}}"'
 
 # Media configuration
-media_folder: "content/images"
-public_folder: "/images"
+media_folder: "static/uploads"
+public_folder: "/static/uploads"
 
 # Set the locale for the CMS
 locale: en
@@ -23,35 +23,21 @@ site_url: https://kubecoin.io
 display_url: https://kubecoin.io
 
 collections:
-  - name: "posts"
-    label: "Blog Posts"
-    label_singular: "Blog Post"
+  - name: blog
+    label: Blog
     folder: "content/posts"
     create: true
-    format: "frontmatter"
-    extension: "md"
     slug: "{{slug}}"
-    preview_path: "posts/{{slug}}"
-    editor:
-      preview: false
     fields:
       - { label: "Title", name: "title", widget: "string" }
-      - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
-      - { label: "Category", name: "category", widget: "string", required: false }
-      - { label: "Tags", name: "tags", widget: "list", required: false, allow_add: true }
+      - { label: "Date", name: "date", widget: "datetime" }
       - { label: "Body", name: "body", widget: "markdown" }
-  
-  - name: "pages"
-    label: "Pages"
-    label_singular: "Page"
+
+  - name: pages
+    label: Pages
     folder: "content/pages"
     create: true
-    format: "frontmatter"
-    extension: "md"
     slug: "{{slug}}"
-    preview_path: "pages/{{slug}}"
-    editor:
-      preview: false
     fields:
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Body", name: "body", widget: "markdown" }
