@@ -183,33 +183,7 @@ export const decapCMSPage = `
               auth_endpoint: 'api/auth'
             },
             media_folder: 'content/images',
-            public_folder: '/images',
-            collections: [
-              {
-                name: "posts",
-                label: "Blog Posts",
-                folder: "content/posts",
-                create: true,
-                format: "frontmatter",
-                editor: { preview: false },
-                fields: [
-                  { label: "Title", name: "title", widget: "string" },
-                  { label: "Body", name: "body", widget: "markdown" }
-                ]
-              },
-              {
-                name: "pages",
-                label: "Pages",
-                folder: "content/pages",
-                create: true,
-                format: "frontmatter",
-                editor: { preview: false },
-                fields: [
-                  { label: "Title", name: "title", widget: "string" },
-                  { label: "Body", name: "body", widget: "markdown" }
-                ]
-              }
-            ]
+            public_folder: '/images'
           }
         });
       });

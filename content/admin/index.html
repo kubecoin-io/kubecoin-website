@@ -75,20 +75,6 @@
             media_folder: 'content/images',
             public_folder: '/images',
             // Disable previews to reduce DOM issues
-            collections: [
-              {
-                name: 'posts',
-                label: 'Blog Posts',
-                folder: 'content/posts',
-                create: true,
-                format: 'frontmatter',
-                editor: { preview: false },
-                fields: [
-                  { label: 'Title', name: 'title', widget: 'string' },
-                  { label: 'Body', name: 'body', widget: 'markdown' }
-                ]
-              }
-            ]
           }
         });
         
