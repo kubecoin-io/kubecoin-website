@@ -62,22 +62,8 @@
       
       document.addEventListener('DOMContentLoaded', () => {
         updateStatus('Loading CMS...');
-        
-        // Initialize Decap CMS
-        CMS.init({
-          config: {
-            backend: {
-              name: 'github',
-              repo: 'kubecoin-io/kubecoin-website',
-              branch: 'main',
-              auth_endpoint: 'api/auth'
-            },
-            media_folder: 'content/images',
-            public_folder: '/images',
-            // Disable previews to reduce DOM issues
-          }
-        });
-        
+        // Use default CMS.init() so it loads config.yml automatically
+        CMS.init();
         // If authentication was successful, refresh the page once to clear any cached errors
         if (window.location.hash && window.location.hash.includes('token')) {
           updateStatus('Authentication complete, loading editor...');
