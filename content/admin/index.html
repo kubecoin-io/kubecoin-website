@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KubeCoin Content Manager</title>
-  <!-- Add basic styling for error messages -->
   <style>
     .error-message {
       padding: 16px;
@@ -14,8 +13,7 @@
       border-radius: 4px;
       margin: 20px;
     }
-    body::before {
-      content: "Loading CMS...";
+    .loading {
       display: block;
       margin: 20px;
       font-family: sans-serif;
@@ -23,88 +21,31 @@
   </style>
 </head>
 <body>
-  <!-- This message will appear until the CMS loads -->
+  <div class="loading">Loading CMS...</div>
   <div id="nc-root"></div>
   
-  <!-- Fallback content in case CMS fails to load -->
   <div id="fallback" style="display:none;" class="error-message">
     <h3>CMS may not be loading correctly</h3>
     <p>Check browser console for errors. If you see this message, the CMS initialization failed.</p>
   </div>
 
-  <!-- Load Decap CMS -->
-  <script src="https://unpkg.com/@decap-cms/app@^3.1.0/dist/decap-cms-app.js"></script>
+  <!-- Use the correct, standard Decap CMS script with auto-loading -->
+  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  
   <script>
-    // Manual initialization with error handling
-    try {
-      console.log("Decap CMS: Initializing");
-      const { CMS, initCMS } = window.DecapCMS;
-      
-      initCMS({
-        config: {
-          backend: {
-            name: "github",
-            repo: "kubecoin-io/kubecoin-website",
-            branch: "main",
-            base_url: "https://kubecoin.io",
-            auth_endpoint: "/api/auth",
-            app_id: "Ov23liNXJUIuHjXxeoeN"
-          },
-          media_folder: "content/uploads",
-          public_folder: "/uploads",
-          collections: [
-            {
-              name: "blog",
-              label: "Blog",
-              folder: "content/posts",
-              create: true,
-              slug: "{{slug}}",
-              fields: [
-                { label: "Title", name: "title", widget: "string" },
-                { label: "Date", name: "date", widget: "datetime" },
-                { label: "Body", name: "body", widget: "markdown" }
-              ]
-            },
-            {
-              name: "pages",
-              label: "Pages",
-              folder: "content/pages",
-              create: true,
-              slug: "{{slug}}",
-              fields: [
-                { label: "Title", name: "title", widget: "string" },
-                { label: "Body", name: "body", widget: "markdown" }
-              ]
-            }
-          ]
-        }
-      }).then(() => {
-        console.log("Decap CMS: Successfully initialized");
-      }).catch(error => {
-        console.error("Decap CMS initialization error:", error);
-        document.getElementById("nc-root").innerHTML = 
-          '<div class="error-message">' +
-          '<h3>CMS Error</h3>' +
-          '<p>Failed to initialize CMS: ' + error.message + '</p>' +
-          '<pre>' + error.stack + '</pre>' +
-          '</div>';
-      });
-    } catch (error) {
-      console.error("Decap CMS script error:", error);
-      document.getElementById("nc-root").innerHTML = 
-        '<div class="error-message">' +
-        '<h3>CMS Script Error</h3>' +
-        '<p>' + error.message + '</p>' +
-        '</div>';
-    }
-
-    // Show fallback message if CMS doesn't initialize within 3 seconds
+    // Log that script has loaded
+    console.log("Decap CMS script loaded");
+    
+    // Show fallback message if CMS doesn't initialize within 5 seconds
     setTimeout(function() {
       if (document.querySelector('#nc-root iframe') === null) {
         document.getElementById('fallback').style.display = 'block';
+        document.querySelector('.loading').style.display = 'none';
         console.error("CMS did not initialize properly within timeout period");
+      } else {
+        document.querySelector('.loading').style.display = 'none';
       }
-    }, 3000);
+    }, 5000);
 
     // Log any global errors
     window.addEventListener('error', function(event) {
