@@ -36,52 +36,65 @@
   <script>
     console.log("Starting CMS initialization");
     
-    // Initialize with inline config instead of relying on config.yml
-    window.decapCMS.init({
-      config: {
-        backend: {
-          name: "github",
-          repo: "kubecoin-io/kubecoin-website",
-          branch: "main",
-          base_url: "https://kubecoin.io",
-          auth_endpoint: "/api/auth",
-          app_id: "Ov23liNXJUIuHjXxeoeN"
-        },
-        media_folder: "content/uploads",
-        public_folder: "/uploads",
-        collections: [
-          {
-            name: "blog",
-            label: "Blog",
-            folder: "content/posts",
-            create: true,
-            slug: "{{slug}}",
-            fields: [
-              { label: "Title", name: "title", widget: "string" },
-              { label: "Date", name: "date", widget: "datetime" },
-              { label: "Body", name: "body", widget: "markdown" }
-            ]
-          },
-          {
-            name: "pages",
-            label: "Pages",
-            folder: "content/pages",
-            create: true,
-            slug: "{{slug}}",
-            fields: [
-              { label: "Title", name: "title", widget: "string" },
-              { label: "Body", name: "body", widget: "markdown" }
+    // Wait for the script to fully load and create the CMS global
+    setTimeout(function() {
+      // Use window.CMS instead of window.decapCMS (this is the correct global object)
+      if (window.CMS) {
+        console.log("CMS global object found, initializing...");
+        
+        window.CMS.init({
+          config: {
+            backend: {
+              name: "github",
+              repo: "kubecoin-io/kubecoin-website",
+              branch: "main",
+              base_url: "https://kubecoin.io",
+              auth_endpoint: "/api/auth",
+              app_id: "Ov23liNXJUIuHjXxeoeN"
+            },
+            media_folder: "content/uploads",
+            public_folder: "/uploads",
+            collections: [
+              {
+                name: "blog",
+                label: "Blog",
+                folder: "content/posts",
+                create: true,
+                slug: "{{slug}}",
+                fields: [
+                  { label: "Title", name: "title", widget: "string" },
+                  { label: "Date", name: "date", widget: "datetime" },
+                  { label: "Body", name: "body", widget: "markdown" }
+                ]
+              },
+              {
+                name: "pages",
+                label: "Pages",
+                folder: "content/pages",
+                create: true,
+                slug: "{{slug}}",
+                fields: [
+                  { label: "Title", name: "title", widget: "string" },
+                  { label: "Body", name: "body", widget: "markdown" }
+                ]
+              }
             ]
           }
-        ]
+        }).catch(function(error) {
+          console.error("CMS initialization error:", error);
+          document.getElementById("fallback").style.display = "block";
+          document.getElementById("fallback").innerHTML += 
+            "<p><strong>Error details:</strong> " + error.message + "</p>";
+          document.querySelector(".loading").style.display = "none";
+        });
+      } else {
+        console.error("CMS global object not found after loading script");
+        document.getElementById("fallback").style.display = "block";
+        document.getElementById("fallback").innerHTML += 
+          "<p><strong>Error:</strong> CMS global object not found. Script may not be loading correctly.</p>";
+        document.querySelector(".loading").style.display = "none";
       }
-    }).catch(function(error) {
-      console.error("CMS initialization error:", error);
-      document.getElementById("fallback").style.display = "block";
-      document.getElementById("fallback").innerHTML += 
-        "<p><strong>Error details:</strong> " + error.message + "</p>";
-      document.querySelector(".loading").style.display = "none";
-    });
+    }, 1000); // Wait 1 second for script to fully initialize
     
     // Show fallback message if CMS doesn't initialize within 10 seconds
     setTimeout(function() {
