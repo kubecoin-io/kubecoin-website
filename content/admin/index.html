@@ -32,10 +32,12 @@
   <!-- Error container -->
   <div id="error" style="display: none;" class="error"></div>
   
-  <!-- Debug element to show CMS status -->
+  <!-- Debug element -->
   <div id="debug" style="display: none; position: fixed; bottom: 0; right: 0; background: #333; color: white; padding: 10px; font-family: monospace; max-width: 400px; max-height: 200px; overflow: auto;"></div>
   
-  <!-- Check for returning from authentication -->
+  <!-- THIS IS CRUCIAL: Add the correct mount point for Decap CMS -->
+  <div id="nc-root"></div>
+  
   <script>
     function debug(message) {
       console.log(message);
@@ -44,12 +46,11 @@
       debugEl.innerHTML += message + '<br>';
     }
     
-    // Check if we're returning from an authentication
+    // Process any stored auth token
     const storedToken = localStorage.getItem("netlifyCmsGithubToken");
     if (storedToken) {
       debug("Found stored GitHub token, applying to CMS");
       
-      // Format the auth data as Decap CMS expects it
       const authData = {
         github: {
           token: {
@@ -59,23 +60,36 @@
         }
       };
       
-      // Store in the format Decap CMS expects
       localStorage.setItem("netlify-cms-user", JSON.stringify(authData));
-      
-      // Clean up our temporary storage
       localStorage.removeItem("netlifyCmsGithubToken");
       localStorage.removeItem("netlifyCmsGithubState");
       
-      // Reload to let Decap CMS pick up the credentials
-      window.location.reload();
+      // No reload here - continue loading the page
     }
   </script>
   
-  <!-- Load Decap CMS with the correct version -->
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <!-- Use a specific version of Decap CMS -->
+  <script src="https://unpkg.com/decap-cms@3.0.0/dist/decap-cms.js"></script>
   
   <script>
     debug("Decap CMS script loaded, waiting for initialization...");
+    
+    // Ensure config.yml is properly loaded
+    fetch('/admin/config.yml')
+      .then(response => {
+        if (!response.ok) {
+          debug("⚠️ Warning: config.yml couldn't be loaded: " + response.status);
+        } else {
+          debug("✓ config.yml is accessible");
+        }
+        return response.text();
+      })
+      .then(text => {
+        debug("Config file content length: " + text.length + " bytes");
+      })
+      .catch(error => {
+        debug("⚠️ Error loading config.yml: " + error.message);
+      });
     
     // Add timeout to handle if CMS gets stuck loading
     setTimeout(function() {
@@ -99,13 +113,12 @@
           <button id="debug-button" style="padding: 10px; margin-top: 10px; margin-left: 10px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Show/Hide Debug Info</button>
         `;
         
-        // Auth button - direct navigation for reliability
         document.getElementById('auth-button').addEventListener('click', function() {
           window.location.href = '/api/auth';
         });
         
-        // Clear button - clear any stale auth data
         document.getElementById('clear-button').addEventListener('click', function() {
+          debug("Clearing all auth data");
           localStorage.removeItem("netlify-cms-user");
           localStorage.removeItem("netlify-cms-github-state");
           localStorage.removeItem("netlifyCmsGithubToken");
@@ -113,7 +126,6 @@
           window.location.reload();
         });
         
-        // Debug button - toggle debug info
         document.getElementById('debug-button').addEventListener('click', function() {
           var debugEl = document.getElementById('debug');
           debugEl.style.display = debugEl.style.display === 'none' ? 'block' : 'none';
@@ -122,7 +134,7 @@
         debug("CMS iframe found, initialization successful");
         loadingEl.style.display = 'none';
       }
-    }, 10000); // Wait 10 seconds before showing the error
+    }, 10000);
   </script>
 </body>
 </html>
