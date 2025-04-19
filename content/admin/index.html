@@ -15,14 +15,51 @@
       margin: 0;
       padding: 0;
     }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 20px;
+      border-radius: 5px;
+      margin: 20px;
+      max-width: 600px;
+    }
   </style>
 </head>
 <body>
-  <!-- Just a simple loading message -->
-  <div class="loading">Loading Decap CMS...</div>
+  <!-- Loading message -->
+  <div class="loading" id="loading">Loading Decap CMS...</div>
   
-  <!-- Decap CMS will replace this content with its interface -->
-  <!-- We're using the standard, automatic initialization -->
+  <!-- Error container -->
+  <div id="error" style="display: none;" class="error"></div>
+  
+  <!-- Decap CMS -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  
+  <script>
+    // Add timeout to handle if CMS gets stuck loading
+    setTimeout(function() {
+      var loadingEl = document.getElementById('loading');
+      var errorEl = document.getElementById('error');
+      
+      if (document.querySelector('#nc-root iframe') === null) {
+        console.log('CMS initialization timeout - taking too long to load');
+        
+        // Display error message
+        loadingEl.style.display = 'none';
+        errorEl.style.display = 'block';
+        errorEl.innerHTML = `
+          <h3>CMS is taking too long to load</h3>
+          <p>This could be due to authentication issues with GitHub.</p>
+          <p>Try clearing your browser cache and refreshing, or clicking the button below to start the authentication flow manually:</p>
+          <button id="auth-button" style="padding: 10px; margin-top: 10px;">Authenticate with GitHub</button>
+        `;
+        
+        // Add manual auth button handler
+        document.getElementById('auth-button').addEventListener('click', function() {
+          window.location.href = 'https://kubecoin.io/api/auth';
+        });
+      }
+    }, 8000); // Wait 8 seconds before showing the error
+  </script>
 </body>
 </html>
