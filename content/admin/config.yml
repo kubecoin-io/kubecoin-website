@@ -6,8 +6,9 @@ backend:
   auth_endpoint: "/api/auth"      # Path to your Cloudflare auth function
   app_id: "Ov23liNXJUIuHjXxeoeN" # Add your GitHub OAuth App Client ID here
 
-media_folder: "/content/uploads" # The path where uploaded files should be stored
-public_folder: "/content/uploads"
+# Fix paths by removing leading slashes
+media_folder: "content/uploads"
+public_folder: "/uploads"
 
 collections:
   - name: blog

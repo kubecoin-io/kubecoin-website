@@ -2,12 +2,114 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Content Manager</title>
-  <!-- Decap CMS embed: auto-loads /admin/config.yml -->
-  <script src="https://unpkg.com/@decap-cms/app@latest/dist/decap-cms-app.js" data-config-url="/admin/config.yml" defer></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KubeCoin Content Manager</title>
+  <!-- Add basic styling for error messages -->
+  <style>
+    .error-message {
+      padding: 16px;
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      border-radius: 4px;
+      margin: 20px;
+    }
+    body::before {
+      content: "Loading CMS...";
+      display: block;
+      margin: 20px;
+      font-family: sans-serif;
+    }
+  </style>
 </head>
 <body>
-  <!-- Decap CMS will mount here -->
+  <!-- This message will appear until the CMS loads -->
   <div id="nc-root"></div>
+  
+  <!-- Fallback content in case CMS fails to load -->
+  <div id="fallback" style="display:none;" class="error-message">
+    <h3>CMS may not be loading correctly</h3>
+    <p>Check browser console for errors. If you see this message, the CMS initialization failed.</p>
+  </div>
+
+  <!-- Load Decap CMS -->
+  <script src="https://unpkg.com/@decap-cms/app@^3.1.0/dist/decap-cms-app.js"></script>
+  <script>
+    // Manual initialization with error handling
+    try {
+      console.log("Decap CMS: Initializing");
+      const { CMS, initCMS } = window.DecapCMS;
+      
+      initCMS({
+        config: {
+          backend: {
+            name: "github",
+            repo: "kubecoin-io/kubecoin-website",
+            branch: "main",
+            base_url: "https://kubecoin.io",
+            auth_endpoint: "/api/auth",
+            app_id: "Ov23liNXJUIuHjXxeoeN"
+          },
+          media_folder: "content/uploads",
+          public_folder: "/uploads",
+          collections: [
+            {
+              name: "blog",
+              label: "Blog",
+              folder: "content/posts",
+              create: true,
+              slug: "{{slug}}",
+              fields: [
+                { label: "Title", name: "title", widget: "string" },
+                { label: "Date", name: "date", widget: "datetime" },
+                { label: "Body", name: "body", widget: "markdown" }
+              ]
+            },
+            {
+              name: "pages",
+              label: "Pages",
+              folder: "content/pages",
+              create: true,
+              slug: "{{slug}}",
+              fields: [
+                { label: "Title", name: "title", widget: "string" },
+                { label: "Body", name: "body", widget: "markdown" }
+              ]
+            }
+          ]
+        }
+      }).then(() => {
+        console.log("Decap CMS: Successfully initialized");
+      }).catch(error => {
+        console.error("Decap CMS initialization error:", error);
+        document.getElementById("nc-root").innerHTML = 
+          '<div class="error-message">' +
+          '<h3>CMS Error</h3>' +
+          '<p>Failed to initialize CMS: ' + error.message + '</p>' +
+          '<pre>' + error.stack + '</pre>' +
+          '</div>';
+      });
+    } catch (error) {
+      console.error("Decap CMS script error:", error);
+      document.getElementById("nc-root").innerHTML = 
+        '<div class="error-message">' +
+        '<h3>CMS Script Error</h3>' +
+        '<p>' + error.message + '</p>' +
+        '</div>';
+    }
+
+    // Show fallback message if CMS doesn't initialize within 3 seconds
+    setTimeout(function() {
+      if (document.querySelector('#nc-root iframe') === null) {
+        document.getElementById('fallback').style.display = 'block';
+        console.error("CMS did not initialize properly within timeout period");
+      }
+    }, 3000);
+
+    // Log any global errors
+    window.addEventListener('error', function(event) {
+      console.error('Global error:', event.error);
+    });
+  </script>
 </body>
 </html>
