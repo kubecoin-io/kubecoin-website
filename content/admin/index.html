@@ -32,7 +32,36 @@
   <!-- Error container -->
   <div id="error" style="display: none;" class="error"></div>
   
-  <!-- Decap CMS -->
+  <!-- Check for returning from authentication -->
+  <script>
+    // Check if we're returning from an authentication
+    const storedToken = localStorage.getItem("netlifyCmsGithubToken");
+    if (storedToken) {
+      console.log("Found stored GitHub token, applying to CMS");
+      
+      // Format the auth data as Decap CMS expects it
+      const authData = {
+        github: {
+          token: {
+            access_token: storedToken
+          },
+          expire: new Date().getTime() + (1000 * 60 * 60) // 1 hour from now
+        }
+      };
+      
+      // Store in the format Decap CMS expects
+      localStorage.setItem("netlify-cms-user", JSON.stringify(authData));
+      
+      // Clean up our temporary storage
+      localStorage.removeItem("netlifyCmsGithubToken");
+      localStorage.removeItem("netlifyCmsGithubState");
+      
+      // Reload to let Decap CMS pick up the credentials
+      window.location.reload();
+    }
+  </script>
+  
+  <!-- Load Decap CMS -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
   
   <script>
@@ -50,16 +79,26 @@
         errorEl.innerHTML = `
           <h3>CMS is taking too long to load</h3>
           <p>This could be due to authentication issues with GitHub.</p>
-          <p>Try clearing your browser cache and refreshing, or clicking the button below to start the authentication flow manually:</p>
-          <button id="auth-button" style="padding: 10px; margin-top: 10px;">Authenticate with GitHub</button>
+          <p>Try clearing your browser cache and refreshing, or clicking the button below:</p>
+          <button id="auth-button" style="padding: 10px; margin-top: 10px; background: #0366d6; color: white; border: none; border-radius: 4px; cursor: pointer;">Authenticate with GitHub</button>
+          <button id="clear-button" style="padding: 10px; margin-top: 10px; margin-left: 10px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Clear Auth Data & Reload</button>
         `;
         
-        // Add manual auth button handler
+        // Auth button - open a popup for better user experience
         document.getElementById('auth-button').addEventListener('click', function() {
-          window.location.href = 'https://kubecoin.io/api/auth';
+          window.location.href = '/api/auth';
+        });
+        
+        // Clear button - clear any stale auth data
+        document.getElementById('clear-button').addEventListener('click', function() {
+          localStorage.removeItem("netlify-cms-user");
+          localStorage.removeItem("netlify-cms-github-state");
+          localStorage.removeItem("netlifyCmsGithubToken");
+          localStorage.removeItem("netlifyCmsGithubState");
+          window.location.reload();
         });
       }
-    }, 8000); // Wait 8 seconds before showing the error
+    }, 10000); // Wait 10 seconds before showing the error
   </script>
 </body>
 </html>
