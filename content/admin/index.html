@@ -29,14 +29,61 @@
     <p>Check browser console for errors. If you see this message, the CMS initialization failed.</p>
   </div>
 
-  <!-- Use the correct, standard Decap CMS script with auto-loading -->
+  <!-- Include Decap CMS but set manual init flag -->
+  <script>window.CMS_MANUAL_INIT = true;</script>
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
   
   <script>
-    // Log that script has loaded
-    console.log("Decap CMS script loaded");
+    console.log("Starting CMS initialization");
     
-    // Show fallback message if CMS doesn't initialize within 5 seconds
+    // Initialize with inline config instead of relying on config.yml
+    window.decapCMS.init({
+      config: {
+        backend: {
+          name: "github",
+          repo: "kubecoin-io/kubecoin-website",
+          branch: "main",
+          base_url: "https://kubecoin.io",
+          auth_endpoint: "/api/auth",
+          app_id: "Ov23liNXJUIuHjXxeoeN"
+        },
+        media_folder: "content/uploads",
+        public_folder: "/uploads",
+        collections: [
+          {
+            name: "blog",
+            label: "Blog",
+            folder: "content/posts",
+            create: true,
+            slug: "{{slug}}",
+            fields: [
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Date", name: "date", widget: "datetime" },
+              { label: "Body", name: "body", widget: "markdown" }
+            ]
+          },
+          {
+            name: "pages",
+            label: "Pages",
+            folder: "content/pages",
+            create: true,
+            slug: "{{slug}}",
+            fields: [
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Body", name: "body", widget: "markdown" }
+            ]
+          }
+        ]
+      }
+    }).catch(function(error) {
+      console.error("CMS initialization error:", error);
+      document.getElementById("fallback").style.display = "block";
+      document.getElementById("fallback").innerHTML += 
+        "<p><strong>Error details:</strong> " + error.message + "</p>";
+      document.querySelector(".loading").style.display = "none";
+    });
+    
+    // Show fallback message if CMS doesn't initialize within 10 seconds
     setTimeout(function() {
       if (document.querySelector('#nc-root iframe') === null) {
         document.getElementById('fallback').style.display = 'block';
@@ -45,9 +92,9 @@
       } else {
         document.querySelector('.loading').style.display = 'none';
       }
-    }, 5000);
-
-    // Log any global errors
+    }, 10000);
+    
+    // Log global errors
     window.addEventListener('error', function(event) {
       console.error('Global error:', event.error);
     });
