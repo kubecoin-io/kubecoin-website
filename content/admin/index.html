@@ -32,12 +32,22 @@
   <!-- Error container -->
   <div id="error" style="display: none;" class="error"></div>
   
+  <!-- Debug element to show CMS status -->
+  <div id="debug" style="display: none; position: fixed; bottom: 0; right: 0; background: #333; color: white; padding: 10px; font-family: monospace; max-width: 400px; max-height: 200px; overflow: auto;"></div>
+  
   <!-- Check for returning from authentication -->
   <script>
+    function debug(message) {
+      console.log(message);
+      var debugEl = document.getElementById('debug');
+      debugEl.style.display = 'block';
+      debugEl.innerHTML += message + '<br>';
+    }
+    
     // Check if we're returning from an authentication
     const storedToken = localStorage.getItem("netlifyCmsGithubToken");
     if (storedToken) {
-      console.log("Found stored GitHub token, applying to CMS");
+      debug("Found stored GitHub token, applying to CMS");
       
       // Format the auth data as Decap CMS expects it
       const authData = {
@@ -61,17 +71,21 @@
     }
   </script>
   
-  <!-- Load Decap CMS -->
+  <!-- Load Decap CMS with the correct version -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
   
   <script>
+    debug("Decap CMS script loaded, waiting for initialization...");
+    
     // Add timeout to handle if CMS gets stuck loading
     setTimeout(function() {
+      debug("Checking if CMS initialized properly...");
       var loadingEl = document.getElementById('loading');
       var errorEl = document.getElementById('error');
       
+      // Check if the CMS content is loaded by looking for the iframe
       if (document.querySelector('#nc-root iframe') === null) {
-        console.log('CMS initialization timeout - taking too long to load');
+        debug("No CMS iframe found, initialization failed");
         
         // Display error message
         loadingEl.style.display = 'none';
@@ -82,9 +96,10 @@
           <p>Try clearing your browser cache and refreshing, or clicking the button below:</p>
           <button id="auth-button" style="padding: 10px; margin-top: 10px; background: #0366d6; color: white; border: none; border-radius: 4px; cursor: pointer;">Authenticate with GitHub</button>
           <button id="clear-button" style="padding: 10px; margin-top: 10px; margin-left: 10px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Clear Auth Data & Reload</button>
+          <button id="debug-button" style="padding: 10px; margin-top: 10px; margin-left: 10px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Show/Hide Debug Info</button>
         `;
         
-        // Auth button - open a popup for better user experience
+        // Auth button - direct navigation for reliability
         document.getElementById('auth-button').addEventListener('click', function() {
           window.location.href = '/api/auth';
         });
@@ -97,6 +112,15 @@
           localStorage.removeItem("netlifyCmsGithubState");
           window.location.reload();
         });
+        
+        // Debug button - toggle debug info
+        document.getElementById('debug-button').addEventListener('click', function() {
+          var debugEl = document.getElementById('debug');
+          debugEl.style.display = debugEl.style.display === 'none' ? 'block' : 'none';
+        });
+      } else {
+        debug("CMS iframe found, initialization successful");
+        loadingEl.style.display = 'none';
       }
     }, 10000); // Wait 10 seconds before showing the error
   </script>
