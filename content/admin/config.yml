@@ -2,6 +2,9 @@ backend:
   name: github
   repo: kubecoin-io/kubecoin-website
   branch: main
+  base_url: "https://kubecoin.io" # Your site's base URL
+  auth_endpoint: "/api/auth"      # Path to your Cloudflare auth function
+  app_id: "Ov23liNXJUIuHjXxeoeN" # Add your GitHub OAuth App Client ID here
 
 media_folder: "static/uploads"
 public_folder: "/static/uploads"
