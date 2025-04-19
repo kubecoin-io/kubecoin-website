@@ -1,6 +1,6 @@
 AUTHOR = 'Kubecoin'
 SITENAME = 'kubecoin.io'
-SITEURL = "http://localhost:8000"
+SITEURL = "https://kunecoin.io"
 
 SUBTITLE = 'Kubecoin'
 SUBTEXT = 'Kubernetes-powered Crypto Platform'
