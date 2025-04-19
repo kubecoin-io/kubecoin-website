@@ -5,112 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KubeCoin Content Manager</title>
   <style>
-    .error-message {
-      padding: 16px;
-      background-color: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-      border-radius: 4px;
-      margin: 20px;
-    }
     .loading {
-      display: block;
-      margin: 20px;
-      font-family: sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
     }
   </style>
 </head>
 <body>
-  <div class="loading">Loading CMS...</div>
-  <div id="nc-root"></div>
+  <!-- Just a simple loading message -->
+  <div class="loading">Loading Decap CMS...</div>
   
-  <div id="fallback" style="display:none;" class="error-message">
-    <h3>CMS may not be loading correctly</h3>
-    <p>Check browser console for errors. If you see this message, the CMS initialization failed.</p>
-  </div>
-
-  <!-- Include Decap CMS but set manual init flag -->
-  <script>window.CMS_MANUAL_INIT = true;</script>
+  <!-- Decap CMS will replace this content with its interface -->
+  <!-- We're using the standard, automatic initialization -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-  
-  <script>
-    console.log("Starting CMS initialization");
-    
-    // Wait for the script to fully load and create the CMS global
-    setTimeout(function() {
-      // Use window.CMS instead of window.decapCMS (this is the correct global object)
-      if (window.CMS) {
-        console.log("CMS global object found, initializing...");
-        
-        window.CMS.init({
-          config: {
-            backend: {
-              name: "github",
-              repo: "kubecoin-io/kubecoin-website",
-              branch: "main",
-              base_url: "https://kubecoin.io",
-              auth_endpoint: "/api/auth",
-              app_id: "Ov23liNXJUIuHjXxeoeN"
-            },
-            media_folder: "content/uploads",
-            public_folder: "/uploads",
-            collections: [
-              {
-                name: "blog",
-                label: "Blog",
-                folder: "content/posts",
-                create: true,
-                slug: "{{slug}}",
-                fields: [
-                  { label: "Title", name: "title", widget: "string" },
-                  { label: "Date", name: "date", widget: "datetime" },
-                  { label: "Body", name: "body", widget: "markdown" }
-                ]
-              },
-              {
-                name: "pages",
-                label: "Pages",
-                folder: "content/pages",
-                create: true,
-                slug: "{{slug}}",
-                fields: [
-                  { label: "Title", name: "title", widget: "string" },
-                  { label: "Body", name: "body", widget: "markdown" }
-                ]
-              }
-            ]
-          }
-        }).catch(function(error) {
-          console.error("CMS initialization error:", error);
-          document.getElementById("fallback").style.display = "block";
-          document.getElementById("fallback").innerHTML += 
-            "<p><strong>Error details:</strong> " + error.message + "</p>";
-          document.querySelector(".loading").style.display = "none";
-        });
-      } else {
-        console.error("CMS global object not found after loading script");
-        document.getElementById("fallback").style.display = "block";
-        document.getElementById("fallback").innerHTML += 
-          "<p><strong>Error:</strong> CMS global object not found. Script may not be loading correctly.</p>";
-        document.querySelector(".loading").style.display = "none";
-      }
-    }, 1000); // Wait 1 second for script to fully initialize
-    
-    // Show fallback message if CMS doesn't initialize within 10 seconds
-    setTimeout(function() {
-      if (document.querySelector('#nc-root iframe') === null) {
-        document.getElementById('fallback').style.display = 'block';
-        document.querySelector('.loading').style.display = 'none';
-        console.error("CMS did not initialize properly within timeout period");
-      } else {
-        document.querySelector('.loading').style.display = 'none';
-      }
-    }, 10000);
-    
-    // Log global errors
-    window.addEventListener('error', function(event) {
-      console.error('Global error:', event.error);
-    });
-  </script>
 </body>
 </html>
