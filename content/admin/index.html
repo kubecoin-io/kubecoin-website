@@ -46,33 +46,48 @@
       debugEl.innerHTML += message + '<br>';
     }
     
-    // Process any stored auth token
+    // Try a different auth format - use exactly the format Decap CMS expects
     const storedToken = localStorage.getItem("netlifyCmsGithubToken");
     if (storedToken) {
       debug("Found stored GitHub token, applying to CMS");
       
-      const authData = {
-        github: {
-          token: {
-            access_token: storedToken
-          },
-          expire: new Date().getTime() + (1000 * 60 * 60) // 1 hour from now
-        }
-      };
-      
-      localStorage.setItem("netlify-cms-user", JSON.stringify(authData));
-      localStorage.removeItem("netlifyCmsGithubToken");
-      localStorage.removeItem("netlifyCmsGithubState");
-      
-      // No reload here - continue loading the page
+      try {
+        // This is the exact format Decap CMS expects
+        const authData = {
+          token: storedToken,
+          provider: "github"
+        };
+        
+        // Store in the format Decap CMS expects (note: key prefix is "netlify-cms-" not "netlifyCms")
+        localStorage.setItem("netlify-cms-user", JSON.stringify(authData));
+        localStorage.removeItem("netlifyCmsGithubToken");
+        localStorage.removeItem("netlifyCmsGithubState");
+        
+        debug("Auth data stored in expected format");
+      } catch (e) {
+        debug("⚠️ Error storing auth data: " + e.message);
+      }
+    } else {
+      debug("No stored GitHub token found");
     }
   </script>
   
-  <!-- Use a specific version of Decap CMS -->
-  <script src="https://unpkg.com/decap-cms@3.0.0/dist/decap-cms.js"></script>
+  <!-- Use a newer version of Decap CMS -->
+  <script src="https://unpkg.com/decap-cms@3.1.2/dist/decap-cms.js"></script>
   
   <script>
     debug("Decap CMS script loaded, waiting for initialization...");
+    
+    // Add a global error handler to catch any CMS errors
+    window.addEventListener('error', function(event) {
+      debug("⚠️ Global error: " + event.message);
+    });
+    
+    // Add direct window.onerror handler
+    window.onerror = function(message, source, lineno, colno, error) {
+      debug("⚠️ Window error: " + message);
+      return false;
+    };
     
     // Ensure config.yml is properly loaded
     fetch('/admin/config.yml')
@@ -86,6 +101,11 @@
       })
       .then(text => {
         debug("Config file content length: " + text.length + " bytes");
+        
+        // Check for common config issues
+        if (text.includes("collections names must be unique")) {
+          debug("⚠️ Config error: collections names must be unique");
+        }
       })
       .catch(error => {
         debug("⚠️ Error loading config.yml: " + error.message);
@@ -101,6 +121,10 @@
       if (document.querySelector('#nc-root iframe') === null) {
         debug("No CMS iframe found, initialization failed");
         
+        // Check what elements are inside nc-root
+        const ncRootContent = document.getElementById('nc-root').innerHTML;
+        debug("nc-root content: " + (ncRootContent ? "Has content" : "Empty"));
+        
         // Display error message
         loadingEl.style.display = 'none';
         errorEl.style.display = 'block';
@@ -111,6 +135,7 @@
           <button id="auth-button" style="padding: 10px; margin-top: 10px; background: #0366d6; color: white; border: none; border-radius: 4px; cursor: pointer;">Authenticate with GitHub</button>
           <button id="clear-button" style="padding: 10px; margin-top: 10px; margin-left: 10px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Clear Auth Data & Reload</button>
           <button id="debug-button" style="padding: 10px; margin-top: 10px; margin-left: 10px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Show/Hide Debug Info</button>
+          <button id="latest-button" style="padding: 10px; margin-top: 10px; margin-left: 10px; background: #fd7e14; color: white; border: none; border-radius: 4px; cursor: pointer;">Try Latest Version</button>
         `;
         
         document.getElementById('auth-button').addEventListener('click', function() {
@@ -129,6 +154,13 @@
         document.getElementById('debug-button').addEventListener('click', function() {
           var debugEl = document.getElementById('debug');
           debugEl.style.display = debugEl.style.display === 'none' ? 'block' : 'none';
+        });
+        
+        document.getElementById('latest-button').addEventListener('click', function() {
+          debug("Loading latest Decap CMS version");
+          var script = document.createElement('script');
+          script.src = "https://unpkg.com/decap-cms@latest/dist/decap-cms.js";
+          document.body.appendChild(script);
         });
       } else {
         debug("CMS iframe found, initialization successful");
