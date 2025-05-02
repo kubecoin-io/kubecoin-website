@@ -117,9 +117,9 @@
       var loadingEl = document.getElementById('loading');
       var errorEl = document.getElementById('error');
       
-      // Check if the CMS content is loaded by looking for the iframe
-      if (document.querySelector('#nc-root iframe') === null) {
-        debug("No CMS iframe found, initialization failed");
+      // Check if the CMS content is loaded by looking for the cms-loaded class
+      if (document.querySelector('#nc-root .cms-loaded') === null) {
+        debug("CMS initialization failed, no indicative content found");
         
         // Check what elements are inside nc-root
         const ncRootContent = document.getElementById('nc-root').innerHTML;
@@ -163,7 +163,7 @@
           document.body.appendChild(script);
         });
       } else {
-        debug("CMS iframe found, initialization successful");
+        debug("CMS loaded class found, initialization successful");
         loadingEl.style.display = 'none';
       }
     }, 10000);
