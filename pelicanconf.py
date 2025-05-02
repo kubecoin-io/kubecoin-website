@@ -12,7 +12,7 @@ THEME = 'themes/papyrus'
 THEME_STATIC_PATHS = ['static']
 PLUGIN_PATHS = ['pelican-plugins']
 PLUGINS = ['pelican-toc']  # Remove 'readtime', 'search', 'neighbors' as they might not be installed
-STATIC_PATHS = ['images', 'extra', 'admin']
+STATIC_PATHS = ['images', 'extra', 'admin/index.html', 'admin/config.yml']
 DISPLAY_PAGES_ON_MENU = True
 DISPLAY_CATEGORIES_ON_MENU = False
 
