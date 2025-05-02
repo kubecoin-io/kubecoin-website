@@ -46,6 +46,7 @@
     // Global flags
     window.cmsInitialized = false;
     window.configReady = false;
+    window.domReady = false; // Add a flag for DOM readiness
     // Store config globally
     window.cmsConfig = null;
 
@@ -58,113 +59,101 @@
       }
     }
 
-    // Function to initialize CMS safely
+    // Function to attempt initialization if both DOM and config are ready
+    function tryInitialize() {
+        if (window.domReady && window.configReady) {
+            debug("DOM and Config are ready. Attempting initialization...");
+            initializeDecapCMS();
+        } else {
+            debug(`Initialization deferred: DOM Ready=${window.domReady}, Config Ready=${window.configReady}`);
+        }
+    }
+
+    // Function to initialize CMS safely (checks moved here)
     function initializeDecapCMS() {
-      debug("Attempting final initialization check...");
+      debug("Running initialization checks...");
       if (window.cmsInitialized) {
         debug("CMS already initialized, skipping.");
         return;
       }
-      // Check if config is parsed
+      // Config check (should be true if called via tryInitialize)
       if (!window.configReady || !window.cmsConfig) {
-        debug("⚠️ Config not ready, cannot initialize CMS yet.");
-        // Display error only if script load didn't already fail
-        if (typeof CMS !== 'undefined') {
-            var errorEl = document.getElementById('error');
-            var loadingEl = document.getElementById('loading');
-            if (loadingEl) loadingEl.style.display = 'none';
-            if (errorEl) {
-               errorEl.style.display = 'block';
-               errorEl.innerHTML = `<h3>Failed to load or parse configuration</h3><p>Check console/debug logs for details.</p>`;
-            }
-        }
+        debug("⚠️ Config check failed unexpectedly.");
+        showTimeoutError("Configuration Error", "Failed to load or parse configuration.");
         return;
       }
-      // Check if CMS script is loaded
+      // CMS script check
       if (typeof CMS === 'undefined') {
           debug("⚠️ Error: CMS object is not defined. Script might not have loaded.");
-          var errorEl = document.getElementById('error');
-          var loadingEl = document.getElementById('loading');
-          if (loadingEl) loadingEl.style.display = 'none';
-          if (errorEl) {
-            errorEl.style.display = 'block';
-            errorEl.innerHTML = `<h3>CMS Script Error</h3><p>The Decap CMS script might not have loaded correctly. Check the browser console and network tab.</p>`;
-          }
-          // Show timeout buttons here as well, as initialization failed
-          showTimeoutError();
+          showTimeoutError("CMS Script Error", "The Decap CMS script might not have loaded correctly.");
           return;
       }
-      // Check for mount point
+      // Mount point check
       if (!document.getElementById('nc-root')) {
          debug("⚠️ Error: #nc-root element not found for initialization.");
+         showTimeoutError("Mount Point Error", "Required #nc-root element not found.");
          return;
       }
 
       debug("All checks passed. Initializing Decap CMS with loaded config...");
       try {
-        // Ensure nc-root is empty before init
         document.getElementById('nc-root').innerHTML = '';
         CMS.init({ config: window.cmsConfig });
         window.cmsInitialized = true;
         debug("CMS.init() called successfully with loaded config.");
-        // Hide loading indicator on successful init call
         var loadingEl = document.getElementById('loading');
         if (loadingEl) loadingEl.style.display = 'none';
       } catch (e) {
         debug("⚠️ Error during CMS.init(): " + e.message);
-        var errorEl = document.getElementById('error');
-        if (errorEl) {
-          errorEl.style.display = 'block';
-          errorEl.innerHTML += `<br><pre>Initialization Error:\n${e.stack || e}</pre>`;
-        }
-        // Show timeout buttons on init error
-        showTimeoutError();
+        // Show error with buttons, include stack trace
+        showTimeoutError("Initialization Error", `<pre>${e.stack || e}</pre>`);
       }
     }
 
     // Function to display the timeout/failure message with buttons
-    function showTimeoutError() {
+    function showTimeoutError(title = "CMS Timeout/Error", message = "CMS failed to initialize correctly.") {
         var loadingEl = document.getElementById('loading');
         var errorEl = document.getElementById('error');
 
         if (loadingEl) loadingEl.style.display = 'none';
-        // Only display if not already showing an init error message, or append if needed
-        if (errorEl && errorEl.style.display === 'none') {
-            errorEl.style.display = 'block';
-            errorEl.innerHTML = `
-              <h3>CMS is taking too long to load or failed to initialize</h3>
-              <p>This could be due to a script error, configuration issue, or network problem.</p>
-              <p>Try clearing auth data and reloading, or check the debug info.</p>
-              <button id="auth-button" style="padding: 10px; margin-top: 10px; background: #0366d6; color: white; border: none; border-radius: 4px; cursor: pointer;">Authenticate with GitHub</button>
-              <button id="clear-button" style="padding: 10px; margin-top: 10px; margin-left: 10px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Clear Auth Data & Reload</button>
-              <button id="debug-button" style="padding: 10px; margin-top: 10px; margin-left: 10px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Show/Hide Debug Info</button>
-              <button id="retry-init-button" style="padding: 10px; margin-top: 10px; margin-left: 10px; background: #fd7e14; color: white; border: none; border-radius: 4px; cursor: pointer;">Retry Initialization</button>
-            `;
+        // Always display the error box if called
+        if (errorEl) {
+            // Avoid appending if the exact same error is already shown
+            if (errorEl.style.display !== 'block' || !errorEl.innerHTML.includes(title)) {
+                errorEl.style.display = 'block';
+                errorEl.innerHTML = `
+                  <h3>${title}</h3>
+                  <p>${message}</p>
+                  <p>Try clearing auth data and reloading, or check the debug info.</p>
+                  <button id="auth-button" style="padding: 10px; margin-top: 10px; background: #0366d6; color: white; border: none; border-radius: 4px; cursor: pointer;">Authenticate with GitHub</button>
+                  <button id="clear-button" style="padding: 10px; margin-top: 10px; margin-left: 10px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Clear Auth Data & Reload</button>
+                  <button id="debug-button" style="padding: 10px; margin-top: 10px; margin-left: 10px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Show/Hide Debug Info</button>
+                  <button id="retry-init-button" style="padding: 10px; margin-top: 10px; margin-left: 10px; background: #fd7e14; color: white; border: none; border-radius: 4px; cursor: pointer;">Retry Initialization</button>
+                `;
 
-            // Attach listeners
-            document.getElementById('auth-button')?.addEventListener('click', () => window.location.href = '/api/auth');
-            document.getElementById('clear-button')?.addEventListener('click', () => {
-              debug("Clearing all auth data");
-              localStorage.removeItem("netlify-cms-user");
-              localStorage.removeItem("netlifyCmsGithubToken"); // Keep removing old key just in case
-              window.location.reload();
-            });
-            document.getElementById('debug-button')?.addEventListener('click', () => {
-              var debugEl = document.getElementById('debug');
-              if(debugEl) debugEl.style.display = debugEl.style.display === 'none' ? 'block' : 'none';
-            });
-            document.getElementById('retry-init-button')?.addEventListener('click', () => {
-               debug("Retrying CMS initialization...");
-               window.cmsInitialized = false; // Reset flag
-               // Re-run the initialization logic
-               initializeDecapCMS();
-               // Hide error, show loading
-               if(errorEl) errorEl.style.display = 'none';
-               if(loadingEl) loadingEl.style.display = 'flex';
-            });
+                // Attach listeners (ensure they are only attached once if possible, but re-attaching is safer here)
+                document.getElementById('auth-button')?.addEventListener('click', () => window.location.href = '/api/auth');
+                document.getElementById('clear-button')?.addEventListener('click', () => {
+                  debug("Clearing all auth data");
+                  localStorage.removeItem("netlify-cms-user");
+                  localStorage.removeItem("netlifyCmsGithubToken");
+                  window.location.reload();
+                });
+                document.getElementById('debug-button')?.addEventListener('click', () => {
+                  var debugEl = document.getElementById('debug');
+                  if(debugEl) debugEl.style.display = debugEl.style.display === 'none' ? 'block' : 'none';
+                });
+                document.getElementById('retry-init-button')?.addEventListener('click', () => {
+                   debug("Retrying CMS initialization...");
+                   window.cmsInitialized = false; // Reset flag
+                   if(errorEl) errorEl.style.display = 'none'; // Hide current error
+                   if(loadingEl) loadingEl.style.display = 'flex'; // Show loading
+                   // Re-run the combined check/initialization logic
+                   tryInitialize();
+                });
+            }
         }
     }
-
 
     // --- Auth Token Handling ---
     const storedToken = localStorage.getItem("netlifyCmsGithubToken");
@@ -203,32 +192,26 @@
            window.cmsConfig = jsyaml.load(text);
            window.configReady = true; // Set flag
            debug("✓ Config parsed successfully.");
-           // *** DO NOT initialize here. Wait for DOMContentLoaded. ***
+           // *** Attempt initialization now that config is ready ***
+           tryInitialize();
          } catch (e) {
            throw new Error(`Failed to parse config.yml: ${e.message}`);
          }
       })
       .catch(error => {
         debug("⚠️ Error loading or parsing config.yml: " + error.message);
-        var errorEl = document.getElementById('error');
-        var loadingEl = document.getElementById('loading');
-        if (loadingEl) loadingEl.style.display = 'none';
-        if (errorEl) {
-           errorEl.style.display = 'block';
-           errorEl.innerHTML = `<h3>Failed to load/parse configuration</h3><p>${error.message}</p>`;
-        }
-        // Show timeout buttons even if config fails
-        showTimeoutError();
+        window.configReady = false; // Ensure flag is false on error
+        // Show error with buttons
+        showTimeoutError("Configuration Error", error.message);
       });
 
-    // --- Wait for DOM and then Initialize ---
+    // --- Wait for DOM ---
     document.addEventListener('DOMContentLoaded', (event) => {
         debug("DOM fully loaded and parsed.");
-        // Now that DOM is ready, and config fetch has likely completed (or failed),
-        // attempt initialization. The function itself checks config and CMS object.
-        initializeDecapCMS();
+        window.domReady = true; // Set flag
+        // *** Attempt initialization now that DOM is ready ***
+        tryInitialize();
     });
-
 
     // --- Timeout Check ---
     setTimeout(function() {
@@ -236,30 +219,37 @@
       // If CMS hasn't initialized successfully by now, show the error with buttons
       if (!window.cmsInitialized) {
          debug("Timeout reached and CMS not initialized.");
-         // Check if the CMS script failed to load specifically
-         if (typeof CMS === 'undefined' && !document.querySelector('#error h3:contains("CMS Script Error")')) {
-             debug("CMS object still undefined at timeout.");
-             var errorEl = document.getElementById('error');
-             if (errorEl) {
-                 errorEl.style.display = 'block';
-                 errorEl.innerHTML = `<h3>CMS Script Error</h3><p>The Decap CMS script failed to load or execute in time. Check the browser console and network tab.</p>`;
+         // Check if the CMS script failed specifically
+         // Fix: Check text content instead of using :contains
+         var errorEl = document.getElementById('error');
+         var scriptErrorDisplayed = false;
+         if (errorEl) {
+             const h3 = errorEl.querySelector('h3');
+             if (h3 && h3.textContent.includes("CMS Script Error")) {
+                 scriptErrorDisplayed = true;
              }
          }
-         // Ensure the error message with buttons is shown
-         showTimeoutError();
+
+         if (typeof CMS === 'undefined' && !scriptErrorDisplayed) {
+             debug("CMS object still undefined at timeout.");
+             showTimeoutError("CMS Script Error", "The Decap CMS script failed to load or execute in time.");
+         } else {
+             // Show generic timeout/error if no specific error already shown
+             showTimeoutError("CMS Timeout", "CMS failed to initialize within the time limit.");
+         }
       } else {
          debug("Timeout check: CMS appears to be initialized.");
-         // Final check for UI elements just in case init was called but UI failed silently
+         // Final check for UI elements
          if (!document.querySelector('#nc-root .cms-app, #nc-root .cms-dashboard, #nc-root .cms-editor-component')) {
-            debug("CMS initialized but UI elements not found. Showing error.");
-            showTimeoutError();
+            debug("CMS initialized flag set, but UI elements not found. Showing error.");
+            showTimeoutError("CMS UI Error", "CMS initialization completed, but the UI failed to render.");
          } else {
             debug("CMS UI elements found. All good.");
             var loadingEl = document.getElementById('loading');
-            if (loadingEl) loadingEl.style.display = 'none'; // Ensure loading is hidden
+            if (loadingEl) loadingEl.style.display = 'none';
          }
       }
-    }, 15000); // Increased timeout to 15s
+    }, 15000); // 15s timeout
 
   </script>
 </body>
