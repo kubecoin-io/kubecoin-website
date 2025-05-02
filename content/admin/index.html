@@ -161,10 +161,39 @@
         });
         
         document.getElementById('latest-button').addEventListener('click', function() {
-          debug("Loading latest Decap CMS version");
-          var script = document.createElement('script');
-          script.src = "https://unpkg.com/decap-cms@latest/dist/decap-cms.js";
-          document.body.appendChild(script);
+          debug("Reinitializing Decap CMS");
+          
+          // First clear the CMS mount point
+          document.getElementById('nc-root').innerHTML = '';
+          
+          // Remove any existing CMS scripts to prevent conflicts
+          var existingScripts = document.querySelectorAll('script[src*="decap-cms"]');
+          existingScripts.forEach(function(script) {
+            if (script.parentNode) {
+              script.parentNode.removeChild(script);
+            }
+          });
+          
+          // Give the browser time to clean up
+          setTimeout(function() {
+            // Load a fresh instance
+            var script = document.createElement('script');
+            script.src = "https://unpkg.com/decap-cms@latest/dist/decap-cms.js";
+            script.onload = function() {
+              debug("Fresh CMS script loaded, initializing...");
+              try {
+                CMS.init();
+                debug("CMS reinitialized");
+              } catch(e) {
+                debug("⚠️ Error initializing CMS: " + e.message);
+              }
+            };
+            document.body.appendChild(script);
+            
+            // Hide error and show loading again
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('loading').style.display = 'flex';
+          }, 500);
         });
       } else {
         debug("CMS loaded class found, initialization successful");
