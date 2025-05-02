@@ -24,7 +24,9 @@
       max-width: 600px;
     }
   </style>
-  <!-- Load Decap CMS script first -->
+  <!-- Load YAML parser first -->
+  <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+  <!-- Load Decap CMS script -->
   <script src="https://unpkg.com/decap-cms@latest/dist/decap-cms.js"></script>
 </head>
 <body>
@@ -62,7 +64,15 @@
         return;
       }
       if (!window.cmsConfig) {
-        debug("⚠️ Config not loaded yet, cannot initialize CMS.");
+        debug("⚠️ Config object not available, cannot initialize CMS.");
+        // Display error if config failed to parse/load
+        var errorEl = document.getElementById('error');
+        var loadingEl = document.getElementById('loading');
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (errorEl) {
+           errorEl.style.display = 'block';
+           errorEl.innerHTML = `<h3>Failed to load or parse configuration</h3><p>Check console/debug logs for details.</p>`;
+        }
         return;
       }
       if (!document.getElementById('nc-root')) {
@@ -70,13 +80,10 @@
          return;
       }
 
-      debug("Attempting to initialize Decap CMS...");
-      // Add a small delay
+      debug("Attempting to initialize Decap CMS with loaded config...");
       setTimeout(function() {
         try {
-          // Ensure nc-root is empty before init
           document.getElementById('nc-root').innerHTML = '';
-          // Initialize with the loaded config
           CMS.init({ config: window.cmsConfig });
           window.cmsInitialized = true;
           debug("CMS.init() called successfully with loaded config.");
@@ -88,7 +95,7 @@
             errorEl.innerHTML += `<br><pre>Initialization Error:\n${e.stack || e}</pre>`;
           }
         }
-      }, 100); // 100ms delay
+      }, 100);
     }
 
     // --- Auth Token Handling ---
@@ -112,7 +119,7 @@
     window.addEventListener('error', function(event) { debug("⚠️ Global error: " + event.message); });
     window.onerror = function(message, source, lineno, colno, error) { debug("⚠️ Window error: " + message); return false; };
 
-    // --- Load Config THEN Initialize ---
+    // --- Load Config, Parse it, THEN Initialize ---
     debug("Fetching config.yml...");
     fetch('/admin/config.yml')
       .then(response => {
@@ -123,17 +130,23 @@
         return response.text();
       })
       .then(text => {
-         debug(`Config file content length: ${text.length} bytes. Ready to initialize.`);
-         initializeDecapCMS();
+         debug(`Config file content length: ${text.length} bytes. Parsing YAML...`);
+         try {
+           window.cmsConfig = jsyaml.load(text);
+           debug("✓ Config parsed successfully. Ready to initialize.");
+           initializeDecapCMS();
+         } catch (e) {
+           throw new Error(`Failed to parse config.yml: ${e.message}`);
+         }
       })
       .catch(error => {
-        debug("⚠️ Error loading config.yml: " + error.message);
+        debug("⚠️ Error loading or parsing config.yml: " + error.message);
         var errorEl = document.getElementById('error');
         var loadingEl = document.getElementById('loading');
         if (loadingEl) loadingEl.style.display = 'none';
         if (errorEl) {
            errorEl.style.display = 'block';
-           errorEl.innerHTML = `<h3>Failed to load configuration</h3><p>${error.message}</p>`;
+           errorEl.innerHTML = `<h3>Failed to load/parse configuration</h3><p>${error.message}</p>`;
         }
       });
 
