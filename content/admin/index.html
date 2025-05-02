@@ -39,13 +39,41 @@
   <div id="nc-root"></div>
   
   <script>
+    // Global flag to track initialization
+    window.cmsInitialized = false;
+
     function debug(message) {
       console.log(message);
       var debugEl = document.getElementById('debug');
       debugEl.style.display = 'block';
       debugEl.innerHTML += message + '<br>';
     }
-    
+
+    // Function to initialize CMS safely
+    function initializeDecapCMS() {
+      if (window.cmsInitialized) {
+        debug("CMS already initialized, skipping.");
+        return;
+      }
+      debug("Attempting to initialize Decap CMS...");
+      try {
+        // Ensure nc-root is present before init
+        if (document.getElementById('nc-root')) {
+          CMS.init();
+          window.cmsInitialized = true;
+          debug("CMS.init() called successfully.");
+        } else {
+          debug("⚠️ Error: #nc-root element not found for initialization.");
+        }
+      } catch (e) {
+        debug("⚠️ Error during CMS.init(): " + e.message);
+        // Display error details in the error div
+        var errorEl = document.getElementById('error');
+        errorEl.style.display = 'block';
+        errorEl.innerHTML += `<br><pre>Initialization Error:\n${e.stack || e}</pre>`;
+      }
+    }
+
     // Try a different auth format - use exactly the format Decap CMS expects
     const storedToken = localStorage.getItem("netlifyCmsGithubToken");
     if (storedToken) {
@@ -72,15 +100,11 @@
     }
   </script>
   
-  <!-- Use a newer version of Decap CMS -->
-  <script src="https://unpkg.com/decap-cms@latest/dist/decap-cms.js"></script>
+  <!-- Use onload to trigger initialization -->
+  <script src="https://unpkg.com/decap-cms@latest/dist/decap-cms.js" onload="debug('Decap CMS script loaded.'); initializeDecapCMS();"></script>
 
   <script>
-    debug("Decap CMS script loaded, initializing...");
-    // Add this line to initialize the CMS
-    CMS.init();
-    
-    debug("Decap CMS script loaded, waiting for initialization...");
+    debug("Waiting for CMS initialization via onload...");
     
     // Add a global error handler to catch any CMS errors
     window.addEventListener('error', function(event) {
@@ -162,10 +186,13 @@
         
         document.getElementById('latest-button').addEventListener('click', function() {
           debug("Reinitializing Decap CMS");
-          
+
+          // Reset the initialization flag
+          window.cmsInitialized = false;
+
           // First clear the CMS mount point
           document.getElementById('nc-root').innerHTML = '';
-          
+
           // Remove any existing CMS scripts to prevent conflicts
           var existingScripts = document.querySelectorAll('script[src*="decap-cms"]');
           existingScripts.forEach(function(script) {
@@ -173,23 +200,22 @@
               script.parentNode.removeChild(script);
             }
           });
-          
+
           // Give the browser time to clean up
           setTimeout(function() {
             // Load a fresh instance
             var script = document.createElement('script');
             script.src = "https://unpkg.com/decap-cms@latest/dist/decap-cms.js";
+            // Use the same onload handler for the new script
             script.onload = function() {
-              debug("Fresh CMS script loaded, initializing...");
-              try {
-                CMS.init();
-                debug("CMS reinitialized");
-              } catch(e) {
-                debug("⚠️ Error initializing CMS: " + e.message);
-              }
+              debug('Fresh CMS script loaded.');
+              initializeDecapCMS(); // Call the safe initialization function
             };
+            script.onerror = function() {
+              debug("⚠️ Failed to load fresh CMS script.");
+            }
             document.body.appendChild(script);
-            
+
             // Hide error and show loading again
             document.getElementById('error').style.display = 'none';
             document.getElementById('loading').style.display = 'flex';
