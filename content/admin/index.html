@@ -89,6 +89,9 @@
 
       debug("All checks passed. Initializing Decap CMS with loaded config...");
       try {
+        // *** ADD THIS LINE to log the config object ***
+        debug("Config object being passed to CMS.init():\n" + JSON.stringify(window.cmsConfig, null, 2));
+
         document.getElementById('nc-root').innerHTML = '';
         CMS.init({ config: window.cmsConfig });
         window.cmsInitialized = true;

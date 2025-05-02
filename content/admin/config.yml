@@ -1,30 +1,18 @@
 backend:
   name: github
-  repo: kubecoin-io/kubecoin-website
+  repo: kubecoin-io/kubecoin-website # Make sure this is correct
   branch: main
-  base_url: "https://kubecoin.io" # Your site's base URL
-  auth_endpoint: "/api/auth"      # Path to your Cloudflare auth function
-  app_id: "Ov23liNXJUIuHjXxeoeN" # Add your GitHub OAuth App Client ID here
+  base_url: "https://kubecoin.io"
+  auth_endpoint: "/api/auth"
+  app_id: "Ov23liNXJUIuHjXxeoeN" # Make sure this is correct
 
-# Fix paths by removing leading slashes
-media_folder: "content/uploads"
-public_folder: "/uploads"
+media_folder: "content/uploads" # Required
+public_folder: "/uploads"      # Required
 
-collections:
-  - name: blog
-    label: Blog
-    folder: "content/posts"
+collections: # Must have at least one collection
+  - name: "test"
+    label: "Test"
+    folder: "content/_test" # Use a temporary folder
     create: true
-    slug: "{{slug}}"
     fields:
       - { label: "Title", name: "title", widget: "string" }
-      - { label: "Date", name: "date", widget: "datetime" }
-      - { label: "Body", name: "body", widget: "markdown" }
-#  - name: pages  # Temporarily commented out
-#    label: Pages
-#    folder: "content/pages"
-#    create: true
-#    slug: "{{slug}}"
-#    fields:
-#      - { label: "Title", name: "title", widget: "string" }
-#      - { label: "Body", name: "body", widget: "markdown" }
