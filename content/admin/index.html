@@ -65,7 +65,6 @@
       }
       if (!window.cmsConfig) {
         debug("⚠️ Config object not available, cannot initialize CMS.");
-        // Display error if config failed to parse/load
         var errorEl = document.getElementById('error');
         var loadingEl = document.getElementById('loading');
         if (loadingEl) loadingEl.style.display = 'none';
@@ -79,23 +78,30 @@
          debug("⚠️ Error: #nc-root element not found for initialization.");
          return;
       }
-
-      debug("Attempting to initialize Decap CMS with loaded config...");
-      setTimeout(function() {
-        try {
-          document.getElementById('nc-root').innerHTML = '';
-          CMS.init({ config: window.cmsConfig });
-          window.cmsInitialized = true;
-          debug("CMS.init() called successfully with loaded config.");
-        } catch (e) {
-          debug("⚠️ Error during CMS.init(): " + e.message);
+      if (typeof CMS === 'undefined') {
+          debug("⚠️ Error: CMS object is not defined. Script might not have loaded.");
           var errorEl = document.getElementById('error');
           if (errorEl) {
             errorEl.style.display = 'block';
-            errorEl.innerHTML += `<br><pre>Initialization Error:\n${e.stack || e}</pre>`;
+            errorEl.innerHTML = `<h3>CMS Script Error</h3><p>The Decap CMS script might not have loaded correctly. Check the browser console and network tab.</p>`;
           }
+          return;
+      }
+
+      debug("Attempting to initialize Decap CMS with loaded config...");
+      try {
+        document.getElementById('nc-root').innerHTML = '';
+        CMS.init({ config: window.cmsConfig });
+        window.cmsInitialized = true;
+        debug("CMS.init() called successfully with loaded config.");
+      } catch (e) {
+        debug("⚠️ Error during CMS.init(): " + e.message);
+        var errorEl = document.getElementById('error');
+        if (errorEl) {
+          errorEl.style.display = 'block';
+          errorEl.innerHTML += `<br><pre>Initialization Error:\n${e.stack || e}</pre>`;
         }
-      }, 100);
+      }
     }
 
     // --- Auth Token Handling ---
@@ -199,7 +205,7 @@
       } else {
          debug("CMS initialization check: CMS.init was called but UI elements not found.");
       }
-    }, 10000);
+    }, 12000);
   </script>
 </body>
 </html>
