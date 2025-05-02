@@ -26,8 +26,11 @@
   </style>
   <!-- Load YAML parser first -->
   <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
-  <!-- Load Decap CMS script -->
-  <script src="https://unpkg.com/decap-cms@latest/dist/decap-cms.js"></script>
+  <!-- Load Decap CMS script with error handler -->
+  <script
+    src="https://unpkg.com/decap-cms@latest/dist/decap-cms.js"
+    onerror="console.error('FATAL: Failed to load decap-cms.js script!'); document.getElementById('error').innerHTML='<h3>Script Load Error</h3><p>Failed to load decap-cms.js. Check network connection and browser console.</p>'; document.getElementById('error').style.display='block'; document.getElementById('loading').style.display='none';"
+  ></script>
 </head>
 <body>
   <!-- Loading message -->
@@ -221,27 +224,29 @@
         // Clear any existing interval first
         if (cmsCheckInterval) clearInterval(cmsCheckInterval);
 
+        let checks = 0;
+        const maxChecks = 40; // 40 * 250ms = 10 seconds
+
         cmsCheckInterval = setInterval(() => {
+            checks++;
             if (typeof CMS !== 'undefined') {
                 debug("✓ CMS object is now defined.");
                 window.cmsScriptReady = true; // Set flag
                 clearInterval(cmsCheckInterval); // Stop polling
-                // Attempt initialization now that CMS script is ready
                 tryInitialize();
-            } else {
-                debug("CMS object not yet defined, checking again...");
-            }
-        }, 250); // Check every 250ms
-
-        // Safety timeout for this specific check
-        setTimeout(() => {
-            if (!window.cmsScriptReady) {
+            } else if (checks >= maxChecks) {
                 debug("⚠️ Timeout waiting for CMS object to become defined.");
                 clearInterval(cmsCheckInterval);
                 // If CMS object never appeared, show specific error
-                showTimeoutError("CMS Script Load Error", "The Decap CMS script failed to load or execute within the expected time.");
+                // Check if the onerror handler already displayed an error
+                const errorEl = document.getElementById('error');
+                if (!errorEl || errorEl.style.display === 'none' || !errorEl.innerHTML.includes("Script Load Error")) {
+                  showTimeoutError("CMS Script Load Error", "The Decap CMS script failed to load or execute within the expected time.");
+                }
+            } else {
+                debug(`CMS object not yet defined, check ${checks}/${maxChecks}...`);
             }
-        }, 10000); // Wait up to 10 seconds for the CMS script
+        }, 250); // Check every 250ms
     }
 
     // --- Overall Timeout Check ---
