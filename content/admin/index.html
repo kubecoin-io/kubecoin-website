@@ -24,8 +24,6 @@
       max-width: 600px;
     }
   </style>
-  <!-- Load YAML parser first -->
-  <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
 </head>
 <body>
   <!-- Loading message -->
@@ -43,11 +41,7 @@
   <script>
     // Global flags
     window.cmsInitialized = false;
-    window.configReady = false;
     window.cmsScriptReady = false;
-    // Store config globally
-    window.cmsConfig = null;
-    // Interval timer
     let cmsCheckInterval = null;
 
     function debug(message) {
@@ -59,13 +53,13 @@
       }
     }
 
-    // Function to attempt initialization if Config and Script are ready
+    // Function to attempt initialization ONLY when CMS script is ready
     function tryInitialize() {
-        if (window.configReady && window.cmsScriptReady) {
-            debug("Config and CMS Script are ready. Attempting initialization...");
+        if (window.cmsScriptReady) {
+            debug("CMS Script is ready. Attempting initialization...");
             initializeDecapCMS();
         } else {
-            debug(`Initialization deferred: Config Ready=${window.configReady}, CMS Script Ready=${window.cmsScriptReady}`);
+            debug(`Initialization deferred: CMS Script Ready=${window.cmsScriptReady}`);
         }
     }
 
@@ -76,26 +70,18 @@
         debug("CMS already initialized, skipping.");
         return;
       }
-      if (!window.configReady || !window.cmsConfig) {
-        debug("⚠️ Config check failed unexpectedly.");
-        showTimeoutError("Configuration Error", "Failed to load or parse configuration.");
-        return;
-      }
       if (!document.getElementById('nc-root')) {
          debug("⚠️ Error: #nc-root element not found for initialization.");
          showTimeoutError("Mount Point Error", "Required #nc-root element not found.");
          return;
       }
 
-      debug("All checks passed. Initializing Decap CMS with loaded config...");
+      debug("All checks passed. Initializing Decap CMS (implicit config)...");
       try {
-        // *** ADD THIS LINE to log the config object ***
-        debug("Config object being passed to CMS.init():\n" + JSON.stringify(window.cmsConfig, null, 2));
-
         document.getElementById('nc-root').innerHTML = '';
-        CMS.init({ config: window.cmsConfig });
+        CMS.init();
         window.cmsInitialized = true;
-        debug("CMS.init() called successfully with loaded config.");
+        debug("CMS.init() called successfully (implicit config).");
         var loadingEl = document.getElementById('loading');
         if (loadingEl) loadingEl.style.display = 'none';
         if (cmsCheckInterval) clearInterval(cmsCheckInterval);
@@ -169,31 +155,17 @@
     window.addEventListener('error', function(event) { debug("⚠️ Global error: " + event.message); });
     window.onerror = function(message, source, lineno, colno, error) { debug("⚠️ Window error: " + message); return false; };
 
-    // --- Load Config ---
-    debug("Fetching config.yml...");
+    // --- Check Config Accessibility (Optional but good practice) ---
+    debug("Checking config.yml accessibility...");
     fetch('/admin/config.yml')
       .then(response => {
         if (!response.ok) {
-          throw new Error(`Failed to load config.yml: ${response.status}`);
+          throw new Error(`Failed to fetch config.yml: ${response.status}`);
         }
-        debug("✓ config.yml fetched, reading content...");
-        return response.text();
-      })
-      .then(text => {
-         debug(`Config file content length: ${text.length} bytes. Parsing YAML...`);
-         try {
-           window.cmsConfig = jsyaml.load(text);
-           window.configReady = true;
-           debug("✓ Config parsed successfully.");
-           tryInitialize();
-         } catch (e) {
-           throw new Error(`Failed to parse config.yml: ${e.message}`);
-         }
+        debug("✓ config.yml is accessible.");
       })
       .catch(error => {
-        debug("⚠️ Error loading or parsing config.yml: " + error.message);
-        window.configReady = false;
-        showTimeoutError("Configuration Error", error.message);
+        debug("⚠️ Warning: Could not verify config.yml accessibility: " + error.message);
       });
 
     // --- Function to Poll for CMS Object ---
@@ -253,7 +225,7 @@
   <!-- Decap CMS script moved here -->
   <script
     src="https://unpkg.com/decap-cms@3/dist/decap-cms.js"
-    onerror="console.error('FATAL: Failed to load decap-cms.js script!'); document.getElementById('error').innerHTML='<h3>Script Load Error</h3><p>Failed to load decap-cms.js. Check network connection and browser console.</p>'; document.getElementById('error').style.display='block'; document.getElementById('loading').style.display='none';"
+    onerror="console.error('FATAL: Failed to load decap-cms.js script!'); /* ... */"
   ></script>
 </body>
 </html>
