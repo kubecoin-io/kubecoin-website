@@ -74,8 +74,12 @@
   
   <!-- Use a newer version of Decap CMS -->
   <script src="https://unpkg.com/decap-cms@latest/dist/decap-cms.js"></script>
-  
+
   <script>
+    debug("Decap CMS script loaded, initializing...");
+    // Add this line to initialize the CMS
+    CMS.init();
+    
     debug("Decap CMS script loaded, waiting for initialization...");
     
     // Add a global error handler to catch any CMS errors
@@ -117,9 +121,9 @@
       var loadingEl = document.getElementById('loading');
       var errorEl = document.getElementById('error');
       
-      // Check if the CMS content is loaded by looking for the cms-loaded class
-      if (document.querySelector('#nc-root .cms-loaded') === null) {
-        debug("CMS initialization failed, no indicative content found");
+      // Check if the CMS content is loaded by looking for the iframe
+      if (document.querySelector('#nc-root iframe') === null) {
+        debug("No CMS iframe found, initialization failed");
         
         // Check what elements are inside nc-root
         const ncRootContent = document.getElementById('nc-root').innerHTML;
