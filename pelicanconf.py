@@ -39,6 +39,7 @@ LINKS = (
     ("Python.org", "https://www.python.org/"),
     ("Jinja2", "https://palletsprojects.com/p/jinja/"),
     ("You can modify those links in your config file", "#"),
+    ('Admin', 'admin'),
 )
 
 # Social widget
@@ -51,3 +52,10 @@ DEFAULT_PAGINATION = 10
 
 # Uncomment following line if you want document-relative URLs when developing
 # RELATIVE_URLS = True
+PAGE_EXCLUDES = [
+    'admin'
+]
+
+ARTICLE_EXCLUDES = [
+    'admin'
+]
