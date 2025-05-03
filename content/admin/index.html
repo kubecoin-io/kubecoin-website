@@ -239,10 +239,25 @@
       if (event.data.type === "authorization_response" && event.data.provider === "github") {
         if (event.data.token) {
           debug("✅ Received authorization_response with token from callback.");
-          // Decap CMS should automatically handle this message if its listener is active
-          // We log it here for confirmation.
-          // You might manually store it if needed, but CMS should handle it:
-          // localStorage.setItem("decap-cms-user", JSON.stringify({ token: event.data.token, ... }));
+
+          // *** START MANUAL STORAGE ***
+          try {
+            // Store the token using the key Decap CMS expects
+            const user = {
+              token: event.data.token,
+              // Decap might store other details, but token is key
+              backendName: "github",
+              login: "", // Usually filled later by CMS
+              name: "",  // Usually filled later by CMS
+              avatar_url: "" // Usually filled later by CMS
+            };
+            localStorage.setItem("decap-cms-user", JSON.stringify(user));
+            debug("Manually stored token in localStorage['decap-cms-user'].");
+          } catch (e) {
+            debug(`⚠️ Error manually storing token: ${e.message}`);
+          }
+          // *** END MANUAL STORAGE ***
+
         } else if (event.data.error) {
           debug(`⚠️ Received authorization_response with error: ${event.data.error}`);
           showTimeoutError("Authentication Error", `Received error from callback: ${event.data.error}`);
