@@ -1,6 +1,6 @@
 AUTHOR = 'Kubecoin'
 SITENAME = 'kubecoin.io'
-SITEURL = "http://kubecoin.io"
+SITEURL = "https://kubecoin.io" # Use https for production
 
 SUBTITLE = 'Kubecoin'
 SUBTEXT = 'Kubernetes-powered Crypto Platform'
@@ -11,10 +11,22 @@ ARTICLE_PATHS = ['posts']
 THEME = 'themes/papyrus'
 THEME_STATIC_PATHS = ['static']
 PLUGIN_PATHS = ['pelican-plugins']
-PLUGINS = ['pelican-toc']  # Remove 'readtime', 'search', 'neighbors' as they might not be installed
+PLUGINS = ['pelican-toc']
 STATIC_PATHS = ['images', 'extra', 'admin/index.html', 'admin/config.yml']
 DISPLAY_PAGES_ON_MENU = True
 DISPLAY_CATEGORIES_ON_MENU = False
+
+# --- Add/Modify this section for Favicons ---
+EXTRA_PATH_METADATA = {
+    # Map the favicon from its source location to the output root
+    'images/uploads/favicon.ico': {'path': 'favicon.ico'},
+    # Optional: Map other common icons if you have them
+    # 'images/uploads/apple-touch-icon.png': {'path': 'apple-touch-icon.png'},
+    # 'images/uploads/favicon-32x32.png': {'path': 'favicon-32x32.png'},
+    # 'images/uploads/favicon-16x16.png': {'path': 'favicon-16x16.png'},
+    # 'images/uploads/site.webmanifest': {'path': 'site.webmanifest'}, # If using a manifest
+}
+# --- End Favicon Section ---
 
 # Custom templates directory to override theme templates
 THEME_TEMPLATES_OVERRIDES = ['templates']
@@ -38,24 +50,21 @@ LINKS = (
     ("Pelican", "https://getpelican.com/"),
     ("Python.org", "https://www.python.org/"),
     ("Jinja2", "https://palletsprojects.com/p/jinja/"),
-    ("You can modify those links in your config file", "#"),
-    ('Admin', 'admin'),
+    # ("You can modify those links in your config file", "#"),
+    ('Admin', '/admin/'), # Use relative path for admin link
 )
 
-# Social widget
+# Social widget - Update these
 SOCIAL = (
-    ("You can add links in your config file", "#"),
-    ("Another social link", "#"),
+    ("github", "https://github.com/kubecoin-io"),
+    # ("twitter", "https://twitter.com/your-profile"),
 )
 
 DEFAULT_PAGINATION = 10
 
 # Uncomment following line if you want document-relative URLs when developing
 # RELATIVE_URLS = True
-PAGE_EXCLUDES = [
-    'admin'
-]
 
-ARTICLE_EXCLUDES = [
-    'admin'
-]
+# Exclude admin directory from being processed as content
+PAGE_EXCLUDES = ['admin']
+ARTICLE_EXCLUDES = ['admin']
