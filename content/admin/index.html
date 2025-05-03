@@ -209,13 +209,16 @@
          showTimeoutError("CMS Timeout", "CMS failed to initialize within the overall time limit.");
       } else {
          debug("Overall timeout check: CMS appears to be initialized.");
-         if (!document.querySelector('#nc-root .cms-app, #nc-root .cms-dashboard, #nc-root .cms-editor-component')) {
-            debug("CMS initialized flag set, but UI elements not found. Showing error.");
-            showTimeoutError("CMS UI Error", "CMS initialization completed, but the UI failed to render.");
+         const ncRoot = document.getElementById('nc-root');
+         if (!ncRoot || !ncRoot.hasChildNodes() || ncRoot.children.length === 0) {
+            debug("CMS initialized flag set, but UI elements not found in #nc-root. Showing error.");
+            showTimeoutError("CMS UI Render Error", "CMS initialization completed, but the UI failed to render inside #nc-root.");
          } else {
-            debug("CMS UI elements found. All good.");
+            debug("CMS UI elements found in #nc-root. All good.");
             var loadingEl = document.getElementById('loading');
             if (loadingEl) loadingEl.style.display = 'none';
+            var errorEl = document.getElementById('error');
+            if (errorEl) errorEl.style.display = 'none';
          }
       }
     }, 18000);
