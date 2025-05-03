@@ -118,12 +118,19 @@ export async function onRequest(context) {
         <script>
           const authData = ${JSON.stringify(data)}; // Contains access_token now
           const authState = "${state}";
+          const targetOrigin = window.location.origin; // Define target origin
+
+          // *** Log before attempting postMessage ***
+          console.log("Callback script: Attempting to post message.");
+          console.log("Callback script: window.opener exists?", !!window.opener);
+          console.log("Callback script: Target Origin:", targetOrigin);
 
           // *** 6. Improve Client-Side Check: Ensure token exists ***
           if (authData && authData.access_token) {
             try {
               if (window.opener) {
-                console.log("Authentication successful, notifying opener");
+                // *** Log inside the if(window.opener) block ***
+                console.log("Callback script: window.opener found. Posting message...");
                 window.opener.postMessage(
                   {
                     type: "authorization_response", // Use correct type for Decap CMS
@@ -131,13 +138,14 @@ export async function onRequest(context) {
                     token: authData.access_token,
                     state: authState
                   },
-                  window.location.origin // Use origin for security
+                  targetOrigin // Use the defined target origin
                 );
+                console.log("Callback script: Message posted."); // Log after posting
 
                 setTimeout(() => { window.close(); }, 1500);
               } else {
-                // Fallback if no opener (less common for CMS flow)
-                console.warn("No opener window found. Storing token in localStorage as fallback.");
+                // *** Log if no opener found ***
+                console.warn("Callback script: No opener window found. Cannot post message.");
                 document.getElementById("message").textContent = "Click the button below to return to the CMS.";
                 try {
                   // Use standard keys if possible, or custom ones
@@ -146,12 +154,12 @@ export async function onRequest(context) {
                 } catch (err) { console.error("Failed to store auth data:", err); }
               }
             } catch (err) {
-              console.error("Error during postMessage or closing window:", err);
+              console.error("Callback script: Error during postMessage or closing window:", err);
               document.getElementById("message").textContent = "Error notifying CMS. Please close this window manually.";
             }
           } else {
             // Handle case where token is missing even after server-side check (shouldn't happen often)
-            console.error("Client-side error: access_token missing in authData.");
+            console.error("Callback script (Client-side): access_token missing in authData.");
             document.getElementById("message").textContent = "Authentication failed: Token not found.";
           }
 
