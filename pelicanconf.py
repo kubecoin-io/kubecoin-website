@@ -11,7 +11,7 @@ ARTICLE_PATHS = ['posts']
 THEME = 'themes/papyrus'
 THEME_STATIC_PATHS = ['static']
 PLUGIN_PATHS = ['pelican-plugins']
-PLUGINS = ['pelican-toc']
+PLUGINS = ['pelican-toc', 'tipue_search']
 STATIC_PATHS = ['images', 'extra', 'admin/index.html', 'admin/config.yml']
 DISPLAY_PAGES_ON_MENU = True
 DISPLAY_CATEGORIES_ON_MENU = False
@@ -68,3 +68,6 @@ DEFAULT_PAGINATION = 10
 # Exclude admin directory from being processed as content
 PAGE_EXCLUDES = ['admin']
 ARTICLE_EXCLUDES = ['admin']
+
+# Add this setting to enable Tipue Search generation
+TIPUE_SEARCH = True
