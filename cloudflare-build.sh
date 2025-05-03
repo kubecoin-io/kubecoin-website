@@ -1,3 +1,4 @@
+# filepath: /workspaces/kubecoin-website/cloudflare-build.sh
 #!/bin/bash
 set -e
 
@@ -14,13 +15,12 @@ cargo --version
 echo "Upgrading pip..."
 pip install --upgrade pip
 
-# Install dependencies
+# Install dependencies from the renamed file
 echo "Installing Python dependencies..."
-pip install -r requirements.txt
+pip install -r dependencies.txt # <-- Changed filename here
 
 # Generate site with Pelican
 echo "Generating site with Pelican..."
-# No need to cd if the script is in the root and build command runs from root
 pelican content -o output -s publishconf.py
 
 # Success message
