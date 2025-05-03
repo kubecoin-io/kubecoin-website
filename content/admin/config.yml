@@ -1,18 +1,24 @@
 backend:
-  name: test-repo # Use the test backend
+  name: github # Switch back to GitHub
+  repo: kubecoin-io/kubecoin-website # Ensure this is correct
+  branch: main # Ensure this is correct
+  base_url: "https://kubecoin.io" # Ensure this is correct
+  auth_endpoint: "/api/auth"      # Ensure this is correct
+  app_id: "Ov23liNXJUIuHjXxeoeN" # Ensure this is correct
 
-# Add required media settings, even if test-repo ignores them
-media_folder: "static/uploads" # Or any placeholder path
+# Keep media settings as they are required
+media_folder: "static/uploads"
 media_library:
   name: uploadcare
   config:
-    publicKey: demopublickey # Use a demo key or placeholder
+    publicKey: demopublickey
 
+# Keep the simplified collection for now
 collections:
   - name: "test"
     label: "Test"
-    folder: "_posts" # test-repo uses predefined folders
+    folder: "content/_test" # Use a temporary folder
     create: true
     fields:
       - { label: "Title", name: "title", widget: "string" }
-      - { label: "Body", name: "body", widget: "markdown" } # Add body field for test-repo
+      - { label: "Body", name: "body", widget: "markdown" } # Added body field back
