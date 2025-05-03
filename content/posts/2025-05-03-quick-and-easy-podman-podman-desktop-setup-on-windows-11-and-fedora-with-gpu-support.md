@@ -15,13 +15,11 @@ summary: This guide explains how to quickly install Podman and Podman Desktop on
   Windows 11 (using Scoop) and Fedora Linux, and how to enable GPU acceleration
   for container workloads on both platforms.
 ---
-
-
 ## Introduction
 
 Podman is a popular daemonless container engine (rootless by default) that’s compatible with Docker CLI commands and container images. Podman Desktop adds a convenient GUI for managing containers and Kubernetes, supporting both Podman and Docker under the hood. In this post, we’ll walk through the **fastest** way to install Podman and Podman Desktop on **Windows 11** and **Fedora Linux**, and then enable **GPU container access** for running GPU-accelerated workloads. Whether you prefer command-line or GUI, you’ll be up and running with containers (and even GPU support) in no time.
 
----
+- - -
 
 ## Windows 11: Installing Podman & Podman Desktop (with Scoop)
 
@@ -32,8 +30,7 @@ Podman is a popular daemonless container engine (rootless by default) that’s c
 ```powershell
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 iwr -useb get.scoop.sh | iex
-```  
-
+```
 
 This will set the execution policy and download/run the Scoop installer script. After this, you can use the `scoop` command.
 
@@ -41,7 +38,7 @@ This will set the execution policy and download/run the Scoop installer script. 
 
 ```powershell
 scoop bucket add extras
-```  
+```
 
 You may also add the `main` bucket (usually added by default) if not already present.
 
@@ -50,7 +47,7 @@ You may also add the `main` bucket (usually added by default) if not already pre
 ```powershell
 scoop install podman
 scoop install podman-desktop
-```  
+```
 
 This will download and install the Podman CLI and Podman Desktop applications. Scoop grabs the official Podman installer (an MSI/EXE) under the hood. Once complete, you should see confirmation that “`podman` was installed successfully” and similarly for Podman Desktop.
 
@@ -59,7 +56,7 @@ This will download and install the Podman CLI and Podman Desktop applications. S
 ```powershell
 podman machine init
 podman machine start
-```  
+```
 
 The `podman machine init` step will create a WSL2 VM (if WSL wasn’t already enabled, it may prompt to install it). The `podman machine start` will boot up this VM. After this, Podman is essentially ready to use. You can verify by running `podman info` or `podman ps` in PowerShell, which should communicate with the Podman VM.
 
@@ -75,7 +72,7 @@ Running GPU-accelerated containers on Windows with Podman is now possible by lev
 
 ```powershell
 podman machine ssh
-``` 
+```
 
 Once you get a shell inside the Podman machine (which is a Linux environment), run the following commands **in the Podman VM** to set up the NVIDIA Container Toolkit:
 
@@ -86,7 +83,7 @@ sudo curl -s -L https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-c
 sudo yum install -y nvidia-container-toolkit
 
 sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
-```  
+```
 
 These commands do the following: add the NVIDIA Container Toolkit YUM repository, install the toolkit packages, and then generate a Container Device Interface (CDI) file for the NVIDIA GPU. The generated `/etc/cdi/nvidia.yaml` tells Podman how to expose the GPU to containers. (The Podman machine is likely a Fedora-based image, hence using `yum`/RPM).
 
@@ -95,7 +92,7 @@ These commands do the following: add the NVIDIA Container Toolkit YUM repository
 ```powershell
 podman run --rm --device nvidia.com/gpu=all \
   nvidia/cuda:11.0.3-base-ubuntu20.04 nvidia-smi
-```  
+```
 
 If everything was set up correctly, this command (run from Windows) will launch a Linux container that has access to the GPU, and `nvidia-smi` inside the container should output your GPU details. You should see a table of GPU information (name, driver version, CUDA version, etc.) instead of an error. For instance, you might see your GeForce RTX card listed along with its memory usage, similar to the output below:
 
@@ -118,7 +115,7 @@ If you get a result from `nvidia-smi` inside the container, congratulations! You
 
 ```bash
 sudo dnf install -y podman
-``` 
+```
 
 This will fetch the latest stable Podman release from Fedora’s repositories. (If Podman was already present, this ensures it’s up-to-date.)
 
@@ -130,8 +127,7 @@ flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flath
 
 # Install Podman Desktop from Flathub
 flatpak install --user -y flathub io.podman_desktop.PodmanDesktop
-```  
-
+```
 
 This will download the Podman Desktop Flatpak and install it for your user. Once complete, you can launch Podman Desktop from your application menu (it might appear after a logout/login if it’s the first flatpak app installed). You can also run it via command line: `flatpak run io.podman_desktop.PodmanDesktop`.
 
@@ -152,8 +148,7 @@ curl -s -L https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-contai
 
 # Install the toolkit package
 sudo dnf install -y nvidia-container-toolkit
-```  
-
+```
 
 This sets up the YUM/DNF repo and installs the `nvidia-container-toolkit` package which includes `nvidia-ctk` and configuration files.
 
@@ -161,7 +156,7 @@ This sets up the YUM/DNF repo and installs the `nvidia-container-toolkit` packag
 
 ```bash
 sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
-```  
+```
 
 This command generates `/etc/cdi/nvidia.yaml` describing the NVIDIA GPU resources. It’s a one-time setup (though you should re-run it if you update drivers or change GPU configuration).
 
@@ -170,7 +165,7 @@ This command generates `/etc/cdi/nvidia.yaml` describing the NVIDIA GPU resource
 ```bash
 podman run --rm --device nvidia.com/gpu=all \
   nvidia/cuda:11.0.3-base-ubuntu20.04 nvidia-smi
-``` 
+```
 
 Since you’re on Linux, this command can be run directly on the host. If configured correctly, you’ll see output from `nvidia-smi` showing your GPU inside the container. This means GPU acceleration is working. If you instead see an error (or no devices found), double-check that the `nvidia-container-toolkit` service/hook is active. You might need to reboot or at least log out/in to ensure Podman picks up the new CDI config. You can also list the CDI devices with `nvidia-ctk cdi list` to confirm it recognizes your GPU.
 
@@ -188,5 +183,3 @@ Enjoy your Docker-free container workflows! Podman’s daemonless design and Pod
 
 <li><a href="https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#installing-with-yum-or-dnf">NVIDIA Container Toolkit Installation Guide</a></li>
 <li><a href="https://podman-desktop.io/docs/podman/gpu?form=MG0AV3">Podman Desktop GPU Support Documentation</a></li>
-    
-
