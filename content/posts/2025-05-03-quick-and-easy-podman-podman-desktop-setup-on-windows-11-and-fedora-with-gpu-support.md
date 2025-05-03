@@ -25,11 +25,11 @@ Podman is a popular daemonless container engine (rootless by default) that’s c
 
 **Prerequisites (Windows):** Ensure that virtualization is enabled (via BIOS) and that **WSL 2** is set up on Windows 10/11. Windows Subsystem for Linux 2 is required because Podman runs containers in a Linux environment under the hood (called a *Podman machine*, a WSL2 VM). Also make sure you have at least 6 GB of RAM available for the VM. You will need an internet connection and **administrative PowerShell** access to install software.
 
-**Step 1: Install Scoop (if not already installed).** Scoop is a handy Windows command-line package manager. If you don’t have it, install it by running the following in PowerShell (as Administrator):
+**Step 1: Install Scoop (if not already installed).** Scoop is a handy Windows command-line package manager. If you don’t have it, install it by running the following in PowerShell :
 
 ```powershell
-Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
-iwr -useb get.scoop.sh | iex
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
 ```
 
 This will set the execution policy and download/run the Scoop installer script. After this, you can use the `scoop` command.
