@@ -1,6 +1,13 @@
 backend:
   name: test-repo # Use the test backend
 
+# Add required media settings, even if test-repo ignores them
+media_folder: "static/uploads" # Or any placeholder path
+media_library:
+  name: uploadcare
+  config:
+    publicKey: demopublickey # Use a demo key or placeholder
+
 collections:
   - name: "test"
     label: "Test"
