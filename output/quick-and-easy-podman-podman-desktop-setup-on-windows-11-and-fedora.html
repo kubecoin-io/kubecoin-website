@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content="Pelican" />
+    <meta name="description" content="kubecoin.io Blog Posts">
+    <title>Quick and Easy Podman & Podman Desktop Setup on Windows 11 and Fedora</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
+    <link rel="stylesheet" type="text/css" href="/theme/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="/theme/css/pygment.css" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/theme/css/stork.css">
+    <link rel="stylesheet" media="screen and (prefers-color-scheme: dark)"
+        href="/theme/css/stork-dark.css">
+    <link
+        href="/feeds/all.atom.xml"
+        type="application/atom+xml" rel="alternate" title="kubecoin.io Atom Feed" />
+<meta name="description" content="(with GPU Support) date: 2025-05-03 05:01:00 category: Containers tags: - Podman - Podman Desktop - Windows - Fedora - GPU slug:..." />
+</head>
+
+<body class="min-h-screen flex flex-col max-w-7xl lg:max-w-none text-zinc-800 bg-neutral-100 
+    dark:bg-neutral-900 dark:text-zinc-300 container mx-auto justify-center md:px-3 ">
+    <script>
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia(
+                '(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
+    <nav class="sm:flex sm:justify-between xl:ml-32 pl-4 items-center">
+        <div class="flex pt-4">
+            <h1 class="font-semibold text-2xl"><a href="/">kubecoin.io</a></h1>
+            <button id="theme-toggle" type="button" aria-label="Light|Dark"
+                class="text-zinc-700 dark:text-zinc-400 rounded-full focus:outline-none text-sm ml-2 p-1">
+                <svg id="theme-toggle-dark-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                </svg>
+                <svg id="theme-toggle-light-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                        fill-rule="evenodd" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+        </div>
+        <ul class="flex flex-wrap lg:mr-24 md:pt-0">
+            <li class="mr-4 pt-6"><a  href="/pages/about-us.html">"About Us"</a></li>
+            <li class="mr-4 pt-6"><a  href="/archives.html">Archive</a></li>
+            <li class="mr-4 pt-6"><a                     href="/categories.html">Categories</a></li>
+            <li class="mr-4 pt-6"><a  href="/tags.html">Tags</a></li>
+            <li class="mr-4 pt-6"><a  href="/search.html">Search</a></li>
+        </ul>
+    </nav>
+    <div class="flex-grow md:max-w-screen-md md:mx-auto md:w-3/4 px-4">
+        <nav class="text-zinc-800 dark:text-zinc-300 mt-12 pb-2 md:mt-16" aria-label="Breadcrumb">
+            <ul class="p-0 inline-flex items-center">
+                <li class="flex items-center">
+                    <a href="/" class="text-zinc-800 dark:text-zinc-300 inline-flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
+                            </path>
+                        </svg>
+                        Home
+                    </a>
+                    <svg class="fill-current w-3 h-3 mr-2 ml-1" xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 320 512">
+                        <path
+                            d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z" />
+                    </svg>
+                </li>
+                <li class="flex items-center">
+                    <a href="/categories.html">Categories</a>
+                    <svg class="fill-current w-3 h-3 mr-2 ml-1" xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 320 512">
+                        <path
+                            d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z" />
+                    </svg>
+                </li>
+                <li class="flex items-center">
+                    <a href="/category/posts.html">posts</a>
+                    <svg class="fill-current w-3 h-3 mr-2 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                        <path
+                            d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z" />
+                    </svg>
+                </li>
+            </ul>
+        </nav>
+
+<main>
+  <header>
+    <h1 class="font-semibold text-3xl my-2">Quick and Easy Podman & Podman Desktop Setup on Windows 11 and Fedora</h1>
+    <footer class="flex text-sm text-zinc-800 dark:text-zinc-400">
+      <div class="flex text-xs text-zinc-800 dark:text-zinc-400">
+        <time>May 03, 2025</time>
+        <div>
+        </div>
+        <div>
+          <span>&nbsp;·&nbsp;Kubecoin</span>
+        </div>
+      </div>
+    </footer>
+  </header>
+  <details class="flex flex-col my-6 p-4 bg-zinc-200 dark:bg-zinc-800 rounded-lg">
+    <summary class="text-lg font-bold">Table of contents</summary>
+    <div class="mx-4 px-4 underline">
+      <div id="toc"><ul><li><a class="toc-href" href="#" title="Quick and Easy Podman &amp; Podman Desktop Setup on Windows 11 and Fedora">Quick and Easy Podman &amp; Podman Desktop Setup on Windows 11 and Fedora</a><ul><li><a class="toc-href" href="#introduction" title="Introduction">Introduction</a></li><li><a class="toc-href" href="#windows-11-installing-podman-podman-desktop-with-scoop" title="Windows&nbsp;11: Installing Podman &amp; Podman Desktop (with Scoop)">Windows&nbsp;11: Installing Podman &amp; Podman Desktop (with Scoop)</a></li><li><a class="toc-href" href="#windows-11-enabling-gpu-acceleration-wsl2podman-machine" title="Windows&nbsp;11: Enabling GPU Acceleration (WSL2/Podman Machine)">Windows&nbsp;11: Enabling GPU Acceleration (WSL2/Podman Machine)</a></li><li><a class="toc-href" href="#fedora-linux-installing-podman-podman-desktop" title="Fedora Linux: Installing Podman &amp; Podman Desktop">Fedora Linux: Installing Podman &amp; Podman Desktop</a></li><li><a class="toc-href" href="#fedora-linux-enabling-gpu-acceleration-for-containers" title="Fedora Linux: Enabling GPU Acceleration for Containers">Fedora Linux: Enabling GPU Acceleration for Containers</a></li><li><a class="toc-href" href="#conclusion" title="Conclusion">Conclusion</a></li><li><a class="toc-href" href="#reference-documentation" title="Reference Documentation">Reference Documentation</a></li></ul></li></ul></div>
+    </div>
+  </details>
+  <div class="max-w-7xl container mx-auto my-8 text-zinc-800 dark:text-zinc-300  
+              prose lg:max-w-none prose-headings:text-zinc-800 prose-headings:dark:text-zinc-300 
+              prose-h1:text-3xl lg:prose-h1:text-3xl prose-headings:font-semibold 
+              prose-pre:bg-zinc-200 prose-pre:text-zinc-800
+              dark:prose-pre:bg-zinc-800 dark:prose-pre:text-zinc-200
+              prose-blockquote:text-zinc-800
+              dark:prose-blockquote:text-zinc-200
+              prose-a:text-slate-600 prose-a:font-normal
+              dark:prose-a:text-slate-400
+              dark:prose-strong:text-zinc-200 
+              dark:prose-code:text-zinc-200
+              dark:prose-code:bg-zinc-800
+              prose-code:bg-zinc-200
+              prose-code:font-light
+              prose-img:rounded-md
+              sm:text-left md:text-justify
+              ">
+    <p>(with GPU Support)
+date: 2025-05-03 05:01:00
+category: Containers
+tags:
+  - Podman
+  - Podman Desktop
+  - Windows
+  - Fedora
+  - GPU
+slug: install-podman-desktop-windows-fedora-gpu
+author: Jane Doe
+summary: This guide explains how to quickly install Podman and Podman Desktop on
+  Windows 11 (using Scoop) and Fedora Linux, and how to enable GPU acceleration
+  for container workloads on both platforms.</p>
+<hr/>
+<h2 id="introduction">Introduction</h2>
+<p>Podman is a popular daemonless container engine (rootless by default) that&rsquo;s compatible with Docker CLI commands and container images. Podman Desktop adds a convenient GUI for managing containers and Kubernetes, supporting both Podman and Docker under the hood. In this post, we&rsquo;ll walk through the <strong>fastest</strong> way to install Podman and Podman Desktop on <strong>Windows&nbsp;11</strong> and <strong>Fedora Linux</strong>, and then enable <strong>GPU container access</strong> for running GPU-accelerated workloads. Whether you prefer command-line or GUI, you&rsquo;ll be up and running with containers (and even GPU support) in no time.</p>
+<hr/>
+<h2 id="windows-11-installing-podman-podman-desktop-with-scoop">Windows&nbsp;11: Installing Podman &amp; Podman Desktop (with Scoop)</h2>
+<p><strong>Prerequisites (Windows):</strong> Ensure that virtualization is enabled (via BIOS) and that <strong>WSL 2</strong> is set up on Windows&nbsp;10/11. Windows Subsystem for Linux 2 is required because Podman runs containers in a Linux environment under the hood (called a <em>Podman machine</em>, a WSL2 VM). Also make sure you have at least 6 GB of RAM available for the VM. You will need an internet connection and <strong>administrative PowerShell</strong> access to install software.</p>
+<p><strong>Step&nbsp;1: Install Scoop (if not already installed).</strong> Scoop is a handy Windows command-line package manager. If you don&rsquo;t have it, install it by running the following in PowerShell :</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Set-ExecutionPolicy</span> <span class="n">-ExecutionPolicy</span> <span class="n">RemoteSigned</span> <span class="n">-Scope</span> <span class="n">CurrentUser</span>
+<span class="nb">Invoke-RestMethod</span> <span class="n">-Uri</span> <span class="n">https</span><span class="p">://</span><span class="n">get</span><span class="p">.</span><span class="n">scoop</span><span class="p">.</span><span class="n">sh</span> <span class="p">|</span> <span class="nb">Invoke-Expression</span>
+</code></pre></div>
+<p>This will set the execution policy and download/run the Scoop installer script. After this, you can use the <code>scoop</code> command.</p>
+<p><strong>Step&nbsp;2: Add Scoop Buckets for Extras.</strong> Podman Desktop is available in Scoop&rsquo;s <em>extras</em> bucket. Enable it with: </p>
+<div class="highlight"><pre><span></span><code><span class="n">scoop</span> <span class="n">bucket</span> <span class="n">add</span> <span class="n">extras</span>
+</code></pre></div>
+<p>You may also add the <code>main</code> bucket (usually added by default) if not already present.</p>
+<p><strong>Step&nbsp;3: Install Podman and Podman Desktop.</strong> Now install both the Podman CLI and the Podman Desktop GUI using Scoop:</p>
+<div class="highlight"><pre><span></span><code><span class="n">scoop</span> <span class="n">install</span> <span class="n">podman</span>
+<span class="n">scoop</span> <span class="n">install</span> <span class="n">podman-desktop</span>
+</code></pre></div>
+<p>This will download and install the Podman CLI and Podman Desktop applications. Scoop grabs the official Podman installer (an MSI/EXE) under the hood. Once complete, you should see confirmation that &ldquo;<code>podman</code> was installed successfully&rdquo; and similarly for Podman Desktop.</p>
+<p><strong>Step&nbsp;4: Initialize the Podman machine.</strong> Podman needs a Linux virtual machine (WSL2 distro) to run containers on Windows. After installation, open a new PowerShell or Command Prompt and set up the default Podman machine:</p>
+<div class="highlight"><pre><span></span><code><span class="n">podman</span> <span class="n">machine</span> <span class="n">init</span>
+<span class="n">podman</span> <span class="n">machine</span> <span class="nb">start</span>
+</code></pre></div>
+<p>The <code>podman machine init</code> step will create a WSL2 VM (if WSL wasn&rsquo;t already enabled, it may prompt to install it). The <code>podman machine start</code> will boot up this VM. After this, Podman is essentially ready to use. You can verify by running <code>podman info</code> or <code>podman ps</code> in PowerShell, which should communicate with the Podman VM.</p>
+<p>Now you can launch <strong>Podman Desktop</strong> (there should be a Start menu shortcut or you can run <code>podman-desktop</code> from PowerShell). On first launch, Podman Desktop may guide you through any remaining setup. For example, it might prompt to initialize Podman (the machine) if you haven&rsquo;t done so, or to enable WSL integration &ndash; which we already handled. Once the dashboard shows that Podman is running, you&rsquo;re all set to use the GUI to manage containers. 🎉</p>
+<h2 id="windows-11-enabling-gpu-acceleration-wsl2podman-machine">Windows&nbsp;11: Enabling GPU Acceleration (WSL2/Podman Machine)</h2>
+<p>Running GPU-accelerated containers on Windows with Podman is now possible by leveraging NVIDIA&rsquo;s WSL2 support. This allows containers to use the host&rsquo;s NVIDIA GPU through the Podman machine VM. </p>
+<p><strong>Prerequisites (GPU on Windows):</strong> You&rsquo;ll need a relatively modern NVIDIA graphics card (Pascal architecture or newer) and the <strong>latest NVIDIA GPU driver</strong> installed on Windows. The newest drivers add WSL2 GPU support automatically, so no separate WSL-specific driver is needed. Ensure that your Podman machine (WSL2 VM) is running (<code>podman machine start</code>) and that you can SSH into it.</p>
+<p><strong>Step&nbsp;1: Install NVIDIA Container Toolkit inside the Podman machine.</strong> To allow containers to access the GPU, you must install NVIDIA&rsquo;s container runtime components in the Podman VM. Open a PowerShell terminal and SSH into the Podman machine with: </p>
+<div class="highlight"><pre><span></span><code><span class="n">podman</span> <span class="n">machine</span> <span class="n">ssh</span>
+</code></pre></div>
+<p>Once you get a shell inside the Podman machine (which is a Linux environment), run the following commands <strong>in the Podman VM</strong> to set up the NVIDIA Container Toolkit:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>curl<span class="w"> </span>-s<span class="w"> </span>-L<span class="w"> </span>https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span>/etc/yum.repos.d/nvidia-container-toolkit.repo
+
+sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>nvidia-container-toolkit
+
+sudo<span class="w"> </span>nvidia-ctk<span class="w"> </span>cdi<span class="w"> </span>generate<span class="w"> </span>--output<span class="o">=</span>/etc/cdi/nvidia.yaml
+</code></pre></div>
+<p>These commands do the following: add the NVIDIA Container Toolkit YUM repository, install the toolkit packages, and then generate a Container Device Interface (CDI) file for the NVIDIA GPU. The generated <code>/etc/cdi/nvidia.yaml</code> tells Podman how to expose the GPU to containers. (The Podman machine is likely a Fedora-based image, hence using <code>yum</code>/RPM).</p>
+<p><strong>Step&nbsp;2: Verify GPU access from a container.</strong> Back on your Windows host (you can exit the Podman machine SSH session), run a test container to ensure the GPU is recognized. For example, try running the official CUDA base image with <code>nvidia-smi</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">podman</span> <span class="n">run</span> <span class="p">-</span><span class="n">-rm</span> <span class="p">-</span><span class="n">-device</span> <span class="n">nvidia</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">gpu</span><span class="p">=</span><span class="n">all</span> <span class="p">\</span>
+  <span class="n">nvidia</span><span class="p">/</span><span class="n">cuda</span><span class="p">:</span><span class="n">11</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">3-base-ubuntu20</span><span class="p">.</span><span class="n">04</span> <span class="n">nvidia-smi</span>
+</code></pre></div>
+<p>If everything was set up correctly, this command (run from Windows) will launch a Linux container that has access to the GPU, and <code>nvidia-smi</code> inside the container should output your GPU details. You should see a table of GPU information (name, driver version, CUDA version, etc.) instead of an error. For instance, you might see your GeForce RTX card listed along with its memory usage, similar to the output below:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">+-----------------------------------------------------------------------------+</span>
+<span class="c">| NVIDIA</span><span class="nb">-</span><span class="c">SMI 545</span><span class="nt">.</span><span class="c">36   Driver Version: 546</span><span class="nt">.</span><span class="c">33   CUDA Version: 12</span><span class="nt">.</span><span class="c">3             |</span>
+<span class="c">|</span><span class="nb">-----------------------------------------------------------------------------</span><span class="c">|</span>
+<span class="c">| GPU  Name        Persistence</span><span class="nb">-</span><span class="c">M| Bus</span><span class="nb">-</span><span class="c">Id       Disp</span><span class="nt">.</span><span class="c">A | Volatile Uncorr</span><span class="nt">.</span><span class="c"> ECC  |</span>
+<span class="c">| 0    NVIDIA </span><span class="nt">...</span><span class="c">                                                Off   </span><span class="nt">...</span><span class="c">   |</span>
+<span class="c">|</span><span class="nb">-----------------------------------------------------------------------------</span><span class="c">|</span>
+</code></pre></div>
+<p>If you get a result from <code>nvidia-smi</code> inside the container, congratulations! Your Podman containers on Windows now have GPU acceleration enabled. (If you encounter errors like <code>Failed to initialize NVML</code>, it could mean a version mismatch; regenerating the CDI file and restarting the Podman machine can fix that.)</p>
+<h2 id="fedora-linux-installing-podman-podman-desktop">Fedora Linux: Installing Podman &amp; Podman Desktop</h2>
+<p><strong>Prerequisites (Fedora):</strong> Ensure you have a Fedora Linux system with internet access and privileges to install packages (sudo). If you plan to use GPU, you&rsquo;ll need an NVIDIA GPU and drivers installed on Fedora as well (more on that in the GPU section). On Fedora Workstation, Podman CLI is typically <strong>pre-installed</strong> by default, but we will verify and install Podman Desktop.</p>
+<p><strong>Step&nbsp;1: Install Podman CLI (if needed).</strong> On Fedora 37/38 and newer, Podman is included out-of-the-box. You can check by running <code>podman --version</code>. If it&rsquo;s not installed for some reason (for example on a minimal installation), install it via DNF:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>podman
+</code></pre></div>
+<p>This will fetch the latest stable Podman release from Fedora&rsquo;s repositories. (If Podman was already present, this ensures it&rsquo;s up-to-date.)</p>
+<p><strong>Step&nbsp;2: Install Podman Desktop GUI.</strong> The easiest way on Fedora is to use <strong>Flatpak</strong> (Fedora supports Flatpak and this avoids manual downloading). Podman Desktop is available on Flathub, so enable Flathub if you haven&rsquo;t already, then install the app:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Enable Flathub (if not already enabled)</span>
+flatpak<span class="w"> </span>remote-add<span class="w"> </span>--if-not-exists<span class="w"> </span>--user<span class="w"> </span>flathub<span class="w"> </span>https://flathub.org/repo/flathub.flatpakrepo
+
+<span class="c1"># Install Podman Desktop from Flathub</span>
+flatpak<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>-y<span class="w"> </span>flathub<span class="w"> </span>io.podman_desktop.PodmanDesktop
+</code></pre></div>
+<p>This will download the Podman Desktop Flatpak and install it for your user. Once complete, you can launch Podman Desktop from your application menu (it might appear after a logout/login if it&rsquo;s the first flatpak app installed). You can also run it via command line: <code>flatpak run io.podman_desktop.PodmanDesktop</code>.</p>
+<p>On first launch, Podman Desktop should detect your local Podman installation. Since Fedora&rsquo;s Podman is already running on the host (no VM needed, as Linux can run containers natively), the Podman engine tile on the dashboard should show as running. You can now use the GUI to manage containers, images, pods, etc., on Fedora directly.</p>
+<h2 id="fedora-linux-enabling-gpu-acceleration-for-containers">Fedora Linux: Enabling GPU Acceleration for Containers</h2>
+<p>If you have an NVIDIA GPU on your Fedora system, you can enable your containers to use it for CUDA/OpenCL workloads. This requires installing the NVIDIA Container Toolkit on Fedora (similar to the Windows steps, but directly on the host).</p>
+<p><strong>Prerequisites (GPU on Fedora):</strong> Ensure you have installed the proprietary NVIDIA driver on Fedora (the open-source Nouveau driver likely won&rsquo;t support CUDA). Typically this is done via RPM Fusion or the official NVIDIA package. Verify that <code>nvidia-smi</code> works on your host OS before proceeding.</p>
+<p><strong>Step&nbsp;1: Install NVIDIA Container Toolkit on Fedora.</strong> NVIDIA provides a repository with the required packages. Run the following commands in a terminal:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Add the NVIDIA Container Toolkit repository for RPM packages</span>
+curl<span class="w"> </span>-s<span class="w"> </span>-L<span class="w"> </span>https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/yum.repos.d/nvidia-container-toolkit.repo
+
+<span class="c1"># Install the toolkit package</span>
+sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>nvidia-container-toolkit
+</code></pre></div>
+<p>This sets up the YUM/DNF repo and installs the <code>nvidia-container-toolkit</code> package which includes <code>nvidia-ctk</code> and configuration files.</p>
+<p><strong>Step&nbsp;2: Generate the GPU CDI configuration.</strong> After installation, create the Container Device Interface spec for your GPU:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>nvidia-ctk<span class="w"> </span>cdi<span class="w"> </span>generate<span class="w"> </span>--output<span class="o">=</span>/etc/cdi/nvidia.yaml
+</code></pre></div>
+<p>This command generates <code>/etc/cdi/nvidia.yaml</code> describing the NVIDIA GPU resources. It&rsquo;s a one-time setup (though you should re-run it if you update drivers or change GPU configuration).</p>
+<p><strong>Step&nbsp;3: Test a GPU-enabled container.</strong> Similar to Windows, you can test on Fedora by running a GPU-utilizing container. For example:</p>
+<div class="highlight"><pre><span></span><code>podman<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--device<span class="w"> </span>nvidia.com/gpu<span class="o">=</span>all<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>nvidia/cuda:11.0.3-base-ubuntu20.04<span class="w"> </span>nvidia-smi
+</code></pre></div>
+<p>Since you&rsquo;re on Linux, this command can be run directly on the host. If configured correctly, you&rsquo;ll see output from <code>nvidia-smi</code> showing your GPU inside the container. This means GPU acceleration is working. If you instead see an error (or no devices found), double-check that the <code>nvidia-container-toolkit</code> service/hook is active. You might need to reboot or at least log out/in to ensure Podman picks up the new CDI config. You can also list the CDI devices with <code>nvidia-ctk cdi list</code> to confirm it recognizes your GPU.</p>
+<p>Now you&rsquo;re ready to run AI/ML or other GPU-hungry workloads in Podman containers on Fedora!</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>In this tutorial, we set up Podman and Podman Desktop on both Windows&nbsp;11 and Fedora Linux in just a few steps. Using Scoop on Windows streamlines the installation of Podman CLI and the desktop GUI, while Flatpak makes it effortless on Fedora. We also enabled GPU support so that containerized applications can utilize your NVIDIA GPU on each platform, following official guidelines. </p>
+<p>With Podman Desktop, you now have a user-friendly interface to manage your containers, images, and pods across environments. On Windows, Podman Desktop will manage a Linux VM behind the scenes to give you a seamless container experience, and on Fedora it works natively with the host Podman. You can pull images, run containers (even with CUDA for ML tasks), and even deploy Kubernetes pods right from the dashboard. </p>
+<p>Enjoy your Docker-free container workflows! Podman&rsquo;s daemonless design and Podman Desktop&rsquo;s convenient GUI are ready to boost your productivity in container management. Happy container hacking! 🚀</p>
+<h2 id="reference-documentation">Reference Documentation</h2>
+<li><a href="https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#installing-with-yum-or-dnf">NVIDIA Container Toolkit Installation Guide</a></li>
+<li><a href="https://podman-desktop.io/docs/podman/gpu?form=MG0AV3">Podman Desktop GPU Support Documentation</a></li>
+    <!-- <div class="aspect-w-16 aspect-h-9 mx-auto"></div> CSS placeholder -->
+  </div>
+  <footer class="flex flex-col mt-10 ">
+    <ul class="flex flex-wrap">
+    </ul>
+    <div class="flex w-full my-2 bg-zinc-200 dark:bg-zinc-700 rounded-lg">
+      <div class="w-1/2 rounded-l-lg"></div>
+    </div>
+  </footer>
+  <div>
+  </div>
+</main>
+
+    </div>
+    <footer class="flex w-full text-xs justify-center mt-10 mb-6 text-zinc-600 dark:text-zinc-400">
+        <div class="px-4">
+            <span></span>Powered by
+            <a class="underline" href="https://getpelican.com/">Pelican</a>&nbsp;&
+            <a class="underline" href="https://github.com/aleylara/Papyrus">Papyrus</a>
+        </div>
+    </footer>
+
+
+    <script>
+        let themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        let themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia(
+                '(prefers-color-scheme: dark)').matches)) {
+            themeToggleLightIcon.classList.remove('hidden');
+        } else {
+            themeToggleDarkIcon.classList.remove('hidden');
+        }
+        let themeToggleBtn = document.getElementById('theme-toggle');
+        themeToggleBtn.addEventListener('click', function () {
+            themeToggleDarkIcon.classList.toggle('hidden');
+            themeToggleLightIcon.classList.toggle('hidden');
+            if (localStorage.getItem('color-theme')) {
+                if (localStorage.getItem('color-theme') === 'light') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                }
+            } else {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

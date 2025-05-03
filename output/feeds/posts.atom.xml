@@ -1,3 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>kubecoin.io - posts</title><link href="/" rel="alternate"></link><link href="/feeds/posts.atom.xml" rel="self"></link><id>/</id><updated>2025-04-12T00:00:00+00:00</updated><entry><title>"Hello World"</title><link href="/hello-world.html" rel="alternate"></link><published>2025-04-12T00:00:00+00:00</published><updated>2025-04-12T00:00:00+00:00</updated><author><name>Kubecoin</name></author><id>tag:None,2025-04-12:/hello-world.html</id><content type="html">&lt;h1 id="hello-world"&gt;Hello World&lt;/h1&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>kubecoin.io - posts</title><link href="/" rel="alternate"></link><link href="/feeds/posts.atom.xml" rel="self"></link><id>/</id><updated>2025-05-03T00:00:00+00:00</updated><entry><title>Quick and Easy Podman &amp; Podman Desktop Setup on Windows 11 and Fedora</title><link href="/quick-and-easy-podman-podman-desktop-setup-on-windows-11-and-fedora.html" rel="alternate"></link><published>2025-05-03T00:00:00+00:00</published><updated>2025-05-03T00:00:00+00:00</updated><author><name>Kubecoin</name></author><id>tag:None,2025-05-03:/quick-and-easy-podman-podman-desktop-setup-on-windows-11-and-fedora.html</id><summary type="html">&lt;p&gt;(with GPU Support)
+date: 2025-05-03 05:01:00
+category: Containers
+tags:
+  - Podman
+  - Podman Desktop
+  - Windows
+  - Fedora
+  - GPU
+slug: install-podman-desktop-windows-fedora-gpu
+author: Jane Doe
+summary: This guide explains how to quickly install Podman and Podman Desktop on
+  Windows 11 (using Scoop) and Fedora Linux, and how to enable GPU acceleration
+  for container …&lt;/p&gt;</summary><content type="html">&lt;p&gt;(with GPU Support)
+date: 2025-05-03 05:01:00
+category: Containers
+tags:
+  - Podman
+  - Podman Desktop
+  - Windows
+  - Fedora
+  - GPU
+slug: install-podman-desktop-windows-fedora-gpu
+author: Jane Doe
+summary: This guide explains how to quickly install Podman and Podman Desktop on
+  Windows 11 (using Scoop) and Fedora Linux, and how to enable GPU acceleration
+  for container workloads on both platforms.&lt;/p&gt;
+&lt;hr/&gt;
+&lt;h2 id="introduction"&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;Podman is a popular daemonless container engine (rootless by default) that&amp;rsquo;s compatible with Docker CLI commands and container images. Podman Desktop adds a convenient GUI for managing containers and Kubernetes, supporting both Podman and Docker under the hood. In this post, we&amp;rsquo;ll walk through the &lt;strong&gt;fastest&lt;/strong&gt; way to install Podman and Podman Desktop on &lt;strong&gt;Windows&amp;nbsp;11&lt;/strong&gt; and &lt;strong&gt;Fedora Linux&lt;/strong&gt;, and then enable &lt;strong&gt;GPU container access&lt;/strong&gt; for running GPU-accelerated workloads. Whether you prefer command-line or GUI, you&amp;rsquo;ll be up and running with containers (and even GPU support) in no time.&lt;/p&gt;
+&lt;hr/&gt;
+&lt;h2 id="windows-11-installing-podman-podman-desktop-with-scoop"&gt;Windows&amp;nbsp;11: Installing Podman &amp;amp; Podman Desktop (with Scoop)&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Prerequisites (Windows):&lt;/strong&gt; Ensure that virtualization is enabled (via BIOS) and that &lt;strong&gt;WSL 2&lt;/strong&gt; is set up on Windows&amp;nbsp;10/11. Windows Subsystem for Linux 2 is required because Podman runs containers in a Linux environment under the hood (called a &lt;em&gt;Podman machine&lt;/em&gt;, a WSL2 VM). Also make sure you have at least 6 GB of RAM available for the VM. You will need an internet connection and &lt;strong&gt;administrative PowerShell&lt;/strong&gt; access to install software.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Step&amp;nbsp;1: Install Scoop (if not already installed).&lt;/strong&gt; Scoop is a handy Windows command-line package manager. If you don&amp;rsquo;t have it, install it by running the following in PowerShell :&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nb"&gt;Set-ExecutionPolicy&lt;/span&gt; &lt;span class="n"&gt;-ExecutionPolicy&lt;/span&gt; &lt;span class="n"&gt;RemoteSigned&lt;/span&gt; &lt;span class="n"&gt;-Scope&lt;/span&gt; &lt;span class="n"&gt;CurrentUser&lt;/span&gt;
+&lt;span class="nb"&gt;Invoke-RestMethod&lt;/span&gt; &lt;span class="n"&gt;-Uri&lt;/span&gt; &lt;span class="n"&gt;https&lt;/span&gt;&lt;span class="p"&gt;://&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;scoop&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sh&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nb"&gt;Invoke-Expression&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This will set the execution policy and download/run the Scoop installer script. After this, you can use the &lt;code&gt;scoop&lt;/code&gt; command.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Step&amp;nbsp;2: Add Scoop Buckets for Extras.&lt;/strong&gt; Podman Desktop is available in Scoop&amp;rsquo;s &lt;em&gt;extras&lt;/em&gt; bucket. Enable it with: &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;scoop&lt;/span&gt; &lt;span class="n"&gt;bucket&lt;/span&gt; &lt;span class="n"&gt;add&lt;/span&gt; &lt;span class="n"&gt;extras&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;You may also add the &lt;code&gt;main&lt;/code&gt; bucket (usually added by default) if not already present.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Step&amp;nbsp;3: Install Podman and Podman Desktop.&lt;/strong&gt; Now install both the Podman CLI and the Podman Desktop GUI using Scoop:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;scoop&lt;/span&gt; &lt;span class="n"&gt;install&lt;/span&gt; &lt;span class="n"&gt;podman&lt;/span&gt;
+&lt;span class="n"&gt;scoop&lt;/span&gt; &lt;span class="n"&gt;install&lt;/span&gt; &lt;span class="n"&gt;podman-desktop&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This will download and install the Podman CLI and Podman Desktop applications. Scoop grabs the official Podman installer (an MSI/EXE) under the hood. Once complete, you should see confirmation that &amp;ldquo;&lt;code&gt;podman&lt;/code&gt; was installed successfully&amp;rdquo; and similarly for Podman Desktop.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Step&amp;nbsp;4: Initialize the Podman machine.&lt;/strong&gt; Podman needs a Linux virtual machine (WSL2 distro) to run containers on Windows. After installation, open a new PowerShell or Command Prompt and set up the default Podman machine:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;podman&lt;/span&gt; &lt;span class="n"&gt;machine&lt;/span&gt; &lt;span class="n"&gt;init&lt;/span&gt;
+&lt;span class="n"&gt;podman&lt;/span&gt; &lt;span class="n"&gt;machine&lt;/span&gt; &lt;span class="nb"&gt;start&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The &lt;code&gt;podman machine init&lt;/code&gt; step will create a WSL2 VM (if WSL wasn&amp;rsquo;t already enabled, it may prompt to install it). The &lt;code&gt;podman machine start&lt;/code&gt; will boot up this VM. After this, Podman is essentially ready to use. You can verify by running &lt;code&gt;podman info&lt;/code&gt; or &lt;code&gt;podman ps&lt;/code&gt; in PowerShell, which should communicate with the Podman VM.&lt;/p&gt;
+&lt;p&gt;Now you can launch &lt;strong&gt;Podman Desktop&lt;/strong&gt; (there should be a Start menu shortcut or you can run &lt;code&gt;podman-desktop&lt;/code&gt; from PowerShell). On first launch, Podman Desktop may guide you through any remaining setup. For example, it might prompt to initialize Podman (the machine) if you haven&amp;rsquo;t done so, or to enable WSL integration &amp;ndash; which we already handled. Once the dashboard shows that Podman is running, you&amp;rsquo;re all set to use the GUI to manage containers. 🎉&lt;/p&gt;
+&lt;h2 id="windows-11-enabling-gpu-acceleration-wsl2podman-machine"&gt;Windows&amp;nbsp;11: Enabling GPU Acceleration (WSL2/Podman Machine)&lt;/h2&gt;
+&lt;p&gt;Running GPU-accelerated containers on Windows with Podman is now possible by leveraging NVIDIA&amp;rsquo;s WSL2 support. This allows containers to use the host&amp;rsquo;s NVIDIA GPU through the Podman machine VM. &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Prerequisites (GPU on Windows):&lt;/strong&gt; You&amp;rsquo;ll need a relatively modern NVIDIA graphics card (Pascal architecture or newer) and the &lt;strong&gt;latest NVIDIA GPU driver&lt;/strong&gt; installed on Windows. The newest drivers add WSL2 GPU support automatically, so no separate WSL-specific driver is needed. Ensure that your Podman machine (WSL2 VM) is running (&lt;code&gt;podman machine start&lt;/code&gt;) and that you can SSH into it.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Step&amp;nbsp;1: Install NVIDIA Container Toolkit inside the Podman machine.&lt;/strong&gt; To allow containers to access the GPU, you must install NVIDIA&amp;rsquo;s container runtime components in the Podman VM. Open a PowerShell terminal and SSH into the Podman machine with: &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;podman&lt;/span&gt; &lt;span class="n"&gt;machine&lt;/span&gt; &lt;span class="n"&gt;ssh&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Once you get a shell inside the Podman machine (which is a Linux environment), run the following commands &lt;strong&gt;in the Podman VM&lt;/strong&gt; to set up the NVIDIA Container Toolkit:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;sudo&lt;span class="w"&gt; &lt;/span&gt;curl&lt;span class="w"&gt; &lt;/span&gt;-s&lt;span class="w"&gt; &lt;/span&gt;-L&lt;span class="w"&gt; &lt;/span&gt;https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="se"&gt;\&lt;/span&gt;
+&lt;span class="w"&gt;  &lt;/span&gt;-o&lt;span class="w"&gt; &lt;/span&gt;/etc/yum.repos.d/nvidia-container-toolkit.repo
+
+sudo&lt;span class="w"&gt; &lt;/span&gt;yum&lt;span class="w"&gt; &lt;/span&gt;install&lt;span class="w"&gt; &lt;/span&gt;-y&lt;span class="w"&gt; &lt;/span&gt;nvidia-container-toolkit
+
+sudo&lt;span class="w"&gt; &lt;/span&gt;nvidia-ctk&lt;span class="w"&gt; &lt;/span&gt;cdi&lt;span class="w"&gt; &lt;/span&gt;generate&lt;span class="w"&gt; &lt;/span&gt;--output&lt;span class="o"&gt;=&lt;/span&gt;/etc/cdi/nvidia.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;These commands do the following: add the NVIDIA Container Toolkit YUM repository, install the toolkit packages, and then generate a Container Device Interface (CDI) file for the NVIDIA GPU. The generated &lt;code&gt;/etc/cdi/nvidia.yaml&lt;/code&gt; tells Podman how to expose the GPU to containers. (The Podman machine is likely a Fedora-based image, hence using &lt;code&gt;yum&lt;/code&gt;/RPM).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Step&amp;nbsp;2: Verify GPU access from a container.&lt;/strong&gt; Back on your Windows host (you can exit the Podman machine SSH session), run a test container to ensure the GPU is recognized. For example, try running the official CUDA base image with &lt;code&gt;nvidia-smi&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;podman&lt;/span&gt; &lt;span class="n"&gt;run&lt;/span&gt; &lt;span class="p"&gt;-&lt;/span&gt;&lt;span class="n"&gt;-rm&lt;/span&gt; &lt;span class="p"&gt;-&lt;/span&gt;&lt;span class="n"&gt;-device&lt;/span&gt; &lt;span class="n"&gt;nvidia&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;com&lt;/span&gt;&lt;span class="p"&gt;/&lt;/span&gt;&lt;span class="n"&gt;gpu&lt;/span&gt;&lt;span class="p"&gt;=&lt;/span&gt;&lt;span class="n"&gt;all&lt;/span&gt; &lt;span class="p"&gt;\&lt;/span&gt;
+  &lt;span class="n"&gt;nvidia&lt;/span&gt;&lt;span class="p"&gt;/&lt;/span&gt;&lt;span class="n"&gt;cuda&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;11&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;3-base-ubuntu20&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;04&lt;/span&gt; &lt;span class="n"&gt;nvidia-smi&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;If everything was set up correctly, this command (run from Windows) will launch a Linux container that has access to the GPU, and &lt;code&gt;nvidia-smi&lt;/code&gt; inside the container should output your GPU details. You should see a table of GPU information (name, driver version, CUDA version, etc.) instead of an error. For instance, you might see your GeForce RTX card listed along with its memory usage, similar to the output below:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nb"&gt;+-----------------------------------------------------------------------------+&lt;/span&gt;
+&lt;span class="c"&gt;| NVIDIA&lt;/span&gt;&lt;span class="nb"&gt;-&lt;/span&gt;&lt;span class="c"&gt;SMI 545&lt;/span&gt;&lt;span class="nt"&gt;.&lt;/span&gt;&lt;span class="c"&gt;36   Driver Version: 546&lt;/span&gt;&lt;span class="nt"&gt;.&lt;/span&gt;&lt;span class="c"&gt;33   CUDA Version: 12&lt;/span&gt;&lt;span class="nt"&gt;.&lt;/span&gt;&lt;span class="c"&gt;3             |&lt;/span&gt;
+&lt;span class="c"&gt;|&lt;/span&gt;&lt;span class="nb"&gt;-----------------------------------------------------------------------------&lt;/span&gt;&lt;span class="c"&gt;|&lt;/span&gt;
+&lt;span class="c"&gt;| GPU  Name        Persistence&lt;/span&gt;&lt;span class="nb"&gt;-&lt;/span&gt;&lt;span class="c"&gt;M| Bus&lt;/span&gt;&lt;span class="nb"&gt;-&lt;/span&gt;&lt;span class="c"&gt;Id       Disp&lt;/span&gt;&lt;span class="nt"&gt;.&lt;/span&gt;&lt;span class="c"&gt;A | Volatile Uncorr&lt;/span&gt;&lt;span class="nt"&gt;.&lt;/span&gt;&lt;span class="c"&gt; ECC  |&lt;/span&gt;
+&lt;span class="c"&gt;| 0    NVIDIA &lt;/span&gt;&lt;span class="nt"&gt;...&lt;/span&gt;&lt;span class="c"&gt;                                                Off   &lt;/span&gt;&lt;span class="nt"&gt;...&lt;/span&gt;&lt;span class="c"&gt;   |&lt;/span&gt;
+&lt;span class="c"&gt;|&lt;/span&gt;&lt;span class="nb"&gt;-----------------------------------------------------------------------------&lt;/span&gt;&lt;span class="c"&gt;|&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;If you get a result from &lt;code&gt;nvidia-smi&lt;/code&gt; inside the container, congratulations! Your Podman containers on Windows now have GPU acceleration enabled. (If you encounter errors like &lt;code&gt;Failed to initialize NVML&lt;/code&gt;, it could mean a version mismatch; regenerating the CDI file and restarting the Podman machine can fix that.)&lt;/p&gt;
+&lt;h2 id="fedora-linux-installing-podman-podman-desktop"&gt;Fedora Linux: Installing Podman &amp;amp; Podman Desktop&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Prerequisites (Fedora):&lt;/strong&gt; Ensure you have a Fedora Linux system with internet access and privileges to install packages (sudo). If you plan to use GPU, you&amp;rsquo;ll need an NVIDIA GPU and drivers installed on Fedora as well (more on that in the GPU section). On Fedora Workstation, Podman CLI is typically &lt;strong&gt;pre-installed&lt;/strong&gt; by default, but we will verify and install Podman Desktop.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Step&amp;nbsp;1: Install Podman CLI (if needed).&lt;/strong&gt; On Fedora 37/38 and newer, Podman is included out-of-the-box. You can check by running &lt;code&gt;podman --version&lt;/code&gt;. If it&amp;rsquo;s not installed for some reason (for example on a minimal installation), install it via DNF:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;sudo&lt;span class="w"&gt; &lt;/span&gt;dnf&lt;span class="w"&gt; &lt;/span&gt;install&lt;span class="w"&gt; &lt;/span&gt;-y&lt;span class="w"&gt; &lt;/span&gt;podman
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This will fetch the latest stable Podman release from Fedora&amp;rsquo;s repositories. (If Podman was already present, this ensures it&amp;rsquo;s up-to-date.)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Step&amp;nbsp;2: Install Podman Desktop GUI.&lt;/strong&gt; The easiest way on Fedora is to use &lt;strong&gt;Flatpak&lt;/strong&gt; (Fedora supports Flatpak and this avoids manual downloading). Podman Desktop is available on Flathub, so enable Flathub if you haven&amp;rsquo;t already, then install the app:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c1"&gt;# Enable Flathub (if not already enabled)&lt;/span&gt;
+flatpak&lt;span class="w"&gt; &lt;/span&gt;remote-add&lt;span class="w"&gt; &lt;/span&gt;--if-not-exists&lt;span class="w"&gt; &lt;/span&gt;--user&lt;span class="w"&gt; &lt;/span&gt;flathub&lt;span class="w"&gt; &lt;/span&gt;https://flathub.org/repo/flathub.flatpakrepo
+
+&lt;span class="c1"&gt;# Install Podman Desktop from Flathub&lt;/span&gt;
+flatpak&lt;span class="w"&gt; &lt;/span&gt;install&lt;span class="w"&gt; &lt;/span&gt;--user&lt;span class="w"&gt; &lt;/span&gt;-y&lt;span class="w"&gt; &lt;/span&gt;flathub&lt;span class="w"&gt; &lt;/span&gt;io.podman_desktop.PodmanDesktop
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This will download the Podman Desktop Flatpak and install it for your user. Once complete, you can launch Podman Desktop from your application menu (it might appear after a logout/login if it&amp;rsquo;s the first flatpak app installed). You can also run it via command line: &lt;code&gt;flatpak run io.podman_desktop.PodmanDesktop&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;On first launch, Podman Desktop should detect your local Podman installation. Since Fedora&amp;rsquo;s Podman is already running on the host (no VM needed, as Linux can run containers natively), the Podman engine tile on the dashboard should show as running. You can now use the GUI to manage containers, images, pods, etc., on Fedora directly.&lt;/p&gt;
+&lt;h2 id="fedora-linux-enabling-gpu-acceleration-for-containers"&gt;Fedora Linux: Enabling GPU Acceleration for Containers&lt;/h2&gt;
+&lt;p&gt;If you have an NVIDIA GPU on your Fedora system, you can enable your containers to use it for CUDA/OpenCL workloads. This requires installing the NVIDIA Container Toolkit on Fedora (similar to the Windows steps, but directly on the host).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Prerequisites (GPU on Fedora):&lt;/strong&gt; Ensure you have installed the proprietary NVIDIA driver on Fedora (the open-source Nouveau driver likely won&amp;rsquo;t support CUDA). Typically this is done via RPM Fusion or the official NVIDIA package. Verify that &lt;code&gt;nvidia-smi&lt;/code&gt; works on your host OS before proceeding.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Step&amp;nbsp;1: Install NVIDIA Container Toolkit on Fedora.&lt;/strong&gt; NVIDIA provides a repository with the required packages. Run the following commands in a terminal:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c1"&gt;# Add the NVIDIA Container Toolkit repository for RPM packages&lt;/span&gt;
+curl&lt;span class="w"&gt; &lt;/span&gt;-s&lt;span class="w"&gt; &lt;/span&gt;-L&lt;span class="w"&gt; &lt;/span&gt;https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="se"&gt;\&lt;/span&gt;
+&lt;span class="w"&gt;  &lt;/span&gt;sudo&lt;span class="w"&gt; &lt;/span&gt;tee&lt;span class="w"&gt; &lt;/span&gt;/etc/yum.repos.d/nvidia-container-toolkit.repo
+
+&lt;span class="c1"&gt;# Install the toolkit package&lt;/span&gt;
+sudo&lt;span class="w"&gt; &lt;/span&gt;dnf&lt;span class="w"&gt; &lt;/span&gt;install&lt;span class="w"&gt; &lt;/span&gt;-y&lt;span class="w"&gt; &lt;/span&gt;nvidia-container-toolkit
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This sets up the YUM/DNF repo and installs the &lt;code&gt;nvidia-container-toolkit&lt;/code&gt; package which includes &lt;code&gt;nvidia-ctk&lt;/code&gt; and configuration files.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Step&amp;nbsp;2: Generate the GPU CDI configuration.&lt;/strong&gt; After installation, create the Container Device Interface spec for your GPU:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;sudo&lt;span class="w"&gt; &lt;/span&gt;nvidia-ctk&lt;span class="w"&gt; &lt;/span&gt;cdi&lt;span class="w"&gt; &lt;/span&gt;generate&lt;span class="w"&gt; &lt;/span&gt;--output&lt;span class="o"&gt;=&lt;/span&gt;/etc/cdi/nvidia.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This command generates &lt;code&gt;/etc/cdi/nvidia.yaml&lt;/code&gt; describing the NVIDIA GPU resources. It&amp;rsquo;s a one-time setup (though you should re-run it if you update drivers or change GPU configuration).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Step&amp;nbsp;3: Test a GPU-enabled container.&lt;/strong&gt; Similar to Windows, you can test on Fedora by running a GPU-utilizing container. For example:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;podman&lt;span class="w"&gt; &lt;/span&gt;run&lt;span class="w"&gt; &lt;/span&gt;--rm&lt;span class="w"&gt; &lt;/span&gt;--device&lt;span class="w"&gt; &lt;/span&gt;nvidia.com/gpu&lt;span class="o"&gt;=&lt;/span&gt;all&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="se"&gt;\&lt;/span&gt;
+&lt;span class="w"&gt;  &lt;/span&gt;nvidia/cuda:11.0.3-base-ubuntu20.04&lt;span class="w"&gt; &lt;/span&gt;nvidia-smi
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Since you&amp;rsquo;re on Linux, this command can be run directly on the host. If configured correctly, you&amp;rsquo;ll see output from &lt;code&gt;nvidia-smi&lt;/code&gt; showing your GPU inside the container. This means GPU acceleration is working. If you instead see an error (or no devices found), double-check that the &lt;code&gt;nvidia-container-toolkit&lt;/code&gt; service/hook is active. You might need to reboot or at least log out/in to ensure Podman picks up the new CDI config. You can also list the CDI devices with &lt;code&gt;nvidia-ctk cdi list&lt;/code&gt; to confirm it recognizes your GPU.&lt;/p&gt;
+&lt;p&gt;Now you&amp;rsquo;re ready to run AI/ML or other GPU-hungry workloads in Podman containers on Fedora!&lt;/p&gt;
+&lt;h2 id="conclusion"&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;In this tutorial, we set up Podman and Podman Desktop on both Windows&amp;nbsp;11 and Fedora Linux in just a few steps. Using Scoop on Windows streamlines the installation of Podman CLI and the desktop GUI, while Flatpak makes it effortless on Fedora. We also enabled GPU support so that containerized applications can utilize your NVIDIA GPU on each platform, following official guidelines. &lt;/p&gt;
+&lt;p&gt;With Podman Desktop, you now have a user-friendly interface to manage your containers, images, and pods across environments. On Windows, Podman Desktop will manage a Linux VM behind the scenes to give you a seamless container experience, and on Fedora it works natively with the host Podman. You can pull images, run containers (even with CUDA for ML tasks), and even deploy Kubernetes pods right from the dashboard. &lt;/p&gt;
+&lt;p&gt;Enjoy your Docker-free container workflows! Podman&amp;rsquo;s daemonless design and Podman Desktop&amp;rsquo;s convenient GUI are ready to boost your productivity in container management. Happy container hacking! 🚀&lt;/p&gt;
+&lt;h2 id="reference-documentation"&gt;Reference Documentation&lt;/h2&gt;
+&lt;li&gt;&lt;a href="https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#installing-with-yum-or-dnf"&gt;NVIDIA Container Toolkit Installation Guide&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://podman-desktop.io/docs/podman/gpu?form=MG0AV3"&gt;Podman Desktop GPU Support Documentation&lt;/a&gt;&lt;/li&gt;</content><category term="posts"></category></entry><entry><title>"Hello World"</title><link href="/hello-world.html" rel="alternate"></link><published>2025-04-12T00:00:00+00:00</published><updated>2025-04-12T00:00:00+00:00</updated><author><name>Kubecoin</name></author><id>tag:None,2025-04-12:/hello-world.html</id><content type="html">&lt;h1 id="hello-world"&gt;Hello World&lt;/h1&gt;
 &lt;p&gt;Welcome to the Kubecoin blog! This is the first post.&lt;/p&gt;</content><category term="posts"></category></entry></feed>
