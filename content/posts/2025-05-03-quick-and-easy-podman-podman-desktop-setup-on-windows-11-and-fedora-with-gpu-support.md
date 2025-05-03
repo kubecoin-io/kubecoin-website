@@ -184,3 +184,9 @@ With Podman Desktop, you now have a user-friendly interface to manage your conta
 
 Enjoy your Docker-free container workflows! Podman’s daemonless design and Podman Desktop’s convenient GUI are ready to boost your productivity in container management. Happy container hacking! 🚀
 
+## Reference Documentation
+
+<li><a href="https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#installing-with-yum-or-dnf">NVIDIA Container Toolkit Installation Guide</a></li>
+<li><a href="https://podman-desktop.io/docs/podman/gpu?form=MG0AV3">Podman Desktop GPU Support Documentation</a></li>
+    
+
