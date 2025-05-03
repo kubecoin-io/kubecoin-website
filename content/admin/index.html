@@ -223,6 +223,38 @@
       }
     }, 18000);
 
+    // *** ADD THIS: Listen for messages from the OAuth callback window ***
+    window.addEventListener("message", (event) => {
+      // IMPORTANT: Check the origin for security
+      // Use the actual origin where your callback function resides
+      // For Cloudflare Pages, it should match window.location.origin
+      if (event.origin !== window.location.origin) {
+        debug(`⚠️ Received message from unexpected origin: ${event.origin}. Ignoring.`);
+        return;
+      }
+
+      debug(`Received message: type=${event.data.type}, provider=${event.data.provider}`);
+
+      // Check if it's the expected authorization response
+      if (event.data.type === "authorization_response" && event.data.provider === "github") {
+        if (event.data.token) {
+          debug("✅ Received authorization_response with token from callback.");
+          // Decap CMS should automatically handle this message if its listener is active
+          // We log it here for confirmation.
+          // You might manually store it if needed, but CMS should handle it:
+          // localStorage.setItem("decap-cms-user", JSON.stringify({ token: event.data.token, ... }));
+        } else if (event.data.error) {
+          debug(`⚠️ Received authorization_response with error: ${event.data.error}`);
+          showTimeoutError("Authentication Error", `Received error from callback: ${event.data.error}`);
+        } else {
+          debug("❓ Received authorization_response with unexpected structure.");
+        }
+      } else {
+        debug(`Received message of unknown type or provider: ${event.data.type}`);
+      }
+    }, false);
+    // *** END OF ADDED CODE ***
+
   </script>
 
   <!-- Use Decap CMS @latest -->
