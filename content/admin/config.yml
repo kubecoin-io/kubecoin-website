@@ -1,22 +1,11 @@
 backend:
-  name: github
-  repo: kubecoin-io/kubecoin-website # Make sure this is correct
-  branch: main
-  base_url: kubecoin-website.pages.dev
-  auth_endpoint: "/api/auth"
-  app_id: "Ov23liNXJUIuHjXxeoeN" # Make sure this is correct
+  name: test-repo # Use the test backend
 
-media_folder: "content/uploads" # Required
-public_folder: "/uploads"      # Required
-
-site_url: https://kubecoin.io
-display_url: https://kubecoin.io
-publish_mode: editorial_workflow
-
-collections: # Must have at least one collection
+collections:
   - name: "test"
     label: "Test"
-    folder: "content/_test" # Use a temporary folder
+    folder: "_posts" # test-repo uses predefined folders
     create: true
     fields:
       - { label: "Title", name: "title", widget: "string" }
+      - { label: "Body", name: "body", widget: "markdown" } # Add body field for test-repo
