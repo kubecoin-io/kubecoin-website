@@ -1,14 +1,7 @@
 #!/bin/bash
 set -e
 
-# --- Install System Dependencies (like OpenSSL 1.1) ---
-echo "Updating package list and installing libssl1.1..."
-# Add sudo here
-sudo apt-get update -y
-# Add sudo here
-sudo apt-get install -y libssl1.1
-echo "libssl1.1 installation attempted."
-# --- End System Dependencies ---
+# --- System Dependencies Section Removed (sudo apt-get doesn't work) ---
 
 # --- Install Rust Toolchain ---
 echo "Installing Rust toolchain..."
@@ -24,13 +17,13 @@ echo "Installing Stork search binary..."
 STORK_VERSION="v1.6.0"
 INSTALL_DIR="$HOME/.local/bin"
 mkdir -p "$INSTALL_DIR"
-# Download Stork binary (adjust asset name if needed for future versions)
-curl -L "https://github.com/jameslittle230/stork/releases/download/${STORK_VERSION}/stork-ubuntu-20-04" -o "$INSTALL_DIR/stork"
+# Download Stork MINIMAL binary
+curl -L "https://github.com/jameslittle230/stork/releases/download/${STORK_VERSION}/stork-linux-minimal" -o "$INSTALL_DIR/stork" # Changed asset name
 chmod +x "$INSTALL_DIR/stork"
 # Add Stork to PATH
 export PATH="$INSTALL_DIR:$PATH"
 echo "Stork installed. Stork version:"
-# Verify Stork runs *after* installing libssl1.1
+# Verify Stork runs
 stork --version
 # --- End Stork Installation ---
 
