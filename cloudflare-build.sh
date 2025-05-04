@@ -11,19 +11,18 @@ echo "Rust installed. Cargo version:"
 cargo --version
 # --- End Rust Installation ---
 
-# --- Install Stork Binary ---
-echo "Installing Stork search binary..."
-# Define Stork version - Check https://github.com/jameslittle230/stork/releases for latest tag
-STORK_VERSION="v1.6.0"
-INSTALL_DIR="$HOME/.local/bin"
-mkdir -p "$INSTALL_DIR"
-# Download Stork MINIMAL binary
-curl -L "https://github.com/jameslittle230/stork/releases/download/${STORK_VERSION}/stork-linux-minimal" -o "$INSTALL_DIR/stork" # Changed asset name
-chmod +x "$INSTALL_DIR/stork"
-# Add Stork to PATH
-export PATH="$INSTALL_DIR:$PATH"
-echo "Stork installed. Stork version:"
-# Verify Stork runs
+# --- Compile and Install Latest Stork from Source ---
+echo "Compiling and installing latest Stork search from source (main branch)..."
+# Clone the Stork repository's main branch
+git clone --depth 1 --branch main https://github.com/jameslittle230/stork.git stork-repo
+cd stork-repo
+# Build Stork in release mode
+cargo build --release
+# Install the compiled binary to a location in PATH
+cp target/release/stork $HOME/.cargo/bin/stork # Copy directly to cargo bin dir
+cd .. # Go back to the project root
+rm -rf stork-repo # Clean up the cloned repo
+echo "Stork compiled and installed. Stork version:"
 stork --version
 # --- End Stork Installation ---
 
