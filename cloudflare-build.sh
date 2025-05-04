@@ -16,9 +16,9 @@ echo "Compiling and installing latest Stork search from source (main branch)..."
 # Clone the Stork repository's main branch
 git clone --depth 1 --recursive --shallow-submodules https://github.com/jameslittle230/stork.git stork-repo
 cd stork-repo
-# Update dependencies (specifically wasm-bindgen) before building
-echo "Updating Stork dependencies..."
-cargo update -p wasm-bindgen # Update wasm-bindgen and related dependencies
+# Update ALL dependencies before building
+echo "Updating ALL Stork dependencies..."
+cargo update # <-- Changed this line
 # Build Stork in release mode
 echo "Building Stork..."
 cargo build --release
@@ -45,5 +45,3 @@ pelican content -o output -s publishconf.py
 
 # Success message
 echo "Site build completed successfully!"
-
-
