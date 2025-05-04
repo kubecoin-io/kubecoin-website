@@ -12,7 +12,7 @@ cargo --version
 # --- Install Stork Binary ---
 echo "Installing Stork search binary..."
 # Define Stork version and target directory
-STORK_VERSION= "latest" # "v1.6.0" # Check https://github.com/jameslittle230/stork/releases for latest
+STORK_VERSION="v1.6.0" # Check https://github.com/jameslittle230/stork/releases for latest
 INSTALL_DIR="$HOME/.local/bin"
 mkdir -p "$INSTALL_DIR"
 # Download and extract Stork binary
