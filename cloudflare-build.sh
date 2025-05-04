@@ -14,7 +14,7 @@ cargo --version
 # --- Compile and Install Latest Stork from Source ---
 echo "Compiling and installing latest Stork search from source (main branch)..."
 # Clone the Stork repository's main branch
-git clone --depth 1 --branch main https://github.com/jameslittle230/stork.git stork-repo
+git clone --depth 1 --recursive --shallow-submodules https://github.com/jameslittle230/stork.git stork-repo
 cd stork-repo
 # Build Stork in release mode
 cargo build --release
