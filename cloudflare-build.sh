@@ -3,8 +3,10 @@ set -e
 
 # --- Install System Dependencies (like OpenSSL 1.1) ---
 echo "Updating package list and installing libssl1.1..."
-apt-get update -y
-apt-get install -y libssl1.1
+# Add sudo here
+sudo apt-get update -y
+# Add sudo here
+sudo apt-get install -y libssl1.1
 echo "libssl1.1 installation attempted."
 # --- End System Dependencies ---
 
