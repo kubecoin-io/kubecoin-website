@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 
 <head>
     <meta charset="utf-8" />
@@ -9,19 +9,19 @@
     <title>kubecoin.io | Categories</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
-    <link rel="stylesheet" type="text/css" href="/theme/css/main.css" />
-    <link rel="stylesheet" type="text/css" href="/theme/css/pygment.css" />
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/theme/css/stork.css">
+    <link rel="stylesheet" type="text/css" href="https://kubecoin.io/theme/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://kubecoin.io/theme/css/pygment.css" />
+    <link rel="shortcut icon" href="https://kubecoin.io/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://kubecoin.io/theme/css/stork.css">
     <link rel="stylesheet" media="screen and (prefers-color-scheme: dark)"
-        href="/theme/css/stork-dark.css">
-    <link
-        href="/feeds/all.atom.xml"
-        type="application/atom+xml" rel="alternate" title="kubecoin.io Atom Feed" />
+        href="https://kubecoin.io/theme/css/stork-dark.css">
+    <style>
+        /* Basic styling for the new layout - will be refined with Tailwind */
+        /* Removed empty rulesets that were here */
+    </style>
 </head>
 
-<body class="min-h-screen flex flex-col max-w-7xl lg:max-w-none text-zinc-800 bg-neutral-100 
-    dark:bg-neutral-900 dark:text-zinc-300 container mx-auto justify-center md:px-3 ">
+<body class="h-full bg-neutral-100 dark:bg-neutral-900 text-zinc-800 dark:text-zinc-300">
     <script>
         if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia(
                 '(prefers-color-scheme: dark)').matches)) {
@@ -30,60 +30,108 @@
             document.documentElement.classList.remove('dark')
         }
     </script>
-    <nav class="sm:flex sm:justify-between xl:ml-32 pl-4 items-center">
-        <div class="flex pt-4">
-            <h1 class="font-semibold text-2xl"><a href="/">kubecoin.io</a></h1>
-            <button id="theme-toggle" type="button" aria-label="Light|Dark"
-                class="text-zinc-700 dark:text-zinc-400 rounded-full focus:outline-none text-sm ml-2 p-1">
-                <svg id="theme-toggle-dark-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-                </svg>
-                <svg id="theme-toggle-light-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
-                        fill-rule="evenodd" clip-rule="evenodd"></path>
-                </svg>
-            </button>
-        </div>
-        <ul class="flex flex-wrap lg:mr-24 md:pt-0">
-            <li class="mr-4 pt-6"><a  href="/pages/about-us.html">"About Us"</a></li>
-            <li class="mr-4 pt-6"><a  href="/archives.html">Archive</a></li>
-            <li class="mr-4 pt-6"><a                     class="border-b-2 border-zinc-800 dark:border-zinc-300"                     href="/categories.html">Categories</a></li>
-            <li class="mr-4 pt-6"><a  href="/tags.html">Tags</a></li>
-            <li class="mr-4 pt-6"><a  href="/search.html">Search</a></li>
-        </ul>
-    </nav>
-    <div class="flex-grow md:max-w-screen-md md:mx-auto md:w-3/4 px-4">
+
+    <div class="flex flex-col h-screen">
+        <!-- Top Bar -->
+        <header class="top-bar shadow-md z-10 bg-neutral-100 dark:bg-neutral-900">
+            <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+                <div class="flex items-center">
+                    <a href="https://kubecoin.io/" class="flex items-center">
+                        <img src="https://kubecoin.io/images/uploads/favicon-96x96.png" alt="kubecoin.io logo" class="h-8 w-8 mr-3">
+                        <h1 class="font-semibold text-xl text-zinc-800 dark:text-zinc-200">kubecoin.io</h1>
+                    </a>
+                </div>
+                
+                <div class="flex items-center">
+                    <!-- Search Bar Placeholder -->
+                    <div class="mr-4">
+                        <input type="text" placeholder="Search..." class="px-2 py-1 border rounded dark:bg-neutral-800 dark:border-neutral-700">
+                    </div>
+                    
+                    <!-- Theme Toggle Button -->
+                    <button id="theme-toggle" type="button" aria-label="Light|Dark"
+                        class="text-zinc-700 dark:text-zinc-400 rounded-full focus:outline-none text-sm p-1">
+                        <svg id="theme-toggle-dark-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                        </svg>
+                        <svg id="theme-toggle-light-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+
+                    <!-- Social Icons Placeholder (from old nav) -->
+                    <ul class="flex items-center ml-4">
+                                <li class="mr-3">
+                                    <a href="https://github.com/KubeCoin-io" target="_blank" rel="noopener noreferrer" aria-label="Github" class="text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200">
+<i class="fab fa-github fa-lg"></i>                                    </a>
+                                </li>
+                                <li class="mr-3">
+                                    <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Discord" class="text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200">
+<i class="fab fa-discord fa-lg"></i>                                    </a>
+                                </li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Area -->
+        <div class="flex flex-1 overflow-hidden">
+            <!-- Left Sidebar -->
+            <aside class="left-sidebar w-64 p-4 overflow-y-auto bg-neutral-50 dark:bg-neutral-800 shadow lg:block hidden">
+                <h2 class="text-lg font-semibold mb-4 text-zinc-800 dark:text-zinc-200">Navigation</h2>
+                <ul class="space-y-2">
+                        <li><a href="https://kubecoin.io/pages/about-us.html" class="block px-3 py-2 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 ">"About Us"</a></li>
+                    <li><a href="https://kubecoin.io/archives.html" class="block px-3 py-2 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 ">Archive</a></li>
+                    <li><a href="https://kubecoin.io/categories.html" class="block px-3 py-2 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 bg-neutral-200 dark:bg-neutral-700">Categories</a></li>
+                    <li><a href="https://kubecoin.io/tags.html" class="block px-3 py-2 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 ">Tags</a></li>
+                    <li><a href="https://kubecoin.io/search.html" class="block px-3 py-2 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 ">Search (Old)</a></li>
+                    <!-- More links can be added here, perhaps with icons -->
+                </ul>
+            </aside>
+
+            <!-- Primary Content Column -->
+            <main class="main-content flex-1 p-6 overflow-y-auto">
+                <!-- Breadcrumbs (from old layout) -->
+                
 
 <div class="mb-12 md:mt-14 text-zinc-800 dark:text-zinc-300">
     <h1 class="font-bold text-4xl my-10">Categories</h1>
     <ul class="flex flex-wrap font-medium">
         <li
             class="bg-zinc-300 dark:bg-neutral-700 text-zinc-800 dark:text-zinc-300 hover:bg-zinc-400 dark:hover:bg-zinc-800 m-2 py-2 px-2 md:px-4 rounded-md transition ease-in active:-translate-y-1 active:scale-110 duration-75">
-            <a href="/category/posts.html">
+            <a href="https://kubecoin.io/category/posts.html">
                 posts<sup class="p-1">2</sup>
             </a>
         </li>
     </ul>
 </div>
 
-    </div>
-    <footer class="flex w-full text-xs justify-center mt-10 mb-6 text-zinc-600 dark:text-zinc-400">
-        <div class="px-4">
-            <span></span>Powered by
-            <a class="underline" href="https://getpelican.com/">Pelican</a>&nbsp;&
-            <a class="underline" href="https://github.com/aleylara/Papyrus">Papyrus</a>
+            </main>
+
+            <!-- Right Sidebar (Placeholder) -->
+            <aside class="right-sidebar w-64 p-4 overflow-y-auto bg-neutral-50 dark:bg-neutral-800 shadow lg:block hidden">
+                <h2 class="text-lg font-semibold mb-4 text-zinc-800 dark:text-zinc-200">On this page</h2>
+                <!-- TOC will go here -->
+                    <p class="text-sm text-zinc-500 dark:text-zinc-400">No table of contents for this page.</p>
+            </aside>
         </div>
-    </footer>
+
+        <!-- Footer (kept minimal for now, might be part of main content scroll or fixed) -->
+        <footer class="flex w-full text-xs justify-center py-4 text-zinc-600 dark:text-zinc-400 border-t border-neutral-200 dark:border-neutral-700">
+            <div class="px-4">
+                <span></span>Powered by
+                <a class="underline" href="https://getpelican.com/">Pelican</a>&nbsp;&
+                <a class="underline" href="https://github.com/aleylara/Papyrus">Papyrus</a> (heavily modified)
+            </div>
+        </footer>
+    </div>
 
 
     <script>
+        // Theme toggle script (existing)
         let themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
         let themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia(
-                '(prefers-color-scheme: dark)').matches)) {
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             themeToggleLightIcon.classList.remove('hidden');
         } else {
             themeToggleDarkIcon.classList.remove('hidden');
@@ -110,7 +158,6 @@
                 }
             }
         });
-    </script>
+    </script> 
 </body>
-
 </html>
