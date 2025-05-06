@@ -56,7 +56,8 @@ LINKS = (
 
 # Social widget - Update these
 SOCIAL = (
-    ("github", "https://github.com/kubecoin-io"),
+    ("github", "https://github.com/KubeCoin-io"),
+    ("discord", "#"), # Placeholder for Discord link
     # ("twitter", "https://twitter.com/your-profile"),
 )
 
