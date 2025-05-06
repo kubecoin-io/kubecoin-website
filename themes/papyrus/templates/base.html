@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="{% block html_lang %}{{ DEFAULT_LANG }}{% endblock html_lang %}" class="h-full">
+
+<head>
+    {% block head %}
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content="Pelican" />
+    <meta name="description" content="{{ SITENAME }} Blog Posts">
+    <title>{% block title %} {{ SITENAME }} {% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
+    <link rel="stylesheet" type="text/css" href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/pygment.css" />
+    <link rel="shortcut icon" href="{{ SITEURL }}/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/stork.css">
+    <link rel="stylesheet" media="screen and (prefers-color-scheme: dark)"
+        href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/stork-dark.css">
+    {% if FEED_ALL_ATOM %}
+    <link
+        href="{{ FEED_DOMAIN }}/{% if FEED_ALL_ATOM_URL %}{{ FEED_ALL_ATOM_URL }}{% else %}{{ FEED_ALL_ATOM }}{% endif %}"
+        type="application/atom+xml" rel="alternate" title="{{ SITENAME }} Atom Feed" />
+    {% endif %}
+    {% if FEED_ALL_RSS %}
+    <link
+        href="{{ FEED_DOMAIN }}/{% if FEED_ALL_RSS_URL %}{{ FEED_ALL_RSS_URL }}{% else %}{{ FEED_ALL_RSS }}{% endif %}"
+        type="application/rss+xml" rel="alternate" title="{{ SITENAME }} RSS Feed" />
+    {% endif %}
+    <style>
+        /* Basic styling for the new layout - will be refined with Tailwind */
+        /* Removed empty rulesets that were here */
+    </style>
+    {% endblock head %}
+</head>
+
+<body class="h-full bg-neutral-100 dark:bg-neutral-900 text-zinc-800 dark:text-zinc-300">
+    <script>
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia(
+                '(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
+
+    <div class="flex flex-col h-screen">
+        <!-- Top Bar -->
+        <header class="top-bar shadow-md z-10 bg-neutral-100 dark:bg-neutral-900">
+            <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+                <div class="flex items-center">
+                    <a href="{{ SITEURL }}/" class="flex items-center">
+                        <img src="{{ SITEURL }}/images/uploads/favicon-96x96.png" alt="{{ SITENAME }} logo" class="h-8 w-8 mr-3">
+                        <h1 class="font-semibold text-xl text-zinc-800 dark:text-zinc-200">{{ SITENAME }}</h1>
+                    </a>
+                </div>
+                
+                <div class="flex items-center">
+                    <!-- Search Bar Placeholder -->
+                    <div class="mr-4">
+                        <input type="text" placeholder="Search..." class="px-2 py-1 border rounded dark:bg-neutral-800 dark:border-neutral-700">
+                    </div>
+                    
+                    <!-- Theme Toggle Button -->
+                    <button id="theme-toggle" type="button" aria-label="Light|Dark"
+                        class="text-zinc-700 dark:text-zinc-400 rounded-full focus:outline-none text-sm p-1">
+                        <svg id="theme-toggle-dark-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                        </svg>
+                        <svg id="theme-toggle-light-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+
+                    <!-- Social Icons Placeholder (from old nav) -->
+                    <ul class="flex items-center ml-4">
+                        {% if SOCIAL %}
+                            {% for name, link in SOCIAL %}
+                                <li class="mr-3">
+                                    <a href="{{ link }}" target="_blank" rel="noopener noreferrer" aria-label="{{ name|capitalize }}" class="text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200">
+                                        {% if name == 'github' %}<i class="fab fa-github fa-lg"></i>{% endif %}
+                                        {% if name == 'discord' %}<i class="fab fa-discord fa-lg"></i>{% endif %}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Area -->
+        <div class="flex flex-1 overflow-hidden">
+            <!-- Left Sidebar -->
+            <aside class="left-sidebar w-64 p-4 overflow-y-auto bg-neutral-50 dark:bg-neutral-800 shadow lg:block hidden">
+                <h2 class="text-lg font-semibold mb-4 text-zinc-800 dark:text-zinc-200">Navigation</h2>
+                <ul class="space-y-2">
+                    {% if DISPLAY_PAGES_ON_MENU %}
+                        {% for p in pages %}
+                        <li><a href="{{ SITEURL }}/{{ p.url }}" class="block px-3 py-2 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 {% if p==page %}bg-neutral-200 dark:bg-neutral-700{% endif %}">{{ p.title }}</a></li>
+                        {% endfor %}
+                    {% endif %}
+                    <li><a href="{{ SITEURL }}/archives.html" class="block px-3 py-2 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 {% if current=='archive' %}bg-neutral-200 dark:bg-neutral-700{% endif %}">Archive</a></li>
+                    <li><a href="{{ SITEURL }}/categories.html" class="block px-3 py-2 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 {% if current=='categories' %}bg-neutral-200 dark:bg-neutral-700{% endif %}">Categories</a></li>
+                    <li><a href="{{ SITEURL }}/tags.html" class="block px-3 py-2 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 {% if current=='tags' %}bg-neutral-200 dark:bg-neutral-700{% endif %}">Tags</a></li>
+                    <li><a href="{{ SITEURL }}/search.html" class="block px-3 py-2 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 {% if current=='search' %}bg-neutral-200 dark:bg-neutral-700{% endif %}">Search (Old)</a></li>
+                    <!-- More links can be added here, perhaps with icons -->
+                </ul>
+            </aside>
+
+            <!-- Primary Content Column -->
+            <main class="main-content flex-1 p-6 overflow-y-auto">
+                <!-- Breadcrumbs (from old layout) -->
+                {% if article %}
+                <nav class="text-zinc-800 dark:text-zinc-300 mb-6" aria-label="Breadcrumb">
+                    <ul class="p-0 inline-flex items-center">
+                        <li class="flex items-center">
+                            <a href="{{ SITEURL }}/" class="text-zinc-800 dark:text-zinc-300 inline-flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>Home
+                            </a><svg class="fill-current w-3 h-3 mr-2 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z" /></svg>
+                        </li>
+                        <li class="flex items-center"><a href="{{ SITEURL }}/categories.html">Categories</a><svg class="fill-current w-3 h-3 mr-2 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z" /></svg></li>
+                        <li class="flex items-center"><a href="{{ SITEURL }}/{{category.url}}">{{ category }}</a></li>
+                    </ul>
+                </nav>
+                {% elif tag %}
+                <nav class="text-zinc-800 dark:text-zinc-300 mb-6" aria-label="Breadcrumb">
+                    <ul class="p-0 inline-flex">
+                        <li class="flex items-center"><a href="{{ SITEURL }}/" class="text-zinc-800 dark:text-zinc-300 inline-flex items-center"><svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>Home</a><svg class="fill-current w-3 h-3 mr-2 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z" /></svg></li>
+                        <li class="flex items-center"><a href="{{ SITEURL }}/tags.html">Tags</a><svg class="fill-current w-3 h-3 mr-2 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z" /></svg></li>
+                        <li class="border-b-2 border-zinc-800 dark:border-zinc-300">{{ tag }}</li>
+                    </ul>
+                </nav>
+                {% elif page and page.url != 'index.html' %} {# Avoid breadcrumbs on homepage #}
+                <nav class="text-zinc-800 dark:text-zinc-300 mb-6" aria-label="Breadcrumb">
+                    <ul class="p-0 inline-flex">
+                        <li class="flex items-center"><a href="{{ SITEURL }}/" class="text-zinc-800 dark:text-zinc-300 inline-flex items-center"><svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>Home</a><svg class="fill-current w-3 h-3 mr-2 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z" /></svg></li>
+                        <li class="border-b-2 border-zinc-800 dark:border-zinc-300">{{page.title}}</li>
+                    </ul>
+                </nav>
+                {% elif category %}
+                <nav class="text-zinc-800 dark:text-zinc-300 mb-6" aria-label="Breadcrumb">
+                    <ul class="p-0 inline-flex">
+                        <li class="flex items-center"><a href="{{ SITEURL }}/" class="text-zinc-800 dark:text-zinc-300 inline-flex items-center"><svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>Home</a><svg class="fill-current w-3 h-3 mr-2 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z" /></svg></li>
+                        <li class="flex items-center"><a href="{{ SITEURL }}/categories.html">Categories</a><svg class="fill-current w-3 h-3 mr-2 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z" /></svg></li>
+                        <li class="border-b-2 border-zinc-800 dark:border-zinc-300">{{ category }}</li>
+                    </ul>
+                </nav>
+                {% endif %}
+                
+                {% block content %} {% endblock %}
+            </main>
+
+            <!-- Right Sidebar (Placeholder) -->
+            <aside class="right-sidebar w-64 p-4 overflow-y-auto bg-neutral-50 dark:bg-neutral-800 shadow lg:block hidden">
+                <h2 class="text-lg font-semibold mb-4 text-zinc-800 dark:text-zinc-200">On this page</h2>
+                <!-- TOC will go here -->
+                {% if article and article.toc %}
+                    <div class="prose dark:prose-invert">
+                        {{ article.toc }}
+                    </div>
+                {% else %}
+                    <p class="text-sm text-zinc-500 dark:text-zinc-400">No table of contents for this page.</p>
+                {% endif %}
+            </aside>
+        </div>
+
+        <!-- Footer (kept minimal for now, might be part of main content scroll or fixed) -->
+        <footer class="flex w-full text-xs justify-center py-4 text-zinc-600 dark:text-zinc-400 border-t border-neutral-200 dark:border-neutral-700">
+            <div class="px-4">
+                <span>{% if COPYRIGHT %}{{ COPYRIGHT }}&nbsp;&#8226;&nbsp;{% endif %}</span>Powered by
+                <a class="underline" href="https://getpelican.com/">Pelican</a>&nbsp;&
+                <a class="underline" href="https://github.com/aleylara/Papyrus">Papyrus</a> (heavily modified)
+            </div>
+        </footer>
+    </div>
+
+    {% include 'analytics.html' ignore missing %}
+    {% include 'disqus_script.html' ignore missing %}
+
+    <script>
+        // Theme toggle script (existing)
+        let themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        let themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            themeToggleLightIcon.classList.remove('hidden');
+        } else {
+            themeToggleDarkIcon.classList.remove('hidden');
+        }
+        let themeToggleBtn = document.getElementById('theme-toggle');
+        themeToggleBtn.addEventListener('click', function () {
+            themeToggleDarkIcon.classList.toggle('hidden');
+            themeToggleLightIcon.classList.toggle('hidden');
+            if (localStorage.getItem('color-theme')) {
+                if (localStorage.getItem('color-theme') === 'light') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                }
+            } else {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                }
+            }
+        });
+    </script> {# End of theme toggle script #}
+
+    {# Stork Search (if on search page, might need adjustment for new layout) #}
+    {# This block is now separate from the theme toggle script #}
+    {% if current == "search" or "search.html" in output_file %} {# Adjusted condition #}
+    <script src="https://files.stork-search.net/releases/v1.6.0/stork.js"></script> {# Updated Stork JS version #}
+    <script>
+        stork.register("sitesearch", "{{ SITEURL }}/search-index.st");
+    </script>
+    {% endif %}
+</body>
+</html>
