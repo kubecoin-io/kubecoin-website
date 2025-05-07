@@ -25,6 +25,15 @@ cargo build --release
 # Install the compiled binary to a location in PATH
 cp target/release/stork $HOME/.cargo/bin/stork # Copy directly to cargo bin dir
 
+echo "Installing wasm-pack..."
+curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+export PATH="$HOME/.cargo/bin:$PATH" # Ensure wasm-pack is in PATH if installed to .cargo/bin by script
+
+echo "Building Stork Wasm assets..."
+cd stork-wasm
+make build_browser_assets
+cd .. # Back to stork-repo root
+
 # --- Debug Stork asset paths ---
 echo "--- Debugging Stork asset paths ---"
 echo "Current directory: $(pwd)" # Should be /opt/buildhome/repo/stork-repo
