@@ -48,16 +48,21 @@ cd .. # Back to stork-repo root
 echo "Creating web-assets directory and populating it..."
 rm -rf web-assets # Clean up if it exists from a partial previous run
 mkdir -p web-assets
-cp stork-wasm/pkg/stork.js web-assets/stork.js
-# wasm-pack usually outputs as <name>_bg.wasm
-if [ -f "stork-wasm/pkg/stork_bg.wasm" ]; then
-    cp stork-wasm/pkg/stork_bg.wasm web-assets/stork.wasm
-else
-    echo "Warning: stork_bg.wasm not found, looking for stork.wasm in pkg"
-    cp stork-wasm/pkg/stork.wasm web-assets/stork.wasm # Fallback, just in case
-fi
+
+# Debugging: List contents of pkg directory to confirm generated file names
+echo "Current directory before copying assets: $(pwd)"
+echo "Listing contents of stork-wasm/ (should contain pkg/ and CSS files):"
+ls -A stork-wasm/
+echo "Listing contents of stork-wasm/pkg/:"
+ls -A stork-wasm/pkg/
+
+# Copy and rename assets from stork-wasm/pkg and stork-wasm/
+# based on Stork's own Makefile logic (wasm crate name is stork-wasm)
+cp stork-wasm/pkg/stork_wasm.js web-assets/stork.js
+cp stork-wasm/pkg/stork_wasm_bg.wasm web-assets/stork.wasm
 cp stork-wasm/stork.css web-assets/basic.css
 cp stork-wasm/dark.css web-assets/dark.css
+
 echo "web-assets populated."
 
 # --- Debug Stork asset paths ---
