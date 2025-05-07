@@ -1,0 +1,41 @@
+backend:
+  name: github
+  repo: kubecoin-io/kubecoin-website # Make sure this is correct
+  branch: main # Make sure this is correct
+  base_url: "https://kubecoin.io" # Your site's base URL
+  auth_endpoint: "/api/auth"      # Your Cloudflare auth function endpoint
+  app_id: "Ov23liNXJUIuHjXxeoeN" # Your GitHub OAuth App ID
+
+# Media files configuration
+# Files will be saved in "content/images/uploads"
+# And accessed via "/images/uploads/filename.jpg" on the site
+media_folder: "content/images/uploads" # Store uploads inside the 'images' static path
+public_folder: "/images/uploads"       # URL path relative to SITEURL
+
+collections:
+  # Collection for Blog Posts
+  - name: "posts"           # Unique identifier for the collection
+    label: "Blog Posts"     # Display name in the CMS UI
+    folder: "content/posts" # Location of posts based on pelicanconf.py
+    create: true            # Allow creating new posts
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}" # Filename format (adjust if needed)
+    fields:                 # Define the metadata fields and body
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Publish Date", name: "date", widget: "datetime", format: "YYYY-MM-DD HH:mm:ss", dateFormat: "YYYY-MM-DD", timeFormat: "HH:mm:ss" } # Pelican date format
+      - { label: "Category", name: "category", widget: "string", required: false }
+      - { label: "Tags", name: "tags", widget: "list", required: false, hint: "Comma-separated list (e.g., tech, news)" }
+      - { label: "Slug", name: "slug", widget: "string", required: false, hint: "URL-friendly identifier (optional, auto-generates from title if blank)" }
+      - { label: "Author", name: "author", widget: "string", required: false, default: "Kubecoin" } # Default author
+      - { label: "Summary", name: "summary", widget: "text", required: false }
+      - { label: "Body", name: "body", widget: "markdown" } # The main content
+
+  # Optional: Collection for Static Pages
+  - name: "pages"
+    label: "Pages"
+    folder: "content/pages" # Location of pages based on pelicanconf.py
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Slug", name: "slug", widget: "string", hint: "URL-friendly identifier (e.g., about-us)" }
+      - { label: "Body", name: "body", widget: "markdown" }

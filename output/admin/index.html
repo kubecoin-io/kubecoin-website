@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KubeCoin Content Manager</title>
+  <style>
+    .loading {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 20px;
+      border-radius: 5px;
+      margin: 20px;
+      max-width: 600px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading message -->
+  <div class="loading" id="loading">Loading Decap CMS...</div>
+  
+  <!-- Error container -->
+  <div id="error" style="display: none;" class="error"></div>
+  
+  <!-- Debug element -->
+  <div id="debug" style="display: none; position: fixed; bottom: 0; right: 0; background: #333; color: white; padding: 10px; font-family: monospace; max-width: 400px; max-height: 200px; overflow: auto;"></div>
+  
+  <!-- Mount point -->
+  <div id="nc-root"></div>
+
+  <script>
+    // Global flags
+    window.cmsInitialized = false;
+    window.cmsScriptReady = false;
+    let cmsCheckInterval = null;
+
+    function debug(message) {
+      console.log(message);
+      var debugEl = document.getElementById('debug');
+      if (debugEl) {
+        debugEl.style.display = 'block';
+        debugEl.innerHTML += message + '<br>';
+      }
+    }
+
+    // Function to attempt initialization ONLY when CMS script is ready
+    function tryInitialize() {
+        if (window.cmsScriptReady) {
+            debug("CMS Script is ready. Attempting initialization...");
+            initializeDecapCMS();
+        } else {
+            debug(`Initialization deferred: CMS Script Ready=${window.cmsScriptReady}`);
+        }
+    }
+
+    // Function to initialize CMS safely
+    function initializeDecapCMS() {
+      debug("Running final initialization checks...");
+      if (window.cmsInitialized) {
+        debug("CMS already initialized, skipping.");
+        return;
+      }
+      if (!document.getElementById('nc-root')) {
+         debug("⚠️ Error: #nc-root element not found for initialization.");
+         showTimeoutError("Mount Point Error", "Required #nc-root element not found.");
+         return;
+      }
+
+      debug("All checks passed. Initializing Decap CMS (implicit config)...");
+      try {
+        document.getElementById('nc-root').innerHTML = '';
+        CMS.init();
+        window.cmsInitialized = true;
+        debug("CMS.init() called successfully (implicit config).");
+        var loadingEl = document.getElementById('loading');
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (cmsCheckInterval) clearInterval(cmsCheckInterval);
+      } catch (e) {
+        debug("⚠️ Error during CMS.init(): " + e.message);
+        showTimeoutError("Initialization Error", `<pre>${e.stack || e}</pre>`);
+        if (cmsCheckInterval) clearInterval(cmsCheckInterval);
+      }
+    }
+
+    // Function to display the timeout/failure message with buttons
+    function showTimeoutError(title = "CMS Timeout/Error", message = "CMS failed to initialize correctly.") {
+        if (cmsCheckInterval) clearInterval(cmsCheckInterval);
+
+        var loadingEl = document.getElementById('loading');
+        var errorEl = document.getElementById('error');
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (errorEl) {
+            if (errorEl.style.display !== 'block' || !errorEl.innerHTML.includes(title)) {
+                errorEl.style.display = 'block';
+                errorEl.innerHTML = `
+                  <h3>${title}</h3>
+                  <p>${message}</p>
+                  <p>Try clearing auth data and reloading, or check the debug info.</p>
+                  <button id="auth-button" style="padding: 10px; margin-top: 10px; background: #0366d6; color: white; border: none; border-radius: 4px; cursor: pointer;">Authenticate with GitHub</button>
+                  <button id="clear-button" style="padding: 10px; margin-top: 10px; margin-left: 10px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Clear Auth Data & Reload</button>
+                  <button id="debug-button" style="padding: 10px; margin-top: 10px; margin-left: 10px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Show/Hide Debug Info</button>
+                  <button id="retry-init-button" style="padding: 10px; margin-top: 10px; margin-left: 10px; background: #fd7e14; color: white; border: none; border-radius: 4px; cursor: pointer;">Retry Initialization</button>
+                `;
+                document.getElementById('auth-button')?.addEventListener('click', () => window.location.href = '/api/auth');
+                document.getElementById('clear-button')?.addEventListener('click', () => {
+                  debug("Clearing all auth data");
+                  localStorage.removeItem("netlify-cms-user");
+                  localStorage.removeItem("netlifyCmsGithubToken");
+                  window.location.reload();
+                });
+                document.getElementById('debug-button')?.addEventListener('click', () => {
+                  var debugEl = document.getElementById('debug');
+                  if(debugEl) debugEl.style.display = debugEl.style.display === 'none' ? 'block' : 'none';
+                });
+                document.getElementById('retry-init-button')?.addEventListener('click', () => {
+                   debug("Retrying CMS initialization...");
+                   window.cmsInitialized = false;
+                   if(errorEl) errorEl.style.display = 'none';
+                   if(loadingEl) loadingEl.style.display = 'flex';
+                   startCMSCheck();
+                   tryInitialize();
+                });
+            }
+        }
+    }
+
+    // --- Auth Token Handling ---
+    const storedToken = localStorage.getItem("netlifyCmsGithubToken");
+    if (storedToken) {
+      debug("Found stored GitHub token, applying to CMS");
+      try {
+        const authData = { token: storedToken, provider: "github" };
+        localStorage.setItem("netlify-cms-user", JSON.stringify(authData));
+        localStorage.removeItem("netlifyCmsGithubToken");
+        localStorage.removeItem("netlifyCmsGithubState");
+        debug("Auth data stored in expected format");
+      } catch (e) {
+        debug("⚠️ Error storing auth data: " + e.message);
+      }
+    } else {
+      debug("No stored GitHub token found");
+    }
+
+    // --- Global Error Handlers ---
+    window.addEventListener('error', function(event) { debug("⚠️ Global error: " + event.message); });
+    window.onerror = function(message, source, lineno, colno, error) { debug("⚠️ Window error: " + message); return false; };
+
+    // --- Check Config Accessibility (Optional but good practice) ---
+    debug("Checking config.yml accessibility...");
+    fetch('/admin/config.yml')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Failed to fetch config.yml: ${response.status}`);
+        }
+        debug("✓ config.yml is accessible.");
+      })
+      .catch(error => {
+        debug("⚠️ Warning: Could not verify config.yml accessibility: " + error.message);
+      });
+
+    // --- Function to Poll for CMS Object ---
+    function startCMSCheck() {
+        debug("Starting check for CMS object availability...");
+        if (cmsCheckInterval) clearInterval(cmsCheckInterval);
+
+        let checks = 0;
+        const maxChecks = 40;
+
+        cmsCheckInterval = setInterval(() => {
+            checks++;
+            if (typeof CMS !== 'undefined') {
+                debug("✓ CMS object is now defined.");
+                window.cmsScriptReady = true;
+                clearInterval(cmsCheckInterval);
+                tryInitialize();
+            } else if (checks >= maxChecks) {
+                debug("⚠️ Timeout waiting for CMS object to become defined.");
+                clearInterval(cmsCheckInterval);
+                const errorEl = document.getElementById('error');
+                if (!errorEl || errorEl.style.display === 'none' || !errorEl.innerHTML.includes("Script Load Error")) {
+                  showTimeoutError("CMS Script Load Error", "The Decap CMS script failed to load or execute within the expected time.");
+                }
+            } else {
+                if (checks % 4 === 0) {
+                    debug(`CMS object not yet defined, check ${checks}/${maxChecks}...`);
+                }
+            }
+        }, 250);
+    }
+
+    // --- Start Polling Immediately ---
+    startCMSCheck();
+
+    // --- Overall Timeout Check ---
+    setTimeout(function() {
+      debug("Checking overall initialization status via timeout...");
+      if (!window.cmsInitialized) {
+         debug("Overall timeout reached and CMS not initialized.");
+         showTimeoutError("CMS Timeout", "CMS failed to initialize within the overall time limit.");
+      } else {
+         debug("Overall timeout check: CMS appears to be initialized.");
+         const ncRoot = document.getElementById('nc-root');
+         if (!ncRoot || !ncRoot.hasChildNodes() || ncRoot.children.length === 0) {
+            debug("CMS initialized flag set, but UI elements not found in #nc-root. Showing error.");
+            showTimeoutError("CMS UI Render Error", "CMS initialization completed, but the UI failed to render inside #nc-root.");
+         } else {
+            debug("CMS UI elements found in #nc-root. All good.");
+            var loadingEl = document.getElementById('loading');
+            if (loadingEl) loadingEl.style.display = 'none';
+            var errorEl = document.getElementById('error');
+            if (errorEl) errorEl.style.display = 'none';
+         }
+      }
+    }, 18000);
+
+    // *** ADD THIS: Listen for messages from the OAuth callback window ***
+    window.addEventListener("message", (event) => {
+      // IMPORTANT: Check the origin for security
+      // Use the actual origin where your callback function resides
+      // For Cloudflare Pages, it should match window.location.origin
+      if (event.origin !== window.location.origin) {
+        debug(`⚠️ Received message from unexpected origin: ${event.origin}. Ignoring.`);
+        return;
+      }
+
+      debug(`Received message: type=${event.data.type}, provider=${event.data.provider}`);
+
+      // Check if it's the expected authorization response
+      if (event.data.type === "authorization_response" && event.data.provider === "github") {
+        if (event.data.token) {
+          debug("✅ Received authorization_response with token from callback.");
+
+          // *** START MANUAL STORAGE ***
+          try {
+            // Store the token using the key Decap CMS expects
+            const user = {
+              token: event.data.token,
+              // Decap might store other details, but token is key
+              backendName: "github",
+              login: "", // Usually filled later by CMS
+              name: "",  // Usually filled later by CMS
+              avatar_url: "" // Usually filled later by CMS
+            };
+            localStorage.setItem("decap-cms-user", JSON.stringify(user));
+            debug("Manually stored token in localStorage['decap-cms-user'].");
+          } catch (e) {
+            debug(`⚠️ Error manually storing token: ${e.message}`);
+          }
+          // *** END MANUAL STORAGE ***
+
+        } else if (event.data.error) {
+          debug(`⚠️ Received authorization_response with error: ${event.data.error}`);
+          showTimeoutError("Authentication Error", `Received error from callback: ${event.data.error}`);
+        } else {
+          debug("❓ Received authorization_response with unexpected structure.");
+        }
+      } else {
+        debug(`Received message of unknown type or provider: ${event.data.type}`);
+      }
+    }, false);
+    // *** END OF ADDED CODE ***
+
+  </script>
+
+  <!-- Use Decap CMS @latest -->
+  <script
+    src="https://unpkg.com/decap-cms@latest/dist/decap-cms.js"
+    onerror="console.error('FATAL: Failed to load decap-cms.js script!'); /* ... */"
+  ></script>
+</body>
+</html>
