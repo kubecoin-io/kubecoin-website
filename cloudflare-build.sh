@@ -21,7 +21,8 @@ git status
 echo "Ensuring we are on master and up to date..."
 git checkout master
 git pull origin master # Ensure it's the latest from master
-echo "Initializing and updating submodules recursively..."
+echo "Syncing and initializing/updating submodules recursively..."
+git submodule sync --recursive
 git submodule update --init --recursive # Ensures all submodules, including nested ones, are fetched
 
 # Update ALL dependencies before building
@@ -72,9 +73,9 @@ ls -A stork-wasm/pkg/
 # based on Stork's own Makefile logic (wasm crate name is stork-wasm)
 cp stork-wasm/pkg/stork_wasm.js web-assets/stork.js
 cp stork-wasm/pkg/stork_wasm_bg.wasm web-assets/stork.wasm
-# CSS files are in stork-wasm/static/css/
-cp stork-wasm/static/css/stork.css web-assets/basic.css
-cp stork-wasm/static/css/dark.css web-assets/dark.css
+# CSS files are in stork-wasm/static/ (after submodule checkout)
+cp stork-wasm/static/stork.css web-assets/basic.css # Corrected path and target name
+cp stork-wasm/static/dark.css web-assets/dark.css   # Corrected path
 
 echo "web-assets populated."
 
