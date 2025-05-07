@@ -16,6 +16,11 @@ STATIC_PATHS = ['images', 'extra', 'admin/index.html', 'admin/config.yml']
 DISPLAY_PAGES_ON_MENU = True
 DISPLAY_CATEGORIES_ON_MENU = False
 
+STORK_CONFIG = {
+    'SEARCH_USE_CDN': False,
+    # Add any other Stork-specific configurations here if needed
+}
+
 # --- Add/Modify this section for Favicons ---
 EXTRA_PATH_METADATA = {
     # Map the favicon from its source location to the output root

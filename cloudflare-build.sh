@@ -24,6 +24,20 @@ echo "Building Stork..."
 cargo build --release
 # Install the compiled binary to a location in PATH
 cp target/release/stork $HOME/.cargo/bin/stork # Copy directly to cargo bin dir
+
+# --- Copy Stork web assets to theme ---
+echo "Copying Stork web assets to theme..."
+THEME_ASSET_DIR="../themes/papyrus/static" # Relative path from stork-repo back to project then to theme
+mkdir -p "$THEME_ASSET_DIR/js"
+mkdir -p "$THEME_ASSET_DIR/css"
+# Assuming stork.js, basic.css, and dark.css are in the root of the stork-repo or standard subdirs
+# Adjust these paths if Stork project structure is different for web assets
+cp js/stork.js "$THEME_ASSET_DIR/js/stork.js"
+cp css/basic.css "$THEME_ASSET_DIR/css/stork.css" # Rename basic.css to stork.css
+cp css/dark.css "$THEME_ASSET_DIR/css/stork-dark.css" # Rename dark.css to stork-dark.css
+echo "Stork web assets copied."
+# --- End Copy Stork web assets ---
+
 cd .. # Go back to the project root
 rm -rf stork-repo # Clean up the cloned repo
 echo "Stork compiled and installed. Stork version:"
