@@ -21,6 +21,8 @@ git status
 echo "Ensuring we are on master and up to date..."
 git checkout master
 git pull origin master # Ensure it's the latest from master
+echo "Initializing and updating submodules recursively..."
+git submodule update --init --recursive # Ensures all submodules, including nested ones, are fetched
 
 # Update ALL dependencies before building
 echo "Updating ALL Stork dependencies..."
