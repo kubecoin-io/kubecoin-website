@@ -25,6 +25,18 @@ echo "Syncing and initializing/updating submodules recursively..."
 git submodule sync --recursive
 git submodule update --init --recursive # Ensures all submodules, including nested ones, are fetched
 
+echo "DEBUG: Listing contents of stork-repo AFTER submodule update:"
+ls -Al
+echo "DEBUG: Listing contents of stork-repo/stork-wasm AFTER submodule update:"
+ls -Al stork-wasm/
+echo "DEBUG: Checking for stork-repo/stork-wasm/static AFTER submodule update:"
+if [ -d "stork-wasm/static" ]; then
+    echo "DEBUG: stork-wasm/static directory FOUND. Contents:"
+    ls -Al stork-wasm/static/
+else
+    echo "DEBUG: stork-wasm/static directory STILL NOT FOUND after submodule update."
+fi
+
 # Update ALL dependencies before building
 echo "Updating ALL Stork dependencies..."
 cargo update
