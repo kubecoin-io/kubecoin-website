@@ -31,8 +31,23 @@ export PATH="$HOME/.cargo/bin:$PATH" # Ensure wasm-pack is in PATH if installed 
 
 echo "Building Stork Wasm assets..."
 cd stork-wasm
-make build-js # Changed target from build_browser_assets to build-js
+make build # Use the 'build' target
 cd .. # Back to stork-repo root
+
+echo "Creating web-assets directory and populating it..."
+rm -rf web-assets # Clean up if it exists from a partial previous run
+mkdir -p web-assets
+cp stork-wasm/pkg/stork.js web-assets/stork.js
+# wasm-pack usually outputs as <name>_bg.wasm
+if [ -f "stork-wasm/pkg/stork_bg.wasm" ]; then
+    cp stork-wasm/pkg/stork_bg.wasm web-assets/stork.wasm
+else
+    echo "Warning: stork_bg.wasm not found, looking for stork.wasm in pkg"
+    cp stork-wasm/pkg/stork.wasm web-assets/stork.wasm # Fallback, just in case
+fi
+cp stork-wasm/stork.css web-assets/basic.css
+cp stork-wasm/dark.css web-assets/dark.css
+echo "web-assets populated."
 
 # --- Debug Stork asset paths ---
 echo "--- Debugging Stork asset paths ---"
