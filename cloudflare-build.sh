@@ -25,6 +25,12 @@ echo "Syncing and initializing/updating submodules recursively..."
 git submodule sync --recursive
 git submodule update --init --recursive # Ensures all submodules, including nested ones, are fetched
 
+echo "DEBUG: Git submodule status AFTER update:"
+git submodule status --recursive
+
+echo "DEBUG: Finding stork.css and dark.css in stork-repo AFTER submodule update:"
+find . -name stork.css -print -o -name dark.css -print
+
 echo "DEBUG: Listing contents of stork-repo AFTER submodule update:"
 ls -Al
 echo "DEBUG: Listing contents of stork-repo/stork-wasm AFTER submodule update:"
