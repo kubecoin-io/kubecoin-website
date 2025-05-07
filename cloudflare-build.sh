@@ -32,9 +32,9 @@ mkdir -p "$THEME_ASSET_DIR/js"
 mkdir -p "$THEME_ASSET_DIR/css"
 # Assuming stork.js, basic.css, and dark.css are in the root of the stork-repo or standard subdirs
 # Adjust these paths if Stork project structure is different for web assets
-cp js/stork.js "$THEME_ASSET_DIR/js/stork.js"
-cp css/basic.css "$THEME_ASSET_DIR/css/stork.css" # Rename basic.css to stork.css
-cp css/dark.css "$THEME_ASSET_DIR/css/stork-dark.css" # Rename dark.css to stork-dark.css
+cp stork-cli/web-assets/stork.js "$THEME_ASSET_DIR/js/stork.js"
+cp stork-cli/web-assets/basic.css "$THEME_ASSET_DIR/css/stork.css" # Rename basic.css to stork.css
+cp stork-cli/web-assets/dark.css "$THEME_ASSET_DIR/css/stork-dark.css" # Rename dark.css to stork-dark.css
 echo "Stork web assets copied."
 # --- End Copy Stork web assets ---
 
