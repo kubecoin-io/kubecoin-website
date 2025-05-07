@@ -13,12 +13,18 @@ cargo --version
 
 # --- Compile and Install Latest Stork from Source ---
 echo "Compiling and installing latest Stork search from source (main branch)..."
-# Clone the Stork repository's main branch (removed --depth 1)
-git clone --recursive --shallow-submodules https://github.com/jameslittle230/stork.git stork-repo
+# Simplify clone, ensure it's not shallow for the main repo
+git clone https://github.com/jameslittle230/stork.git stork-repo # Removed --recursive, --shallow-submodules
 cd stork-repo
+echo "Current branch and status in stork-repo:"
+git status
+echo "Ensuring we are on main and up to date..."
+git checkout main
+git pull origin main # Ensure it's the latest from main
+
 # Update ALL dependencies before building
 echo "Updating ALL Stork dependencies..."
-cargo update # <-- Changed this line
+cargo update
 # Build Stork in release mode
 echo "Building Stork..."
 cargo build --release
@@ -34,7 +40,7 @@ cd stork-wasm
 
 echo "Current directory: $(pwd)"
 echo "Listing contents of stork-wasm (BEFORE wasm-pack build):"
-ls -A
+ls -Al # Use -Al for more details, including permissions and if 'static' is a link
 
 # Debug: Check if Makefile exists and print its contents
 if [ -f "Makefile" ]; then
