@@ -157,10 +157,19 @@ pip install --upgrade pip
 echo "Installing Python dependencies..."
 pip install -r dependencies.txt
 
+# Verify Stork is in PATH for Pelican
+echo "Verifying Stork availability for Pelican..."
+which stork
+stork --version
+
 # Generate site with Pelican
 echo "Generating site with Pelican..."
 # Use publishconf.py for final build settings (like SITEURL)
 pelican content -o output -s publishconf.py
+
+# Check for Stork index file in output
+echo "Listing contents of output directory to check for Stork index file (.st):"
+ls -l output/
 
 # Success message
 echo "Site build completed successfully!"
