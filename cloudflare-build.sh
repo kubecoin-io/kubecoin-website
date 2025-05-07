@@ -25,6 +25,50 @@ cargo build --release
 # Install the compiled binary to a location in PATH
 cp target/release/stork $HOME/.cargo/bin/stork # Copy directly to cargo bin dir
 
+# --- Debug Stork asset paths ---
+echo "--- Debugging Stork asset paths ---"
+echo "Current directory: $(pwd)" # Should be /opt/buildhome/repo/stork-repo
+
+echo "Checking for stork-cli directory in $(pwd):"
+if [ -d "stork-cli" ]; then
+    echo "stork-cli directory EXISTS."
+    echo "Listing contents of stork-cli/:"
+    ls -A stork-cli/
+    
+    echo "Checking for stork-cli/web-assets directory in $(pwd)/stork-cli/:"
+    if [ -d "stork-cli/web-assets" ]; then
+        echo "stork-cli/web-assets directory EXISTS."
+        echo "Listing contents of stork-cli/web-assets/:"
+        ls -A stork-cli/web-assets/
+        
+        echo "Full path check for stork.js: $(pwd)/stork-cli/web-assets/stork.js"
+        if [ -f "stork-cli/web-assets/stork.js" ]; then
+            echo "stork.js FOUND in stork-cli/web-assets/"
+        else
+            echo "stork.js NOT FOUND in stork-cli/web-assets/"
+        fi
+        
+        echo "Full path check for basic.css: $(pwd)/stork-cli/web-assets/basic.css"
+        if [ -f "stork-cli/web-assets/basic.css" ]; then
+            echo "basic.css FOUND in stork-cli/web-assets/"
+        else
+            echo "basic.css NOT FOUND in stork-cli/web-assets/"
+        fi
+
+        echo "Full path check for dark.css: $(pwd)/stork-cli/web-assets/dark.css"
+        if [ -f "stork-cli/web-assets/dark.css" ]; then
+            echo "dark.css FOUND in stork-cli/web-assets/"
+        else
+            echo "dark.css NOT FOUND in stork-cli/web-assets/"
+        fi
+    else
+        echo "stork-cli/web-assets directory DOES NOT EXIST in $(pwd)/stork-cli/."
+    fi
+else
+    echo "stork-cli directory DOES NOT EXIST in $(pwd)."
+fi
+echo "--- End Debugging Stork asset paths ---"
+
 # --- Copy Stork web assets to theme ---
 echo "Copying Stork web assets to theme..."
 THEME_ASSET_DIR="../themes/papyrus/static" # Relative path from stork-repo back to project then to theme
