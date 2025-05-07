@@ -31,7 +31,18 @@ export PATH="$HOME/.cargo/bin:$PATH" # Ensure wasm-pack is in PATH if installed 
 
 echo "Building Stork Wasm assets..."
 cd stork-wasm
-make build # Use the 'build' target
+
+# Debug: Check if Makefile exists and print its contents
+if [ -f "Makefile" ]; then
+    echo "Makefile exists in stork-wasm. Contents:"
+    cat Makefile
+else
+    echo "Makefile NOT FOUND in stork-wasm."
+fi
+
+echo "Attempting to build Wasm assets directly with wasm-pack..."
+wasm-pack build --target web --out-dir pkg
+
 cd .. # Back to stork-repo root
 
 echo "Creating web-assets directory and populating it..."
