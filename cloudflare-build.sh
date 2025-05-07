@@ -12,15 +12,15 @@ cargo --version
 # --- End Rust Installation ---
 
 # --- Compile and Install Latest Stork from Source ---
-echo "Compiling and installing latest Stork search from source (main branch)..."
+echo "Compiling and installing latest Stork search from source (master branch)..."
 # Simplify clone, ensure it's not shallow for the main repo
 git clone https://github.com/jameslittle230/stork.git stork-repo # Removed --recursive, --shallow-submodules
 cd stork-repo
 echo "Current branch and status in stork-repo:"
 git status
-echo "Ensuring we are on main and up to date..."
-git checkout main
-git pull origin main # Ensure it's the latest from main
+echo "Ensuring we are on master and up to date..."
+git checkout master
+git pull origin master # Ensure it's the latest from master
 
 # Update ALL dependencies before building
 echo "Updating ALL Stork dependencies..."
