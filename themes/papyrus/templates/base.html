@@ -215,7 +215,7 @@
     {% if current == "search" or "search.html" in output_file %} {# Adjusted condition #}
     <script src="{{ SITEURL }}/theme/js/stork.js"></script> {# Use local Stork JS #}
     <script>
-        stork.register("sitesearch", "{{ SITEURL }}/{{ SITENAME | lower }}.st"); // Use correct local index file name
+        stork.register("sitesearch", "{{ SITEURL }}/search-index.st"); // Use correct local index file name
     </script>
     {% endif %}
 </body>

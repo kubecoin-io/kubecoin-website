@@ -16,11 +16,16 @@ STATIC_PATHS = ['images', 'extra', 'admin/index.html', 'admin/config.yml']
 DISPLAY_PAGES_ON_MENU = True
 DISPLAY_CATEGORIES_ON_MENU = False
 
-# Add this setting for pelican-search to know what content to index
-SEARCH_HTML_SELECTOR = "main" 
+# New setting to replace SEARCH_HTML_SELECTOR
+STORK_INPUT_OPTIONS = {
+    'html_selector': 'main'
+}
+
 STORK_CONFIG = {
     'SEARCH_USE_CDN': False,
     # Add any other Stork-specific configurations here if needed
+    # For example, to specify the output file name if it's not the default SITENAME.st:
+    # 'OUTPUT_FILENAME': 'kubecoin.st', # This would override the default
 }
 
 # --- Add/Modify this section for Favicons ---
