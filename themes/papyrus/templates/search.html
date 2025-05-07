@@ -1,24 +1,98 @@
 {% extends "base.html" %}
+{% block title %}Search - {{ SITENAME }}{% endblock %}
 
-{% block title %}Search | {{ SITENAME }}{% endblock %}
-{% set current = "search" %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" type="text/css" href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/stork.css">
+  <link rel="stylesheet" type="text/css" href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/stork-dark.css">
+  <style>
+    /* Optional: Add some basic styling for the search page layout */
+    .stork-wrapper {
+      margin: 2em auto;
+      max-width: 800px;
+      padding: 0 1em;
+    }
+    .stork-input {
+      width: 100%;
+      padding: 0.75em 1em;
+      font-size: 1.1em;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 1em;
+    }
+    .stork-output {
+      margin-top: 1em;
+    }
+    .stork-output ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    .stork-output li {
+      border-bottom: 1px solid #eee;
+      padding: 0.75em 0;
+    }
+    .stork-output li:last-child {
+      border-bottom: none;
+    }
+    .stork-output a {
+      text-decoration: none;
+      color: #333;
+    }
+    .stork-output a:hover {
+      text-decoration: underline;
+    }
+    .stork-output .title {
+      font-weight: bold;
+      font-size: 1.1em;
+      display: block;
+      margin-bottom: 0.25em;
+    }
+    .stork-output .excerpt {
+      font-size: 0.9em;
+      color: #555;
+    }
+    /* Dark theme adjustments for Stork output if needed */
+    .dark .stork-input {
+        border-color: #555;
+        background-color: #333;
+        color: #f1f1f1;
+    }
+    .dark .stork-output a {
+        color: #f1f1f1;
+    }
+    .dark .stork-output .excerpt {
+        color: #aaa;
+    }
+    .dark .stork-output li {
+        border-bottom-color: #444;
+    }
+  </style>
+{% endblock %}
 
 {% block content %}
+<article class="prose dark:prose-invert max-w-none">
+  <h1 class="text-center">Search</h1>
+  <div class="stork-wrapper">
+    <input data-stork="kubecoin-search" class="stork-input" placeholder="Enter search query...">
+    <div data-stork="kubecoin-search-output" class="stork-output"></div>
+  </div>
+</article>
 
-<div class="relative mb-12 md:mt-14 text-zinc-800 dark:text-zinc-300">
-    <h1 class="flex font-bold my-10 text-4xl mb-12 md:my-12 text-zinc-800 dark:text-zinc-300">Search&nbsp;
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-            stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-    </h1>
-    <div class="stork-wrapper">
-        <input
-            class="font-semibold h-10 w-full border-2 border-zinc-500  bg-zinc-100 dark:bg-zinc-800 placeholder-zinc-400 dark:placeholder-zinc-300 focus:border-zinc-500 focus:outline-none rounded-lg pl-4"
-            data-stork="sitesearch" autofocus="" placeholder=" Search ↵" aria-label="search" type="search">
-        <div data-stork="sitesearch-output" class=""></div>
-    </div>
-</div>
-
+<script src="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/js/stork.js"></script>
+<script>
+  stork.register('kubecoin-search', '{{ SITEURL }}/search-index.st', {
+    showProgress: true,
+    // Optional: Customize how results are displayed or handled
+    // onQueryUpdate: (query, results) => {
+    //     console.log(`Query: ${query}, Results:`, results);
+    // },
+    onResultSelected: (query, result) => {
+        console.log(`Query: ${query}, Selected:`, result);
+        window.location.assign(result.entry.url);
+    },
+    // Optional: if you want to show excerpts
+    // showScores: true, 
+    // minimumQueryLength: 3,
+  });
+</script>
 {% endblock %}
