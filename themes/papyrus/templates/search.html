@@ -3,68 +3,15 @@
 
 {% block head %}
   {{ super() }}
-  <link rel="stylesheet" type="text/css" href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/stork.css">
-  <link rel="stylesheet" type="text/css" href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/stork-dark.css">
+  {# Stork CSS is loaded in base.html if we make header search primary #}
+  {# You can keep specific styles for the .stork-wrapper if you intend to use it #}
   <style>
     /* Optional: Add some basic styling for the search page layout */
     .stork-wrapper {
       margin: 2em auto;
       max-width: 800px;
       padding: 0 1em;
-    }
-    .stork-input {
-      width: 100%;
-      padding: 0.75em 1em;
-      font-size: 1.1em;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      margin-bottom: 1em;
-    }
-    .stork-output {
-      margin-top: 1em;
-    }
-    .stork-output ul {
-      list-style-type: none;
-      padding-left: 0;
-    }
-    .stork-output li {
-      border-bottom: 1px solid #eee;
-      padding: 0.75em 0;
-    }
-    .stork-output li:last-child {
-      border-bottom: none;
-    }
-    .stork-output a {
-      text-decoration: none;
-      color: #333;
-    }
-    .stork-output a:hover {
-      text-decoration: underline;
-    }
-    .stork-output .title {
-      font-weight: bold;
-      font-size: 1.1em;
-      display: block;
-      margin-bottom: 0.25em;
-    }
-    .stork-output .excerpt {
-      font-size: 0.9em;
-      color: #555;
-    }
-    /* Dark theme adjustments for Stork output if needed */
-    .dark .stork-input {
-        border-color: #555;
-        background-color: #333;
-        color: #f1f1f1;
-    }
-    .dark .stork-output a {
-        color: #f1f1f1;
-    }
-    .dark .stork-output .excerpt {
-        color: #aaa;
-    }
-    .dark .stork-output li {
-        border-bottom-color: #444;
+      /* This class might not be used if search.html content is minimal */
     }
   </style>
 {% endblock %}
@@ -72,64 +19,14 @@
 {% block content %}
 <article class="prose dark:prose-invert max-w-none">
   <h1 class="text-center">Search</h1>
-  <div class="stork-wrapper">
-    <input data-stork="kubecoin-search" class="stork-input" placeholder="Enter search query...">
-    <div data-stork="kubecoin-search-output" class="stork-output"></div>
-  </div>
+  {# The actual search input and output will be in the header via base.html #}
+  <p class="text-center">Use the search bar in the header to find content.</p>
+  {#
+    If you want search.html to also display results from the header search,
+    you would need more advanced JavaScript to sync them or make Stork
+    target multiple output areas, which is more complex.
+    For now, let's assume results appear in the header's dropdown/overlay.
+  #}
 </article>
 
-<header class="top-bar shadow-md z-10 bg-neutral-100 dark:bg-neutral-900">
-    <div class="container mx-auto px-4 h-16 flex items-center justify-between">
-        <div class="flex items-center">
-            <a href="{{ SITEURL }}" class="text-xl font-bold text-zinc-800 dark:text-zinc-200 hover:text-zinc-600 dark:hover:text-zinc-400 mr-6">
-                {% if SITELOGO %}
-                <img src="{{ SITEURL }}/{{ SITELOGO }}" alt="{{ SITENAME }}" class="h-8 w-auto">
-                {% else %}
-                {{ SITENAME }}
-                {% endif %}
-            </a>
-            <!-- Functional Stork Search Bar in Header -->
-            <div class="mr-4 relative">
-                <input type="text" data-stork="sitesearch" placeholder="Search..." class="px-2 py-1 border rounded dark:bg-neutral-800 dark:border-neutral-700 w-64">
-                <div data-stork="sitesearch-output" class="absolute mt-1 w-full rounded-md shadow-lg bg-white dark:bg-zinc-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-20" style="max-height: 300px; overflow-y: auto;">
-                    <!-- Stork results will appear here -->
-                </div>
-            </div>
-        </div>
-    </div>
-</header>
-
-<script src="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/js/stork.js"></script>
-<script>
-  stork.register('kubecoin-search', '{{ SITEURL }}/search-index.st', {
-    showProgress: true,
-    // Optional: Customize how results are displayed or handled
-    // onQueryUpdate: (query, results) => {
-    //     console.log(`Query: ${query}, Results:`, results);
-    // },
-    onResultSelected: (query, result) => {
-        console.log(`Query: ${query}, Selected:`, result);
-        window.location.assign(result.entry.url);
-    },
-    // Optional: if you want to show excerpts
-    // showScores: true, 
-    // minimumQueryLength: 3,
-  });
-</script>
-
-{% include 'analytics.html' ignore missing %}
-{% include 'disqus_script.html' ignore missing %}
-
-<script>
-    // Theme toggle script (existing)
-    // ... (keep existing theme toggle script) ...
-</script> {# End of theme toggle script #}
-
-{# Stork Search - Load always for header search #}
-<script type="module" src="{{ SITEURL }}/theme/js/stork.js"></script>
-<script type="module">
-    // Assuming stork.js makes 'stork' globally available or exports it as default
-    // If 'stork' is not global, you might need: import stork from '{{ SITEURL }}/theme/js/stork.js';
-    stork.register("sitesearch", "{{ SITEURL }}/search-index.st");
-</script>
 {% endblock %}

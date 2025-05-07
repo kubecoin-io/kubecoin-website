@@ -18,14 +18,12 @@ DISPLAY_CATEGORIES_ON_MENU = False
 
 # New setting to replace SEARCH_HTML_SELECTOR
 STORK_INPUT_OPTIONS = {
-    'html_selector': 'main'
+    'html_selector': 'main' # This tells Stork what content to index from your articles/pages
 }
 
 STORK_CONFIG = {
     'SEARCH_USE_CDN': False,
-    # Add any other Stork-specific configurations here if needed
-    # For example, to specify the output file name if it's not the default SITENAME.st:
-    # 'OUTPUT_FILENAME': 'kubecoin.st', # This would override the default
+    'OUTPUT_FILENAME': 'search-index.st' # Matches the generated file name
 }
 
 # --- Add/Modify this section for Favicons ---
