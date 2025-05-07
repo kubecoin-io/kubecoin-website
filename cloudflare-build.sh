@@ -31,7 +31,7 @@ export PATH="$HOME/.cargo/bin:$PATH" # Ensure wasm-pack is in PATH if installed 
 
 echo "Building Stork Wasm assets..."
 cd stork-wasm
-make build_browser_assets
+make build-js # Changed target from build_browser_assets to build-js
 cd .. # Back to stork-repo root
 
 # --- Debug Stork asset paths ---
