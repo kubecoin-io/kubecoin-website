@@ -28,8 +28,8 @@ git submodule update --init --recursive # Ensures all submodules, including nest
 echo "DEBUG: Git submodule status AFTER update:"
 git submodule status --recursive
 
-echo "DEBUG: Finding stork.css and dark.css in stork-repo AFTER submodule update:"
-find . -name stork.css -print -o -name dark.css -print
+echo "DEBUG: Finding stork.css, basic.css and dark.css in stork-repo AFTER submodule update:"
+find . -name stork.css -print -o -name basic.css -print -o -name dark.css -print
 
 echo "DEBUG: Listing contents of stork-repo AFTER submodule update:"
 ls -Al
@@ -87,13 +87,12 @@ ls -A stork-wasm/
 echo "Listing contents of stork-wasm/pkg/:"
 ls -A stork-wasm/pkg/
 
-# Copy and rename assets from stork-wasm/pkg and stork-wasm/
-# based on Stork's own Makefile logic (wasm crate name is stork-wasm)
+# Copy and rename assets from stork-wasm/pkg and stork-repo/themes/
 cp stork-wasm/pkg/stork_wasm.js web-assets/stork.js
 cp stork-wasm/pkg/stork_wasm_bg.wasm web-assets/stork.wasm
-# CSS files are in stork-wasm/static/ (after submodule checkout)
-cp stork-wasm/static/stork.css web-assets/basic.css # Corrected path and target name
-cp stork-wasm/static/dark.css web-assets/dark.css   # Corrected path
+# CSS files are in the top-level themes/ directory of stork-repo
+cp themes/basic.css web-assets/basic.css
+cp themes/dark.css web-assets/dark.css
 
 echo "web-assets populated."
 
