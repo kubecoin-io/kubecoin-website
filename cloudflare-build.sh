@@ -29,43 +29,34 @@ cp target/release/stork $HOME/.cargo/bin/stork # Copy directly to cargo bin dir
 echo "--- Debugging Stork asset paths ---"
 echo "Current directory: $(pwd)" # Should be /opt/buildhome/repo/stork-repo
 
-echo "Checking for stork-cli directory in $(pwd):"
-if [ -d "stork-cli" ]; then
-    echo "stork-cli directory EXISTS."
-    echo "Listing contents of stork-cli/:"
-    ls -A stork-cli/
+echo "Checking for web-assets directory in $(pwd):"
+if [ -d "web-assets" ]; then
+    echo "web-assets directory EXISTS."
+    echo "Listing contents of web-assets/:"
+    ls -A web-assets/
     
-    echo "Checking for stork-cli/web-assets directory in $(pwd)/stork-cli/:"
-    if [ -d "stork-cli/web-assets" ]; then
-        echo "stork-cli/web-assets directory EXISTS."
-        echo "Listing contents of stork-cli/web-assets/:"
-        ls -A stork-cli/web-assets/
-        
-        echo "Full path check for stork.js: $(pwd)/stork-cli/web-assets/stork.js"
-        if [ -f "stork-cli/web-assets/stork.js" ]; then
-            echo "stork.js FOUND in stork-cli/web-assets/"
-        else
-            echo "stork.js NOT FOUND in stork-cli/web-assets/"
-        fi
-        
-        echo "Full path check for basic.css: $(pwd)/stork-cli/web-assets/basic.css"
-        if [ -f "stork-cli/web-assets/basic.css" ]; then
-            echo "basic.css FOUND in stork-cli/web-assets/"
-        else
-            echo "basic.css NOT FOUND in stork-cli/web-assets/"
-        fi
-
-        echo "Full path check for dark.css: $(pwd)/stork-cli/web-assets/dark.css"
-        if [ -f "stork-cli/web-assets/dark.css" ]; then
-            echo "dark.css FOUND in stork-cli/web-assets/"
-        else
-            echo "dark.css NOT FOUND in stork-cli/web-assets/"
-        fi
+    echo "Full path check for stork.js: $(pwd)/web-assets/stork.js"
+    if [ -f "web-assets/stork.js" ]; then
+        echo "stork.js FOUND in web-assets/"
     else
-        echo "stork-cli/web-assets directory DOES NOT EXIST in $(pwd)/stork-cli/."
+        echo "stork.js NOT FOUND in web-assets/"
+    fi
+    
+    echo "Full path check for basic.css: $(pwd)/web-assets/basic.css"
+    if [ -f "web-assets/basic.css" ]; then
+        echo "basic.css FOUND in web-assets/"
+    else
+        echo "basic.css NOT FOUND in web-assets/"
+    fi
+
+    echo "Full path check for dark.css: $(pwd)/web-assets/dark.css"
+    if [ -f "web-assets/dark.css" ]; then
+        echo "dark.css FOUND in web-assets/"
+    else
+        echo "dark.css NOT FOUND in web-assets/"
     fi
 else
-    echo "stork-cli directory DOES NOT EXIST in $(pwd)."
+    echo "web-assets directory DOES NOT EXIST in $(pwd)."
 fi
 echo "--- End Debugging Stork asset paths ---"
 
@@ -74,11 +65,10 @@ echo "Copying Stork web assets to theme..."
 THEME_ASSET_DIR="../themes/papyrus/static" # Relative path from stork-repo back to project then to theme
 mkdir -p "$THEME_ASSET_DIR/js"
 mkdir -p "$THEME_ASSET_DIR/css"
-# Assuming stork.js, basic.css, and dark.css are in the root of the stork-repo or standard subdirs
 # Adjust these paths if Stork project structure is different for web assets
-cp stork-cli/web-assets/stork.js "$THEME_ASSET_DIR/js/stork.js"
-cp stork-cli/web-assets/basic.css "$THEME_ASSET_DIR/css/stork.css" # Rename basic.css to stork.css
-cp stork-cli/web-assets/dark.css "$THEME_ASSET_DIR/css/stork-dark.css" # Rename dark.css to stork-dark.css
+cp web-assets/stork.js "$THEME_ASSET_DIR/js/stork.js"
+cp web-assets/basic.css "$THEME_ASSET_DIR/css/stork.css" # Rename basic.css to stork.css
+cp web-assets/dark.css "$THEME_ASSET_DIR/css/stork-dark.css" # Rename dark.css to stork-dark.css
 echo "Stork web assets copied."
 # --- End Copy Stork web assets ---
 
