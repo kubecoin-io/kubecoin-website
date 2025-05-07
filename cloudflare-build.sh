@@ -13,8 +13,8 @@ cargo --version
 
 # --- Compile and Install Latest Stork from Source ---
 echo "Compiling and installing latest Stork search from source (master branch)..."
-# Simplify clone, ensure it's not shallow for the main repo
-git clone https://github.com/jameslittle230/stork.git stork-repo # Removed --recursive, --shallow-submodules
+# Clone with --recursive to fetch submodules like stork-wasm/static
+git clone --recursive https://github.com/jameslittle230/stork.git stork-repo
 cd stork-repo
 echo "Current branch and status in stork-repo:"
 git status
