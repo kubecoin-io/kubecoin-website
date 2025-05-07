@@ -60,8 +60,9 @@ ls -A stork-wasm/pkg/
 # based on Stork's own Makefile logic (wasm crate name is stork-wasm)
 cp stork-wasm/pkg/stork_wasm.js web-assets/stork.js
 cp stork-wasm/pkg/stork_wasm_bg.wasm web-assets/stork.wasm
-cp stork-wasm/stork.css web-assets/basic.css
-cp stork-wasm/dark.css web-assets/dark.css
+# CSS files are in stork-wasm/static/css/
+cp stork-wasm/static/css/stork.css web-assets/basic.css
+cp stork-wasm/static/css/dark.css web-assets/dark.css
 
 echo "web-assets populated."
 
