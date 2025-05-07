@@ -78,6 +78,27 @@
   </div>
 </article>
 
+<header class="top-bar shadow-md z-10 bg-neutral-100 dark:bg-neutral-900">
+    <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+        <div class="flex items-center">
+            <a href="{{ SITEURL }}" class="text-xl font-bold text-zinc-800 dark:text-zinc-200 hover:text-zinc-600 dark:hover:text-zinc-400 mr-6">
+                {% if SITELOGO %}
+                <img src="{{ SITEURL }}/{{ SITELOGO }}" alt="{{ SITENAME }}" class="h-8 w-auto">
+                {% else %}
+                {{ SITENAME }}
+                {% endif %}
+            </a>
+            <!-- Functional Stork Search Bar in Header -->
+            <div class="mr-4 relative">
+                <input type="text" data-stork="sitesearch" placeholder="Search..." class="px-2 py-1 border rounded dark:bg-neutral-800 dark:border-neutral-700 w-64">
+                <div data-stork="sitesearch-output" class="absolute mt-1 w-full rounded-md shadow-lg bg-white dark:bg-zinc-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-20" style="max-height: 300px; overflow-y: auto;">
+                    <!-- Stork results will appear here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
 <script src="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/js/stork.js"></script>
 <script>
   stork.register('kubecoin-search', '{{ SITEURL }}/search-index.st', {
@@ -94,5 +115,21 @@
     // showScores: true, 
     // minimumQueryLength: 3,
   });
+</script>
+
+{% include 'analytics.html' ignore missing %}
+{% include 'disqus_script.html' ignore missing %}
+
+<script>
+    // Theme toggle script (existing)
+    // ... (keep existing theme toggle script) ...
+</script> {# End of theme toggle script #}
+
+{# Stork Search - Load always for header search #}
+<script type="module" src="{{ SITEURL }}/theme/js/stork.js"></script>
+<script type="module">
+    // Assuming stork.js makes 'stork' globally available or exports it as default
+    // If 'stork' is not global, you might need: import stork from '{{ SITEURL }}/theme/js/stork.js';
+    stork.register("sitesearch", "{{ SITEURL }}/search-index.st");
 </script>
 {% endblock %}

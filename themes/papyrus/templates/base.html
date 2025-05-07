@@ -212,10 +212,11 @@
 
     {# Stork Search (if on search page, might need adjustment for new layout) #}
     {# This block is now separate from the theme toggle script #}
-    {% if current == "search" or "search.html" in output_file %} {# Adjusted condition #}
-    <script src="{{ SITEURL }}/theme/js/stork.js"></script> {# Use local Stork JS #}
-    <script>
-        stork.register("sitesearch", "{{ SITEURL }}/search-index.st"); // Use correct local index file name
+    {% if current == "search" or "search.html" in output_file %}
+    <script type="module" src="{{ SITEURL }}/theme/js/stork.js"></script>
+    <script type="module">
+        import stork from '{{ SITEURL }}/theme/js/stork.js';
+        stork.register("sitesearch", "{{ SITEURL }}/search-index.st");
     </script>
     {% endif %}
 </body>
