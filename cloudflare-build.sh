@@ -138,6 +138,7 @@ mkdir -p "$THEME_ASSET_DIR/js"
 mkdir -p "$THEME_ASSET_DIR/css"
 # Adjust these paths if Stork project structure is different for web assets
 cp web-assets/stork.js "$THEME_ASSET_DIR/js/stork.js"
+cp web-assets/stork.wasm "$THEME_ASSET_DIR/js/stork_bg.wasm" # Copy Wasm and name it as stork.js would expect
 cp web-assets/basic.css "$THEME_ASSET_DIR/css/stork.css" # Rename basic.css to stork.css
 cp web-assets/dark.css "$THEME_ASSET_DIR/css/stork-dark.css" # Rename dark.css to stork-dark.css
 echo "Stork web assets copied."
