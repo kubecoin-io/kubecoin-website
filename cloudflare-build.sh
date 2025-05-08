@@ -69,7 +69,7 @@ echo "DEBUG: Returned to stork-repo root. Current directory: $(pwd)"
 echo "Building Stork JS bundle (high-level API)..."
 cd js # Navigate to stork-repo/js/
 echo "Installing JS dependencies for Stork bundle..."
-npm install
+npm install --legacy-peer-deps # Use --legacy-peer-deps to resolve conflicts
 echo "Building Stork JS bundle with Rollup..."
 npm run build # This should create dist/stork.js and dist/stork.wasm
 cd .. # Back to stork-repo root
