@@ -19,133 +19,66 @@ cd stork-repo
 echo "Current branch and status in stork-repo:"
 git status
 echo "Ensuring we are on master and up to date..."
-git checkout master
-git pull origin master # Ensure it's the latest from master
+git checkout master # Or the specific tag like v1.6.0 if preferred
+git pull origin master
 echo "Syncing and initializing/updating submodules recursively..."
 git submodule sync --recursive
-git submodule update --init --recursive # Ensures all submodules, including nested ones, are fetched
+git submodule update --init --recursive
 
 echo "DEBUG: Git submodule status AFTER update:"
 git submodule status --recursive
 
-echo "DEBUG: Finding stork.css, basic.css and dark.css in stork-repo AFTER submodule update:"
-find . -name stork.css -print -o -name basic.css -print -o -name dark.css -print
-
-echo "DEBUG: Listing contents of stork-repo AFTER submodule update:"
-ls -Al
-echo "DEBUG: Listing contents of stork-repo/stork-wasm AFTER submodule update:"
-ls -Al stork-wasm/
-echo "DEBUG: Checking for stork-repo/stork-wasm/static AFTER submodule update:"
-if [ -d "stork-wasm/static" ]; then
-    echo "DEBUG: stork-wasm/static directory FOUND. Contents:"
-    ls -Al stork-wasm/static/
-else
-    echo "DEBUG: stork-wasm/static directory STILL NOT FOUND after submodule update."
-fi
-
-# Update ALL dependencies before building
-echo "Updating ALL Stork dependencies..."
+echo "Updating ALL Stork dependencies (Rust)..."
 cargo update
-# Build Stork in release mode
-echo "Building Stork..."
+echo "Building Stork CLI..."
 cargo build --release
-# Install the compiled binary to a location in PATH
-cp target/release/stork $HOME/.cargo/bin/stork # Copy directly to cargo bin dir
+cp target/release/stork $HOME/.cargo/bin/stork
 
-echo "Installing wasm-pack..."
-curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-export PATH="$HOME/.cargo/bin:$PATH" # Ensure wasm-pack is in PATH if installed to .cargo/bin by script
-
-echo "Building Stork Wasm assets..."
-cd stork-wasm
-
-echo "Current directory: $(pwd)"
-echo "Listing contents of stork-wasm (BEFORE wasm-pack build):"
-ls -Al # Use -Al for more details, including permissions and if 'static' is a link
-
-# Debug: Check if Makefile exists and print its contents
-if [ -f "Makefile" ]; then
-    echo "Makefile exists in stork-wasm. Contents:"
-    cat Makefile
-else
-    echo "Makefile NOT FOUND in stork-wasm."
+# --- Build Stork Wasm assets (low-level) ---
+echo "Building Stork Wasm assets (low-level bindings)..."
+cd stork-repo/stork-wasm # Navigate to the wasm crate
+if ! command -v wasm-pack &> /dev/null
+then
+    echo "wasm-pack could not be found, installing..."
+    curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+    export PATH="$HOME/.cargo/bin:$PATH" # Ensure wasm-pack is in PATH
 fi
-
-echo "Attempting to build Wasm assets directly with wasm-pack..."
 wasm-pack build --target web --out-dir pkg
-
 cd .. # Back to stork-repo root
 
-echo "Creating web-assets directory and populating it..."
-rm -rf web-assets # Clean up if it exists from a partial previous run
+# --- Build Stork JS Bundle (high-level API) ---
+echo "Building Stork JS bundle (high-level API)..."
+cd js # Navigate to stork-repo/js/
+echo "Installing JS dependencies for Stork bundle..."
+npm install
+echo "Building Stork JS bundle with Rollup..."
+npm run build # This should create dist/stork.js and dist/stork.wasm
+cd .. # Back to stork-repo root
+
+# --- Populate web-assets with bundled Stork JS and Wasm ---
+echo "Creating web-assets directory and populating it with bundled Stork assets..."
+rm -rf web-assets # Clean up
 mkdir -p web-assets
-
-# Debugging: List contents of pkg directory to confirm generated file names
-echo "Current directory before copying assets: $(pwd)"
-echo "Listing contents of stork-wasm/ (should contain pkg/ and CSS files):"
-ls -A stork-wasm/
-echo "Listing contents of stork-wasm/pkg/:"
-ls -A stork-wasm/pkg/
-
-# Copy and rename assets from stork-wasm/pkg and stork-repo/themes/
-cp stork-wasm/pkg/stork_wasm.js web-assets/stork.js
-cp stork-wasm/pkg/stork_wasm_bg.wasm web-assets/stork_wasm_bg.wasm # Keep original name
-# CSS files are in the top-level themes/ directory of stork-repo
-cp themes/basic.css web-assets/basic.css
-cp themes/dark.css web-assets/dark.css
-
-echo "web-assets populated."
-
-# --- Debug Stork asset paths ---
-echo "--- Debugging Stork asset paths ---"
-echo "Current directory: $(pwd)" # Should be /opt/buildhome/repo/stork-repo
-
-echo "Checking for web-assets directory in $(pwd):"
-if [ -d "web-assets" ]; then
-    echo "web-assets directory EXISTS."
-    echo "Listing contents of web-assets/:"
-    ls -A web-assets/
-    
-    echo "Full path check for stork.js: $(pwd)/web-assets/stork.js"
-    if [ -f "web-assets/stork.js" ]; then
-        echo "stork.js FOUND in web-assets/"
-    else
-        echo "stork.js NOT FOUND in web-assets/"
-    fi
-    
-    echo "Full path check for basic.css: $(pwd)/web-assets/basic.css"
-    if [ -f "web-assets/basic.css" ]; then
-        echo "basic.css FOUND in web-assets/"
-    else
-        echo "basic.css NOT FOUND in web-assets/"
-    fi
-
-    echo "Full path check for dark.css: $(pwd)/web-assets/dark.css"
-    if [ -f "web-assets/dark.css" ]; then
-        echo "dark.css FOUND in web-assets/"
-    else
-        echo "dark.css NOT FOUND in web-assets/"
-    fi
-else
-    echo "web-assets directory DOES NOT EXIST in $(pwd)."
-fi
-echo "--- End Debugging Stork asset paths ---"
+cp js/dist/stork.js web-assets/stork.js
+cp js/dist/stork.wasm web-assets/stork.wasm # Note: stork.wasm, not _bg.wasm
+# Also copy CSS
+cp themes/basic.css web-assets/basic.css # Assuming this is still the desired source
+cp themes/dark.css web-assets/dark.css   # Assuming this is still the desired source
+echo "web-assets populated with bundled Stork."
 
 # --- Copy Stork web assets to theme ---
-echo "Copying Stork web assets to theme..."
-THEME_ASSET_DIR="../themes/papyrus/static" # Relative path from stork-repo back to project then to theme
+echo "Copying bundled Stork web assets to theme..."
+THEME_ASSET_DIR="../themes/papyrus/static" # Relative path from stork-repo
 mkdir -p "$THEME_ASSET_DIR/js"
 mkdir -p "$THEME_ASSET_DIR/css"
-# Adjust these paths if Stork project structure is different for web assets
 cp web-assets/stork.js "$THEME_ASSET_DIR/js/stork.js"
-cp web-assets/stork_wasm_bg.wasm "$THEME_ASSET_DIR/js/stork_wasm_bg.wasm" # Keep original name
-cp web-assets/basic.css "$THEME_ASSET_DIR/css/stork.css" # Rename basic.css to stork.css
-cp web-assets/dark.css "$THEME_ASSET_DIR/css/stork-dark.css" # Rename dark.css to stork-dark.css
-echo "Stork web assets copied."
-# --- End Copy Stork web assets ---
+cp web-assets/stork.wasm "$THEME_ASSET_DIR/js/stork.wasm" # Use stork.wasm
+cp web-assets/basic.css "$THEME_ASSET_DIR/css/stork.css"
+cp web-assets/dark.css "$THEME_ASSET_DIR/css/stork-dark.css"
+echo "Bundled Stork web assets copied."
 
-cd .. # Go back to the project root
-rm -rf stork-repo # Clean up the cloned repo
+cd .. # Back to project root
+rm -rf stork-repo # Clean up
 echo "Stork compiled and installed. Stork version:"
 stork --version
 # --- End Stork Installation ---

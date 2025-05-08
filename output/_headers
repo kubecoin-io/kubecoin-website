@@ -1,3 +1,3 @@
-/theme/js/stork_wasm_bg.wasm
+/theme/js/stork.wasm
   Content-Type: application/wasm
-  X-Wasm-Test-Header: WasHere
+  X-Wasm-Test-Header: WasHereBundled

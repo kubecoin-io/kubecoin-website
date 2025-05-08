@@ -178,60 +178,69 @@
 
     {# Stork Search - Load always for header search, ensure it's type="module" #}
     <script type="module">
-        // Import the default export from stork.js, which should be a function
-        import storkEntryFunction from '{{ SITEURL }}/theme/js/stork.js'; 
+        import stork from '{{ SITEURL }}/theme/js/stork.js';
 
-        if (typeof storkEntryFunction === 'function') {
-            storkEntryFunction().then(storkModule => {
-                if (storkModule && typeof storkModule.initialize === 'function') {
-                    storkModule.initialize().then(() => {
-                        if (storkModule && typeof storkModule.register === 'function') {
-                            storkModule.register("sitesearch", "{{ SITEURL }}/search-index.st", {
-                                 onQueryUpdate: (query, results) => {
-                                    const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
-                                    if (outputElement) {
-                                        if (query && results && results.length > 0) {
-                                            outputElement.style.display = 'block';
-                                        } else {
-                                            outputElement.style.display = 'none';
-                                        }
-                                    }
-                                },
-                                onResultSelected: (query, result) => {
-                                    if (result && result.entry && result.entry.url) {
-                                        window.location.assign(result.entry.url);
-                                    }
-                                }
-                            });
-
-                            // UI logic for hiding dropdown
-                            const searchInput = document.querySelector('input[data-stork="sitesearch"]');
-                            const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
-                            if (searchInput && outputElement) {
-                                document.addEventListener('click', function(event) {
-                                    const searchContainer = searchInput.closest('.relative');
-                                    if (searchContainer && !searchContainer.contains(event.target)) {
+        if (stork && typeof stork.initialize === 'function') {
+            // Pass the URL to the .wasm file. The bundled stork.js expects stork.wasm by default in the same path.
+            stork.initialize({ wasmUrl: '{{ SITEURL }}/theme/js/stork.wasm' })
+                .then(() => {
+                    console.log("Stork initialized successfully.");
+                    if (typeof stork.register === 'function') {
+                        stork.register("sitesearch", "{{ SITEURL }}/search-index.st", {
+                            onQueryUpdate: (query, results) => {
+                                const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
+                                if (outputElement) {
+                                    if (query && results && results.length > 0) {
+                                        outputElement.style.display = 'block';
+                                    } else {
                                         outputElement.style.display = 'none';
                                     }
-                                });
-                                outputElement.addEventListener('click', function(event) {
-                                    event.stopPropagation();
-                                });
+                                }
+                            },
+                            onResultSelected: (query, result) => {
+                                if (result && result.entry && result.entry.url) {
+                                    window.location.assign(result.entry.url);
+                                }
+                            },
+                            onInputCleared: () => {
+                                const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
+                                if (outputElement) {
+                                    // outputElement.style.display = 'none';
+                                }
                             }
-                        } else {
-                            console.error("Stork 'register' function not found on the module after initialization. Keys:", storkModule ? Object.keys(storkModule).join(', ') : "storkModule is null/undefined");
+                        });
+                        console.log("Stork registration attempted for sitesearch.");
+
+                        // UI logic for hiding dropdown (can stay here)
+                        const searchInput = document.querySelector('input[data-stork="sitesearch"]');
+                        const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
+                        if (searchInput && outputElement) {
+                            document.addEventListener('click', function(event) {
+                                const searchContainer = searchInput.closest('.relative');
+                                if (searchContainer && !searchContainer.contains(event.target)) {
+                                    outputElement.style.display = 'none';
+                                }
+                            });
+                            outputElement.addEventListener('click', function(event) {
+                                event.stopPropagation();
+                            });
                         }
-                    }).catch(initError => {
-                        console.error("Error initializing Stork Wasm module:", initError);
-                    });
-                } else {
-                    console.error("Stork module loaded, but 'initialize' function is missing. Keys:", storkModule ? Object.keys(storkModule).join(', ') : 'storkModule is null/undefined');
-                }
-            }).catch(entryError => {
-                console.error("Error executing Stork entry function (the default export of stork.js):", entryError);
-            });
+
+                    } else {
+                        console.error("Stork 'register' function not found after initialization.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error initializing Stork:", error);
+                });
         } else {
-            console.error("Imported Stork entry point is not a function. Actual type:", typeof storkEntryFunction, "Value:", storkEntryFunction);
+            let message = "Stork module could not be imported or is missing the 'initialize' function. ";
+            if (stork) {
+                message += "Imported object does not have 'initialize'. Keys: " + Object.keys(stork).join(', ');
+            } else {
+                message += "Import resulted in a falsy object (stork.js might not have loaded).";
+            }
+            console.error(message);
         }
     </script>
 </body>
