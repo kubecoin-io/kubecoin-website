@@ -34,9 +34,24 @@ echo "Building Stork CLI..."
 cargo build --release
 cp target/release/stork $HOME/.cargo/bin/stork
 
+echo "DEBUG: Current directory before attempting to cd into stork-wasm: $(pwd)"
+echo "DEBUG: Listing contents of current directory (should be stork-repo):"
+ls -la
+echo "DEBUG: Checking existence of stork-wasm directory:"
+if [ -d "stork-wasm" ]; then
+  echo "DEBUG: stork-wasm directory exists in $(pwd)."
+else
+  echo "DEBUG: stork-wasm directory DOES NOT exist in $(pwd)."
+  echo "DEBUG: Listing subdirectories of $(pwd) that might be relevant:"
+  ls -d */ 2>/dev/null || echo "DEBUG: No subdirectories found or ls -d failed."
+fi
+
+echo "DEBUG: Enabling command tracing."
+set -x # Enable command tracing to see the exact commands being run
+
 # --- Build Stork Wasm assets (low-level) ---
 echo "Building Stork Wasm assets (low-level bindings)..."
-cd stork-repo/stork-wasm # Navigate to the wasm crate
+cd stork-wasm # Navigate to the wasm crate
 if ! command -v wasm-pack &> /dev/null
 then
     echo "wasm-pack could not be found, installing..."
@@ -44,7 +59,11 @@ then
     export PATH="$HOME/.cargo/bin:$PATH" # Ensure wasm-pack is in PATH
 fi
 wasm-pack build --target web --out-dir pkg
+
+set +x # Disable command tracing
+echo "DEBUG: Successfully changed to stork-wasm and ran wasm-pack. Current directory: $(pwd)"
 cd .. # Back to stork-repo root
+echo "DEBUG: Returned to stork-repo root. Current directory: $(pwd)"
 
 # --- Build Stork JS Bundle (high-level API) ---
 echo "Building Stork JS bundle (high-level API)..."
