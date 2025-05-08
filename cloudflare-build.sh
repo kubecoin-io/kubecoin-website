@@ -89,7 +89,7 @@ ls -A stork-wasm/pkg/
 
 # Copy and rename assets from stork-wasm/pkg and stork-repo/themes/
 cp stork-wasm/pkg/stork_wasm.js web-assets/stork.js
-cp stork-wasm/pkg/stork_wasm_bg.wasm web-assets/stork.wasm
+cp stork-wasm/pkg/stork_wasm_bg.wasm web-assets/stork_bg.wasm # Ensure consistent naming
 # CSS files are in the top-level themes/ directory of stork-repo
 cp themes/basic.css web-assets/basic.css
 cp themes/dark.css web-assets/dark.css
@@ -138,7 +138,7 @@ mkdir -p "$THEME_ASSET_DIR/js"
 mkdir -p "$THEME_ASSET_DIR/css"
 # Adjust these paths if Stork project structure is different for web assets
 cp web-assets/stork.js "$THEME_ASSET_DIR/js/stork.js"
-cp web-assets/stork.wasm "$THEME_ASSET_DIR/js/stork_bg.wasm" # Copy Wasm and name it as stork.js would expect
+cp web-assets/stork_bg.wasm "$THEME_ASSET_DIR/js/stork_bg.wasm" # Ensure consistent naming
 cp web-assets/basic.css "$THEME_ASSET_DIR/css/stork.css" # Rename basic.css to stork.css
 cp web-assets/dark.css "$THEME_ASSET_DIR/css/stork-dark.css" # Rename dark.css to stork-dark.css
 echo "Stork web assets copied."
@@ -171,6 +171,8 @@ pelican content -o output -s publishconf.py
 # Check for Stork index file in output
 echo "Listing contents of output directory to check for Stork index file (.st):"
 ls -l output/
+echo "Listing contents of output/theme/js/ to check for Wasm file presence and name:"
+ls -Al output/theme/js/
 
 # Success message
 echo "Site build completed successfully!"
