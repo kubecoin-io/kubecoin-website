@@ -180,65 +180,57 @@
     {# Stork Search - Load always for header search, ensure it's type="module" #}
     <script type="module">
         // Import stork from the stork.js module.
-        // The browser will fetch and execute stork.js due to this import.
-        // The path should be absolute from the site root for clarity.
-        import stork from '{{ SITEURL }}/theme/js/stork.js'; 
+        import storkObjectFromImport from '{{ SITEURL }}/theme/js/stork.js'; 
 
-        if (stork && typeof stork.register === 'function') {
-            stork.register("sitesearch", "{{ SITEURL }}/search-index.st", {
-                 onQueryUpdate: (query, results) => {
-                    const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
-                    if (outputElement) {
-                        if (query && results && results.length > 0) {
-                            outputElement.style.display = 'block';
-                        } else {
-                            outputElement.style.display = 'none';
+        if (storkObjectFromImport && typeof storkObjectFromImport.initialize === 'function') {
+            storkObjectFromImport.initialize().then(() => {
+                if (storkObjectFromImport && typeof storkObjectFromImport.register === 'function') {
+                    storkObjectFromImport.register("sitesearch", "{{ SITEURL }}/search-index.st", {
+                         onQueryUpdate: (query, results) => {
+                            const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
+                            if (outputElement) {
+                                if (query && results && results.length > 0) {
+                                    outputElement.style.display = 'block';
+                                } else {
+                                    outputElement.style.display = 'none';
+                                }
+                            }
+                        },
+                        onResultSelected: (query, result) => {
+                            if (result && result.entry && result.entry.url) {
+                                window.location.assign(result.entry.url);
+                            }
                         }
-                    }
-                },
-                onResultSelected: (query, result) => {
-                    if (result && result.entry && result.entry.url) {
-                        window.location.assign(result.entry.url);
-                    }
-                },
-                // Optional: Hide results if input is empty and blurred
-                onInputCleared: () => {
+                    });
+
+                    // UI logic for hiding dropdown (can stay here if elements are reliably found)
+                    const searchInput = document.querySelector('input[data-stork="sitesearch"]');
                     const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
-                    if (outputElement) {
-                         // outputElement.style.display = 'none'; // Or let onQueryUpdate handle it
+                    if (searchInput && outputElement) {
+                        document.addEventListener('click', function(event) {
+                            const searchContainer = searchInput.closest('.relative');
+                            if (searchContainer && !searchContainer.contains(event.target)) {
+                                outputElement.style.display = 'none';
+                            }
+                        });
+                        outputElement.addEventListener('click', function(event) {
+                            event.stopPropagation();
+                        });
                     }
+                } else {
+                    console.error("Stork 'register' function not found on the imported module after initialization.");
                 }
+            }).catch(error => {
+                console.error("Error initializing Stork from imported module:", error);
             });
-
-            const searchInput = document.querySelector('input[data-stork="sitesearch"]');
-            const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
-
-            // Hide results when clicking outside the search input and its output container
-            document.addEventListener('click', function(event) {
-                const searchContainer = searchInput ? searchInput.closest('.relative') : null; // Get the parent .relative container
-                if (searchContainer && outputElement && !searchContainer.contains(event.target)) {
-                    outputElement.style.display = 'none';
-                }
-            });
-            
-            // Prevent clicks within the output element from closing it
-            if (outputElement) {
-                outputElement.addEventListener('click', function(event) {
-                    event.stopPropagation();
-                });
-            }
-
-            // Optional: Show results on focus if there's already text (e.g., after page navigation)
-            // if (searchInput) {
-            //     searchInput.addEventListener('focus', () => {
-            //         if (searchInput.value) {
-            //             // Stork should re-trigger a search or onQueryUpdate should handle visibility
-            //         }
-            //     });
-            // }
-
         } else {
-            console.error("Stork library could not be imported or stork.register is not a function. Check that stork.js is loaded correctly and provides a default export.");
+            let message = "Stork module could not be imported or is missing the 'initialize' function. ";
+            if (storkObjectFromImport) {
+                message += "Imported object does not have 'initialize'. Keys: " + Object.keys(storkObjectFromImport).join(', ');
+            } else {
+                message += "Import resulted in a falsy object.";
+            }
+            console.error(message);
         }
     </script>
 </body>

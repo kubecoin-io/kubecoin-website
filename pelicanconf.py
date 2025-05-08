@@ -3,6 +3,7 @@ import datetime
 AUTHOR = 'Kubecoin'
 SITENAME = 'kubecoin.io'
 SITEURL = "https://kubecoin.io" # Use https for production
+SITELOGO = 'images/uploads/favicon-96x96.png' # Use favicon-96x96.png for the logo
 
 SUBTITLE = 'Kubecoin'
 SUBTEXT = 'Kubernetes-powered Crypto Platform'
