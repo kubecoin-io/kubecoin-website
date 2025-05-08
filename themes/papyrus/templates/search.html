@@ -1,32 +1,17 @@
 {% extends "base.html" %}
 {% block title %}Search - {{ SITENAME }}{% endblock %}
 
-{% block head %}
-  {{ super() }}
-  {# Stork CSS is loaded in base.html if we make header search primary #}
-  {# You can keep specific styles for the .stork-wrapper if you intend to use it #}
-  <style>
-    /* Optional: Add some basic styling for the search page layout */
-    .stork-wrapper {
-      margin: 2em auto;
-      max-width: 800px;
-      padding: 0 1em;
-      /* This class might not be used if search.html content is minimal */
-    }
-  </style>
-{% endblock %}
-
 {% block content %}
-<article class="prose dark:prose-invert max-w-none">
-  <h1 class="text-center">Search</h1>
-  {# The actual search input and output will be in the header via base.html #}
-  <p class="text-center">Use the search bar in the header to find content.</p>
+<article class="prose dark:prose-invert max-w-none py-8">
+  <h1 class="text-center text-3xl font-bold">Search Results</h1>
+  <p class="text-center">
+    Use the search bar in the site header to find content. Results will appear below the search bar.
+  </p>
   {#
-    If you want search.html to also display results from the header search,
-    you would need more advanced JavaScript to sync them or make Stork
-    target multiple output areas, which is more complex.
-    For now, let's assume results appear in the header's dropdown/overlay.
+    If the pelican-search plugin automatically injects a variable like {{ search_box }}
+    and it's causing an unwanted search input here, you would need to ensure this template
+    does not render it, or configure pelican-search not to provide it for this theme.
+    For now, this template is intentionally simple.
   #}
 </article>
-
 {% endblock %}

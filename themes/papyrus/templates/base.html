@@ -178,47 +178,67 @@
     </script>
 
     {# Stork Search - Load always for header search, ensure it's type="module" #}
-    <script type="module" src="{{ SITEURL }}/theme/js/stork.js"></script>
     <script type="module">
-        // Option 1: If stork.js makes 'stork' globally available when loaded as a module
-        // (This is often the case with wasm-pack output for --target web)
-        if (window.stork) {
+        // Import stork from the stork.js module.
+        // The browser will fetch and execute stork.js due to this import.
+        // The path should be absolute from the site root for clarity.
+        import stork from '{{ SITEURL }}/theme/js/stork.js'; 
+
+        if (stork && typeof stork.register === 'function') {
             stork.register("sitesearch", "{{ SITEURL }}/search-index.st", {
                  onQueryUpdate: (query, results) => {
                     const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
-                    if (query && results.length > 0) {
-                        outputElement.style.display = 'block';
-                    } else {
-                        outputElement.style.display = 'none';
+                    if (outputElement) {
+                        if (query && results && results.length > 0) {
+                            outputElement.style.display = 'block';
+                        } else {
+                            outputElement.style.display = 'none';
+                        }
                     }
                 },
                 onResultSelected: (query, result) => {
-                    window.location.assign(result.entry.url);
+                    if (result && result.entry && result.entry.url) {
+                        window.location.assign(result.entry.url);
+                    }
+                },
+                // Optional: Hide results if input is empty and blurred
+                onInputCleared: () => {
+                    const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
+                    if (outputElement) {
+                         // outputElement.style.display = 'none'; // Or let onQueryUpdate handle it
+                    }
                 }
             });
 
-            // Hide results when clicking outside
+            const searchInput = document.querySelector('input[data-stork="sitesearch"]');
+            const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
+
+            // Hide results when clicking outside the search input and its output container
             document.addEventListener('click', function(event) {
-                const searchContainer = document.querySelector('.mr-4.relative'); // Adjust selector if needed
-                const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
-                if (searchContainer && !searchContainer.contains(event.target)) {
+                const searchContainer = searchInput ? searchInput.closest('.relative') : null; // Get the parent .relative container
+                if (searchContainer && outputElement && !searchContainer.contains(event.target)) {
                     outputElement.style.display = 'none';
                 }
             });
-            // Prevent hiding when clicking inside the results
-             const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
-             if (outputElement) {
+            
+            // Prevent clicks within the output element from closing it
+            if (outputElement) {
                 outputElement.addEventListener('click', function(event) {
                     event.stopPropagation();
                 });
-             }
+            }
+
+            // Optional: Show results on focus if there's already text (e.g., after page navigation)
+            // if (searchInput) {
+            //     searchInput.addEventListener('focus', () => {
+            //         if (searchInput.value) {
+            //             // Stork should re-trigger a search or onQueryUpdate should handle visibility
+            //         }
+            //     });
+            // }
 
         } else {
-            // Option 2: If you need to explicitly import (less common for --target web global)
-            // import storkLib from '{{ SITEURL }}/theme/js/stork.js';
-            // storkLib.register("sitesearch", "{{ SITEURL }}/search-index.st");
-            // console.error("Stork library not found globally, import might be needed or check stork.js loading.");
-            console.error("Stork library not found on window object.");
+            console.error("Stork library could not be imported or stork.register is not a function. Check that stork.js is loaded correctly and provides a default export.");
         }
     </script>
 </body>
