@@ -48,12 +48,11 @@
         <header class="top-bar shadow-md z-10 bg-neutral-100 dark:bg-neutral-900">
             <div class="container mx-auto px-4 h-16 flex items-center justify-between">
                 <div class="flex items-center">
-                    <a href="{{ SITEURL }}" class="text-xl font-bold text-zinc-800 dark:text-zinc-200 hover:text-zinc-600 dark:hover:text-zinc-400 mr-6">
+                    <a href="{{ SITEURL }}" class="flex items-center text-xl font-bold text-zinc-800 dark:text-zinc-200 hover:text-zinc-600 dark:hover:text-zinc-400 mr-6">
                         {% if SITELOGO %}
-                        <img src="{{ SITEURL }}/{{ SITELOGO }}" alt="{{ SITENAME }}" class="h-8 w-auto">
-                        {% else %}
-                        {{ SITENAME }}
+                        <img src="{{ SITEURL }}/{{ SITELOGO }}" alt="{{ SITENAME }}" class="h-8 w-auto mr-2">
                         {% endif %}
+                        <span>{{ SITENAME }}</span>
                     </a>
                     <!-- Functional Stork Search Bar in Header -->
                     <div class="mr-4 relative">
@@ -179,58 +178,60 @@
 
     {# Stork Search - Load always for header search, ensure it's type="module" #}
     <script type="module">
-        // Import stork from the stork.js module.
-        import storkObjectFromImport from '{{ SITEURL }}/theme/js/stork.js'; 
+        // Import the default export from stork.js, which should be a function
+        import storkEntryFunction from '{{ SITEURL }}/theme/js/stork.js'; 
 
-        if (storkObjectFromImport && typeof storkObjectFromImport.initialize === 'function') {
-            storkObjectFromImport.initialize().then(() => {
-                if (storkObjectFromImport && typeof storkObjectFromImport.register === 'function') {
-                    storkObjectFromImport.register("sitesearch", "{{ SITEURL }}/search-index.st", {
-                         onQueryUpdate: (query, results) => {
-                            const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
-                            if (outputElement) {
-                                if (query && results && results.length > 0) {
-                                    outputElement.style.display = 'block';
-                                } else {
-                                    outputElement.style.display = 'none';
+        if (typeof storkEntryFunction === 'function') {
+            storkEntryFunction().then(storkModule => {
+                if (storkModule && typeof storkModule.initialize === 'function') {
+                    storkModule.initialize().then(() => {
+                        if (storkModule && typeof storkModule.register === 'function') {
+                            storkModule.register("sitesearch", "{{ SITEURL }}/search-index.st", {
+                                 onQueryUpdate: (query, results) => {
+                                    const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
+                                    if (outputElement) {
+                                        if (query && results && results.length > 0) {
+                                            outputElement.style.display = 'block';
+                                        } else {
+                                            outputElement.style.display = 'none';
+                                        }
+                                    }
+                                },
+                                onResultSelected: (query, result) => {
+                                    if (result && result.entry && result.entry.url) {
+                                        window.location.assign(result.entry.url);
+                                    }
                                 }
-                            }
-                        },
-                        onResultSelected: (query, result) => {
-                            if (result && result.entry && result.entry.url) {
-                                window.location.assign(result.entry.url);
-                            }
-                        }
-                    });
+                            });
 
-                    // UI logic for hiding dropdown (can stay here if elements are reliably found)
-                    const searchInput = document.querySelector('input[data-stork="sitesearch"]');
-                    const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
-                    if (searchInput && outputElement) {
-                        document.addEventListener('click', function(event) {
-                            const searchContainer = searchInput.closest('.relative');
-                            if (searchContainer && !searchContainer.contains(event.target)) {
-                                outputElement.style.display = 'none';
+                            // UI logic for hiding dropdown
+                            const searchInput = document.querySelector('input[data-stork="sitesearch"]');
+                            const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
+                            if (searchInput && outputElement) {
+                                document.addEventListener('click', function(event) {
+                                    const searchContainer = searchInput.closest('.relative');
+                                    if (searchContainer && !searchContainer.contains(event.target)) {
+                                        outputElement.style.display = 'none';
+                                    }
+                                });
+                                outputElement.addEventListener('click', function(event) {
+                                    event.stopPropagation();
+                                });
                             }
-                        });
-                        outputElement.addEventListener('click', function(event) {
-                            event.stopPropagation();
-                        });
-                    }
+                        } else {
+                            console.error("Stork 'register' function not found on the module after initialization. Keys:", storkModule ? Object.keys(storkModule).join(', ') : "storkModule is null/undefined");
+                        }
+                    }).catch(initError => {
+                        console.error("Error initializing Stork Wasm module:", initError);
+                    });
                 } else {
-                    console.error("Stork 'register' function not found on the imported module after initialization.");
+                    console.error("Stork module loaded, but 'initialize' function is missing. Keys:", storkModule ? Object.keys(storkModule).join(', ') : 'storkModule is null/undefined');
                 }
-            }).catch(error => {
-                console.error("Error initializing Stork from imported module:", error);
+            }).catch(entryError => {
+                console.error("Error executing Stork entry function (the default export of stork.js):", entryError);
             });
         } else {
-            let message = "Stork module could not be imported or is missing the 'initialize' function. ";
-            if (storkObjectFromImport) {
-                message += "Imported object does not have 'initialize'. Keys: " + Object.keys(storkObjectFromImport).join(', ');
-            } else {
-                message += "Import resulted in a falsy object.";
-            }
-            console.error(message);
+            console.error("Imported Stork entry point is not a function. Actual type:", typeof storkEntryFunction, "Value:", storkEntryFunction);
         }
     </script>
 </body>
