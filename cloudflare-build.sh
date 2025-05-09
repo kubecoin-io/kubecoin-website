@@ -79,28 +79,38 @@ fi
 echo "just version:"
 just --version
 
-# --- Build Stork JS Bundle (high-level API) using just ---
-echo "Building Stork JS bundle (high-level API) from $(pwd) using just..."
-
-echo "Installing JS dependencies for Stork bundle (in stork-repo/js/)..."
-cd js
-# The project uses yarn, as evidenced by yarn.lock in the stork-repo root and js/package.json.
-# npm install --legacy-peer-deps # Previous attempt, switching to yarn.
-if [ -f "yarn.lock" ]; then
-    yarn install --frozen-lockfile # Use yarn as per project setup
-elif [ -f "package-lock.json" ]; then
-    npm ci
+# --- Install Yarn if not present ---
+echo "Checking for yarn..."
+if ! command -v yarn &> /dev/null
+then
+    echo "yarn could not be found, installing globally via npm..."
+    npm install -g yarn
 else
-    npm install --legacy-peer-deps
+    echo "yarn is already installed."
 fi
-cd .. # Back to stork-repo root
+echo "yarn version:"
+yarn --version
 
-echo "Building Stork JS bundle with 'just js-build-bundle' (from $(pwd))..."
+# --- Build Stork JS Bundle (high-level API) using just ---
+echo "Building Stork JS bundle (high-level API) from $(pwd) [stork-repo root] using just..."
+
+echo "Installing JS dependencies for Stork bundle using Yarn (from $(pwd) [stork-repo root])..."
+# Stork uses Yarn workspaces. Install from the root.
+# The root yarn.lock and package.json (with workspace config) will be used.
+if [ -f "yarn.lock" ]; then # This check is now at stork-repo root
+    yarn install --frozen-lockfile
+else
+    echo "WARNING: yarn.lock not found in $(pwd) [stork-repo root], which is unexpected for this project. Falling back to npm install."
+    # Fallback, though Stork is set up for Yarn.
+    npm install --legacy-peer-deps # This will use package.json at root
+fi
+
+echo "Building Stork JS bundle with 'just build-js' (from $(pwd) [stork-repo root])..."
 # This command, from Stork's justfile, should:
 # 1. Run 'js-build-wasm-shim': mkdir -p js/dist; cp ./stork-wasm/pkg/stork_wasm_bg.wasm js/dist/stork.wasm
-# 2. Run 'cd js && npx webpack --config ../webpack.prod.js'
+# 2. Run 'js-build-webpack': 'cd js && npx webpack --config ../webpack.prod.js'
 # This will create js/dist/stork.js and ensure js/dist/stork.wasm is the correct Wasm file.
-just js-build-bundle
+just build-js
 
 # --- Populate web-assets with bundled Stork JS and Wasm ---
 echo "Creating web-assets directory and populating it with bundled Stork assets..."
