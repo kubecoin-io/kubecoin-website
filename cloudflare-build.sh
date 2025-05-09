@@ -98,7 +98,8 @@ echo "Installing JS dependencies for Stork bundle using Yarn (from $(pwd) [stork
 # Stork uses Yarn workspaces. Install from the root.
 # The root yarn.lock and package.json (with workspace config) will be used.
 if [ -f "yarn.lock" ]; then # This check is now at stork-repo root
-    yarn install --frozen-lockfile
+    echo "Found yarn.lock. Running yarn install (allowing lockfile updates if needed by Yarn 3+)..."
+    yarn install
 else
     echo "WARNING: yarn.lock not found in $(pwd) [stork-repo root], which is unexpected for this project. Falling back to npm install."
     # Fallback, though Stork is set up for Yarn.
