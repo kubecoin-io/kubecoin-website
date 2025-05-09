@@ -65,25 +65,42 @@ echo "DEBUG: Successfully changed to stork-wasm and ran wasm-pack. Current direc
 cd .. # Back to stork-repo root
 echo "DEBUG: Returned to stork-repo root. Current directory: $(pwd)"
 
-# --- Build Stork JS Bundle (high-level API) ---
-echo "Building Stork JS bundle (high-level API) from $(pwd)..."
-# DO NOT cd js here. npm install and build should run from stork-repo root.
-echo "Installing JS dependencies for Stork bundle (from stork-repo root)..."
-npm install --legacy-peer-deps # Use --legacy-peer-deps to resolve conflicts
-
-echo "DEBUG: Contents of stork-repo/package.json scripts section (from $(pwd)):"
-if [ -f "package.json" ]; then
-  grep -A 10 -B 2 '"scripts":' package.json || echo "DEBUG: 'scripts' section not found or grep failed in $(pwd)."
+# --- Install just (command runner used by Stork) ---
+echo "Checking for just..."
+if ! command -v just &> /dev/null
+then
+    echo "just could not be found, installing via cargo..."
+    cargo install just
+    # Ensure just is in PATH for this session if cargo install placed it in .cargo/bin
+    export PATH="$HOME/.cargo/bin:$PATH"
 else
-  echo "DEBUG: package.json not found in $(pwd)"
+    echo "just is already installed."
 fi
+echo "just version:"
+just --version
 
-echo "DEBUG: Listing available npm scripts in $(pwd) (stork-repo root):"
-npm run || echo "DEBUG: 'npm run' command failed or produced no output in $(pwd)."
+# --- Build Stork JS Bundle (high-level API) using just ---
+echo "Building Stork JS bundle (high-level API) from $(pwd) using just..."
 
-echo "Building Stork JS bundle with npm run build (from $(pwd))..."
-npm run build # This should use stork-repo/package.json and create js/dist/*
-# No cd .. here, as we didn't cd into js for this part.
+echo "Installing JS dependencies for Stork bundle (in stork-repo/js/)..."
+cd js
+# The project uses yarn, as evidenced by yarn.lock in the stork-repo root and js/package.json.
+# npm install --legacy-peer-deps # Previous attempt, switching to yarn.
+if [ -f "yarn.lock" ]; then
+    yarn install --frozen-lockfile # Use yarn as per project setup
+elif [ -f "package-lock.json" ]; then
+    npm ci
+else
+    npm install --legacy-peer-deps
+fi
+cd .. # Back to stork-repo root
+
+echo "Building Stork JS bundle with 'just js-build-bundle' (from $(pwd))..."
+# This command, from Stork's justfile, should:
+# 1. Run 'js-build-wasm-shim': mkdir -p js/dist; cp ./stork-wasm/pkg/stork_wasm_bg.wasm js/dist/stork.wasm
+# 2. Run 'cd js && npx webpack --config ../webpack.prod.js'
+# This will create js/dist/stork.js and ensure js/dist/stork.wasm is the correct Wasm file.
+just js-build-bundle
 
 # --- Populate web-assets with bundled Stork JS and Wasm ---
 echo "Creating web-assets directory and populating it with bundled Stork assets..."
