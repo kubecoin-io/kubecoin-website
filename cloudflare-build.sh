@@ -70,6 +70,17 @@ echo "Building Stork JS bundle (high-level API)..."
 cd js # Navigate to stork-repo/js/
 echo "Installing JS dependencies for Stork bundle..."
 npm install --legacy-peer-deps # Use --legacy-peer-deps to resolve conflicts
+
+echo "DEBUG: Contents of stork-repo/js/package.json scripts section:"
+if [ -f "package.json" ]; then
+  grep -A 10 -B 2 '"scripts":' package.json || echo "DEBUG: 'scripts' section not found or grep failed."
+else
+  echo "DEBUG: package.json not found in $(pwd)"
+fi
+
+echo "DEBUG: Listing available npm scripts in $(pwd) (stork-repo/js/):"
+npm run || echo "DEBUG: 'npm run' command failed or produced no output."
+
 echo "Building Stork JS bundle with Rollup..."
 npm run build # This should create dist/stork.js and dist/stork.wasm
 cd .. # Back to stork-repo root
