@@ -66,24 +66,24 @@ cd .. # Back to stork-repo root
 echo "DEBUG: Returned to stork-repo root. Current directory: $(pwd)"
 
 # --- Build Stork JS Bundle (high-level API) ---
-echo "Building Stork JS bundle (high-level API)..."
-cd js # Navigate to stork-repo/js/
-echo "Installing JS dependencies for Stork bundle..."
+echo "Building Stork JS bundle (high-level API) from $(pwd)..."
+# DO NOT cd js here. npm install and build should run from stork-repo root.
+echo "Installing JS dependencies for Stork bundle (from stork-repo root)..."
 npm install --legacy-peer-deps # Use --legacy-peer-deps to resolve conflicts
 
-echo "DEBUG: Contents of stork-repo/js/package.json scripts section:"
+echo "DEBUG: Contents of stork-repo/package.json scripts section (from $(pwd)):"
 if [ -f "package.json" ]; then
-  grep -A 10 -B 2 '"scripts":' package.json || echo "DEBUG: 'scripts' section not found or grep failed."
+  grep -A 10 -B 2 '"scripts":' package.json || echo "DEBUG: 'scripts' section not found or grep failed in $(pwd)."
 else
   echo "DEBUG: package.json not found in $(pwd)"
 fi
 
-echo "DEBUG: Listing available npm scripts in $(pwd) (stork-repo/js/):"
-npm run || echo "DEBUG: 'npm run' command failed or produced no output."
+echo "DEBUG: Listing available npm scripts in $(pwd) (stork-repo root):"
+npm run || echo "DEBUG: 'npm run' command failed or produced no output in $(pwd)."
 
-echo "Building Stork JS bundle with Rollup..."
-npm run build # This should create dist/stork.js and dist/stork.wasm
-cd .. # Back to stork-repo root
+echo "Building Stork JS bundle with npm run build (from $(pwd))..."
+npm run build # This should use stork-repo/package.json and create js/dist/*
+# No cd .. here, as we didn't cd into js for this part.
 
 # --- Populate web-assets with bundled Stork JS and Wasm ---
 echo "Creating web-assets directory and populating it with bundled Stork assets..."
