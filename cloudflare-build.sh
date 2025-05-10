@@ -129,16 +129,6 @@ fi
 echo "Running just build-js to bundle Stork Wasm and JS..."
 just build-js # This will run yarn install and webpack
 
-echo "Listing contents of stork-repo root after just build-js:"
-ls -la
-echo "Listing contents of stork-repo/dist/ after just build-js (if it exists):"
-ls -la dist/
-echo "Listing contents of stork-repo/js/dist/ after just build-js (if it exists):"
-ls -la js/dist/
-echo "Finding stork.js and stork.wasm in stork-repo..."
-find . -name "stork.js" -ls
-find . -name "stork.wasm" -ls
-
 # --- Populate web-assets with bundled Stork JS and Wasm ---
 echo "Creating web-assets directory and populating it with bundled Stork assets..."
 rm -rf web-assets # Clean up
