@@ -126,23 +126,31 @@ else
     fi
 fi
 
-echo "Building Stork JS bundle with 'just build-js' (from $(pwd) [stork-repo root])..."
-# The 'just build-js' recipe in Stork's justfile typically runs 'cd js && yarn install --frozen-lockfile && cd ..'
-# This will correctly use Yarn Classic due to the YARN_VERSION environment variable.
-just build-js
+echo "Running just build-js to bundle Stork Wasm and JS..."
+just build-js # This will run yarn install and webpack
+
+echo "Listing contents of stork-repo root after just build-js:"
+ls -la
+echo "Listing contents of stork-repo/dist/ after just build-js (if it exists):"
+ls -la dist/
+echo "Listing contents of stork-repo/js/dist/ after just build-js (if it exists):"
+ls -la js/dist/
+echo "Finding stork.js and stork.wasm in stork-repo..."
+find . -name "stork.js" -ls
+find . -name "stork.wasm" -ls
 
 # --- Populate web-assets with bundled Stork JS and Wasm ---
 echo "Creating web-assets directory and populating it with bundled Stork assets..."
 rm -rf web-assets # Clean up
 mkdir -p web-assets
-cp js/dist/stork.js web-assets/stork.js
-cp js/dist/stork.wasm web-assets/stork.wasm # Note: stork.wasm, not _bg.wasm
+cp dist/stork.js web-assets/stork.js # Corrected path
+cp dist/stork.wasm web-assets/stork.wasm # Corrected path
 # Also copy CSS
-cp themes/basic.css web-assets/basic.css # Assuming this is still the desired source
-cp themes/dark.css web-assets/dark.css   # Assuming this is still the desired source
+cp themes/basic.css web-assets/basic.css # This path is relative to stork-repo root
+cp themes/dark.css web-assets/dark.css   # This path is relative to stork-repo root
 echo "web-assets populated with bundled Stork."
 
-# --- Copy Stork web assets to theme ---
+# Copy Stork web assets to theme
 echo "Copying bundled Stork web assets to theme..."
 THEME_ASSET_DIR="../themes/papyrus/static" # Relative path from stork-repo
 mkdir -p "$THEME_ASSET_DIR/js"
