@@ -95,23 +95,31 @@ yarn --version
 echo "Building Stork JS bundle (high-level API) from $(pwd) [stork-repo root] using just..."
 
 echo "Installing JS dependencies for Stork bundle using Yarn (from $(pwd) [stork-repo root])..."
-# Stork uses Yarn workspaces. Install from the root.
-# The root yarn.lock and package.json (with workspace config) will be used.
 if [ -f "yarn.lock" ]; then # This check is now at stork-repo root
-    echo "Found yarn.lock. Removing it to force regeneration, then running yarn install."
-    rm -f yarn.lock
-    yarn install
+    echo "Found yarn.lock (likely Yarn 1.x format). Running 'YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install' to allow migration..."
+    if YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install; then
+        echo "Yarn install (with lockfile migration) successful. yarn.lock should now be in Yarn 3+ format."
+    else
+        echo "YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install FAILED during lockfile migration."
+        echo "This is unexpected. Dumping yarn.lock (first 50 lines) and package.json for debugging."
+        echo "--- package.json ---"
+        cat package.json || echo "Failed to cat package.json"
+        echo "--- yarn.lock (first 50 lines) ---"
+        head -n 50 yarn.lock || echo "Failed to cat yarn.lock"
+        exit 1 # Fail the build
+    fi
 else
-    echo "WARNING: yarn.lock not found in $(pwd) [stork-repo root]. Running yarn install."
-    # Fallback, though Stork is set up for Yarn.
-    yarn install # If no lockfile, yarn install will create one.
+    echo "WARNING: yarn.lock not found in $(pwd) [stork-repo root]."
+    echo "Attempting 'YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install' to create lockfile..."
+    if YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install; then
+        echo "Yarn install (lockfile creation) successful."
+    else
+        echo "YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install (lockfile creation) FAILED."
+        exit 1 # Fail the build
+    fi
 fi
 
 echo "Building Stork JS bundle with 'just build-js' (from $(pwd) [stork-repo root])..."
-# This command, from Stork's justfile, should:
-# 1. Run 'js-build-wasm-shim': mkdir -p js/dist; cp ./stork-wasm/pkg/stork_wasm_bg.wasm js/dist/stork.wasm
-# 2. Run 'js-build-webpack': 'cd js && npx webpack --config ../webpack.prod.js'
-# This will create js/dist/stork.js and ensure js/dist/stork.wasm is the correct Wasm file.
 just build-js
 
 # --- Populate web-assets with bundled Stork JS and Wasm ---
