@@ -89,33 +89,24 @@ else
     echo "yarn is already installed."
 fi
 echo "yarn version:"
-yarn --version
+yarn --version # This should now report the version set by YARN_VERSION (e.g., 1.22.19)
 
 # --- Build Stork JS Bundle (high-level API) using just ---
 echo "Building Stork JS bundle (high-level API) from $(pwd) [stork-repo root] using just..."
 
-echo "Installing JS dependencies for Stork bundle using Yarn (from $(pwd) [stork-repo root])..."
-# Stork uses Yarn workspaces. Install from the root.
-# The root yarn.lock and package.json (with workspace config) will be used.
-if [ -f "yarn.lock" ]; then # This check is now at stork-repo root
-    echo "Found yarn.lock (Yarn 1.x format). Setting Yarn version to classic for this project to match lockfile."
-    
-    # Ensure Corepack uses Yarn Classic for this project.
-    # This will create/update .yarnrc.yml and might update package.json with a packageManager field.
-    yarn set version classic 
-    
-    echo "Yarn version after 'set version classic':"
-    yarn --version # Should now report a 1.x version
+echo "Installing JS dependencies for Stork bundle using Yarn (from $(pwd) [stork-repo root])."
+echo "Assuming YARN_VERSION environment variable is set to a Yarn 1.x version (e.g., 1.22.19) in Cloudflare Pages."
 
-    echo "Now running yarn install with Yarn Classic..."
-    # Yarn Classic doesn't have the same immutable install issues with its own lockfile format.
-    # The --frozen-lockfile flag is appropriate for CI with Yarn Classic if no changes are expected.
-    # However, since we just set the version, a plain 'yarn install' is safer to ensure setup.
-    if yarn install; then 
-        echo "Yarn install (using Yarn Classic) successful."
+# Stork uses Yarn workspaces. Install from the root using Yarn Classic.
+if [ -f "yarn.lock" ]; then # This check is now at stork-repo root
+    echo "Found yarn.lock. Running 'yarn install --frozen-lockfile' with Yarn Classic."
+    # --frozen-lockfile is standard for CI to ensure lockfile is not changed.
+    if yarn install --frozen-lockfile; then
+        echo "Yarn install (using Yarn Classic with --frozen-lockfile) successful."
     else
-        echo "Yarn install (using Yarn Classic) FAILED."
-        echo "This is unexpected. Dumping yarn.lock (first 50 lines) and package.json for debugging."
+        echo "Yarn install (using Yarn Classic with --frozen-lockfile) FAILED."
+        echo "This might happen if yarn.lock is somehow incompatible even with Yarn Classic."
+        echo "Dumping yarn.lock (first 50 lines) and package.json for debugging."
         echo "--- package.json ---"
         cat package.json || echo "Failed to cat package.json"
         echo "--- yarn.lock (first 50 lines) ---"
@@ -124,20 +115,20 @@ if [ -f "yarn.lock" ]; then # This check is now at stork-repo root
     fi
 else
     # This case means the original stork-repo/yarn.lock was missing.
-    # We'll proceed with the default Yarn version (likely Berry) and allow lockfile creation.
+    # This is unlikely if the submodule was cloned correctly.
     echo "WARNING: yarn.lock not found in $(pwd) [stork-repo root]."
-    echo "Attempting 'YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install' to create lockfile (using default Yarn version)..."
-    if YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install; then
-        echo "Yarn install (lockfile creation) successful."
+    echo "Attempting 'yarn install' to create lockfile (using Yarn Classic from YARN_VERSION env var)..."
+    if yarn install; then
+        echo "Yarn install (lockfile creation with Yarn Classic) successful."
     else
-        echo "YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install (lockfile creation) FAILED."
+        echo "Yarn install (lockfile creation with Yarn Classic) FAILED."
         exit 1 # Fail the build
     fi
 fi
 
 echo "Building Stork JS bundle with 'just build-js' (from $(pwd) [stork-repo root])..."
-# The 'just build-js' recipe in Stork's justfile runs 'cd js && yarn install --frozen-lockfile && cd ..'
-# This should now also use Yarn Classic due to the 'yarn set version classic' project-level setting.
+# The 'just build-js' recipe in Stork's justfile typically runs 'cd js && yarn install --frozen-lockfile && cd ..'
+# This will correctly use Yarn Classic due to the YARN_VERSION environment variable.
 just build-js
 
 # --- Populate web-assets with bundled Stork JS and Wasm ---
