@@ -176,6 +176,13 @@
         }
     </script>
 
+    {# Set Webpack public path for Stork before it loads #}
+    <script>
+      // This needs to be the path to the directory where stork.js and stork.wasm are located.
+      // It ensures Webpack can correctly resolve paths for any assets it might try to load.
+      window.__webpack_public_path__ = '{{ SITEURL }}/theme/js/';
+    </script>
+
     {# Stork Search - Load always for header search, ensure it's type="module" #}
     <script type="module">
         import * as stork from '{{ SITEURL }}/theme/js/stork.js';
