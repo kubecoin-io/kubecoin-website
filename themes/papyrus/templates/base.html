@@ -178,7 +178,7 @@
 
     {# Stork Search - Load always for header search, ensure it's type="module" #}
     <script type="module">
-        import stork from '{{ SITEURL }}/theme/js/stork.js';
+        import * as stork from '{{ SITEURL }}/theme/js/stork.js';
 
         if (stork && typeof stork.initialize === 'function') {
             // Pass the URL to the .wasm file. The bundled stork.js expects stork.wasm by default in the same path.
