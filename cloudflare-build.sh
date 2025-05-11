@@ -175,6 +175,19 @@ echo "Generating site with Pelican..."
 # Use publishconf.py for final build settings (like SITEURL)
 pelican content -o output -s publishconf.py
 
+# --- Verify _headers file ---
+echo "Checking for _headers file in output directory..."
+if [ -f "output/_headers" ]; then
+  echo "_headers file found in output directory. Contents:"
+  cat output/_headers
+else
+  echo "ERROR: _headers file NOT FOUND in output directory!"
+  echo "Listing root of output directory to help debug:"
+  ls -Al output/
+  echo "Please ensure '_headers' is in STATIC_PATHS in pelicanconf.py and the _headers file exists in the project root."
+fi
+# --- End _headers check ---
+
 # Check for Stork index file in output
 echo "Listing contents of output directory to check for Stork index file (.st):"
 ls -l output/
