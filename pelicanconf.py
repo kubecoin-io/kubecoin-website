@@ -15,7 +15,7 @@ THEME = 'themes/papyrus'
 THEME_STATIC_PATHS = ['static']
 PLUGIN_PATHS = ['pelican-plugins']
 PLUGINS = ['pelican-toc', 'search'] # Replace 'tipue_search' with 'search'
-STATIC_PATHS = ['images', 'extra', 'admin/index.html', 'admin/config.yml']
+STATIC_PATHS = ['images', 'extra', 'admin/index.html', 'admin/config.yml', '_headers']
 DISPLAY_PAGES_ON_MENU = True
 DISPLAY_CATEGORIES_ON_MENU = False
 
