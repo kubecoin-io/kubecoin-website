@@ -183,17 +183,19 @@
       window.__webpack_public_path__ = '{{ SITEURL }}/theme/js/';
     </script>
 
-    {# Stork Search - Load always for header search, ensure it's type="module" #}
-    <script type="module">
-        import * as stork from '{{ SITEURL }}/theme/js/stork.js';
+    {# Load Stork JS (assuming it creates a global `stork` object) #}
+    <script src="{{ SITEURL }}/theme/js/stork.js"></script>
 
-        if (stork && typeof stork.initialize === 'function') {
-            // Pass the URL to the .wasm file. The bundled stork.js expects stork.wasm by default in the same path.
-            stork.initialize({ wasmUrl: '{{ SITEURL }}/theme/js/stork.wasm' })
+    {# Initialize and register Stork #}
+    <script>
+        // Ensure Stork is loaded and initialize is available
+        // Use a try-catch for initial access to window.stork to be safe, or check typeof
+        if (typeof window.stork !== 'undefined' && window.stork && typeof window.stork.initialize === 'function') {
+            window.stork.initialize({ wasmUrl: '{{ SITEURL }}/theme/js/stork.wasm' })
                 .then(() => {
                     console.log("Stork initialized successfully.");
-                    if (typeof stork.register === 'function') {
-                        stork.register("sitesearch", "{{ SITEURL }}/search-index.st", {
+                    if (typeof window.stork.register === 'function') {
+                        window.stork.register("sitesearch", "{{ SITEURL }}/search-index.st", {
                             onQueryUpdate: (query, results) => {
                                 const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
                                 if (outputElement) {
@@ -212,7 +214,7 @@
                             onInputCleared: () => {
                                 const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
                                 if (outputElement) {
-                                    // outputElement.style.display = 'none';
+                                    // outputElement.style.display = 'none'; // Behavior for this can be reviewed
                                 }
                             }
                         });
@@ -229,23 +231,23 @@
                                 }
                             });
                             outputElement.addEventListener('click', function(event) {
-                                event.stopPropagation();
+                                event.stopPropagation(); // Prevent clicks inside results from closing it
                             });
                         }
 
                     } else {
-                        console.error("Stork 'register' function not found after initialization.");
+                        console.error("window.stork.register function not found after initialization.");
                     }
                 })
                 .catch(error => {
                     console.error("Error initializing Stork:", error);
                 });
         } else {
-            let message = "Stork module could not be imported or is missing the 'initialize' function. ";
-            if (stork) {
-                message += "Imported object does not have 'initialize'. Keys: " + Object.keys(stork).join(', ');
+            let message = "Stork object (window.stork) not found or is missing the 'initialize' function. ";
+            if (typeof window.stork !== 'undefined' && window.stork) {
+                message += "window.stork does not have 'initialize'. Keys: " + Object.keys(window.stork).join(', ');
             } else {
-                message += "Import resulted in a falsy object (stork.js might not have loaded).";
+                message += "window.stork is not defined (stork.js might not have loaded or executed correctly).";
             }
             console.error(message);
         }
