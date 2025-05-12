@@ -23,6 +23,12 @@ PAGINATION_PATTERNS = (
     (2, '{base_name}/page/{number}/', '{base_name}/page/{number}/index.html'),
 )
 
+STATIC_PATHS = ['images', 'extra']
+EXTRA_PATH_METADATA = {
+    'extra/_headers': {'path': '_headers'},
+    # ...
+}
+
 # Following items are often useful when publishing
 
 # DISQUS_SITENAME = ""
