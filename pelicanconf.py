@@ -15,7 +15,7 @@ THEME = 'themes/papyrus'
 THEME_STATIC_PATHS = ['static']
 PLUGIN_PATHS = ['pelican-plugins']
 PLUGINS = ['pelican-toc', 'search'] # Replace 'tipue_search' with 'search'
-STATIC_PATHS = ['images', 'extra', 'admin/index.html', 'admin/config.yml', '_headers']
+STATIC_PATHS = ['images', 'extra', 'admin/index.html', 'admin/config.yml'] # Removed '_headers'
 DISPLAY_PAGES_ON_MENU = True
 DISPLAY_CATEGORIES_ON_MENU = False
 
@@ -35,6 +35,8 @@ STORK_CONFIG = {
 EXTRA_PATH_METADATA = {
     # Map the favicon from its source location to the output root
     'images/uploads/favicon.ico': {'path': 'favicon.ico'},
+    # Map the _headers file from project root to output root
+    '_headers': {'path': '_headers'},
     # Optional: Map other common icons if you have them
     # 'images/uploads/apple-touch-icon.png': {'path': 'apple-touch-icon.png'},
     # 'images/uploads/favicon-32x32.png': {'path': 'favicon-32x32.png'},
