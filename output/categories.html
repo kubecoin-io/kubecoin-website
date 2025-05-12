@@ -27,7 +27,7 @@
                 '(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {
-            document.documentElement.classList.remove('dark')
+            document.documentElement.classList.remove('dark');
         }
     </script>
 
@@ -36,18 +36,19 @@
         <header class="top-bar shadow-md z-10 bg-neutral-100 dark:bg-neutral-900">
             <div class="container mx-auto px-4 h-16 flex items-center justify-between">
                 <div class="flex items-center">
-                    <a href="https://kubecoin.io/" class="flex items-center">
-                        <img src="https://kubecoin.io/images/uploads/favicon-96x96.png" alt="kubecoin.io logo" class="h-8 w-8 mr-3">
-                        <h1 class="font-semibold text-xl text-zinc-800 dark:text-zinc-200">kubecoin.io</h1>
+                    <a href="https://kubecoin.io" class="flex items-center text-xl font-bold text-zinc-800 dark:text-zinc-200 hover:text-zinc-600 dark:hover:text-zinc-400 mr-6">
+                        <img src="https://kubecoin.io/images/uploads/favicon-96x96.png" alt="kubecoin.io" class="h-8 w-auto mr-2">
+                        <span>kubecoin.io</span>
                     </a>
-                </div>
-                
-                <div class="flex items-center">
-                    <!-- Search Bar Placeholder -->
-                    <div class="mr-4">
-                        <input type="text" placeholder="Search..." class="px-2 py-1 border rounded dark:bg-neutral-800 dark:border-neutral-700">
+                    <!-- Functional Stork Search Bar in Header -->
+                    <div class="mr-4 relative">
+                        <input type="text" data-stork="sitesearch" placeholder="Search..." class="px-2 py-1 border rounded dark:bg-neutral-800 dark:border-neutral-700 w-64">
+                        <div data-stork="sitesearch-output" class="absolute mt-1 w-full rounded-md shadow-lg bg-white dark:bg-zinc-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-20" style="max-height: 300px; overflow-y: auto; display: none;">
+                            <!-- Stork results will appear here. Initially hidden. -->
+                        </div>
                     </div>
-                    
+                </div>
+                <div class="flex items-center">
                     <!-- Theme Toggle Button -->
                     <button id="theme-toggle" type="button" aria-label="Light|Dark"
                         class="text-zinc-700 dark:text-zinc-400 rounded-full focus:outline-none text-sm p-1">
@@ -58,7 +59,6 @@
                             <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
                         </svg>
                     </button>
-
                     <!-- Social Icons Placeholder (from old nav) -->
                     <ul class="flex items-center ml-4">
                                 <li class="mr-3">
@@ -69,6 +69,10 @@
                                     <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Discord" class="text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200">
 <i class="fab fa-discord fa-lg"></i>                                    </a>
                                 </li>
+                         <li>                             <a href="https://kubecoin.io/None" type="application/atom+xml" title="kubecoin.io Atom Feed" rel="alternate" class="text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200">
+                                <i class="fa fa-rss fa-lg" aria-hidden="true"></i>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -79,20 +83,18 @@
             <!-- Left Sidebar -->
             <aside class="left-sidebar w-64 p-4 overflow-y-auto bg-neutral-50 dark:bg-neutral-800 shadow lg:block hidden">
                 <h2 class="text-lg font-semibold mb-4 text-zinc-800 dark:text-zinc-200">Navigation</h2>
-                <ul class="space-y-2">
-                        <li><a href="https://kubecoin.io/pages/about-us.html" class="block px-3 py-2 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 ">"About Us"</a></li>
-                    <li><a href="https://kubecoin.io/archives.html" class="block px-3 py-2 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 ">Archive</a></li>
-                    <li><a href="https://kubecoin.io/categories.html" class="block px-3 py-2 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 bg-neutral-200 dark:bg-neutral-700">Categories</a></li>
-                    <li><a href="https://kubecoin.io/tags.html" class="block px-3 py-2 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 ">Tags</a></li>
-                    <li><a href="https://kubecoin.io/search.html" class="block px-3 py-2 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 ">Search (Old)</a></li>
-                    <!-- More links can be added here, perhaps with icons -->
-                </ul>
+                <nav>
+                    <ul>
+                        <li class="mb-2"><a href="https://kubecoin.io" class="hover:text-zinc-800 dark:hover:text-zinc-200">Home</a></li>
+                         <li class="mb-2"><a href="https://kubecoin.io/pages/about-us.html" class="hover:text-zinc-800 dark:hover:text-zinc-200">"About Us"</a></li>
+                        <li class="mb-2"><a href="https://kubecoin.io/archives.html" class="hover:text-zinc-800 dark:hover:text-zinc-200">Archives</a></li>
+                        <li class="mb-2"><a href="https://kubecoin.io/search.html" class="hover:text-zinc-800 dark:hover:text-zinc-200">Search Page</a></li> 
+                    </ul>
+                </nav>
             </aside>
 
-            <!-- Primary Content Column -->
-            <main class="main-content flex-1 p-6 overflow-y-auto">
-                <!-- Breadcrumbs (from old layout) -->
-                
+            <!-- Content Area -->
+            <main class="flex-1 p-6 overflow-y-auto">
 
 <div class="mb-12 md:mt-14 text-zinc-800 dark:text-zinc-300">
     <h1 class="font-bold text-4xl my-10">Categories</h1>
@@ -107,57 +109,123 @@
 </div>
 
             </main>
-
-            <!-- Right Sidebar (Placeholder) -->
-            <aside class="right-sidebar w-64 p-4 overflow-y-auto bg-neutral-50 dark:bg-neutral-800 shadow lg:block hidden">
-                <h2 class="text-lg font-semibold mb-4 text-zinc-800 dark:text-zinc-200">On this page</h2>
-                <!-- TOC will go here -->
-                    <p class="text-sm text-zinc-500 dark:text-zinc-400">No table of contents for this page.</p>
-            </aside>
         </div>
 
-        <!-- Footer (kept minimal for now, might be part of main content scroll or fixed) -->
-        <footer class="flex w-full text-xs justify-center py-4 text-zinc-600 dark:text-zinc-400 border-t border-neutral-200 dark:border-neutral-700">
-            <div class="px-4">
-                <span></span>Powered by
-                <a class="underline" href="https://getpelican.com/">Pelican</a>&nbsp;&
-                <a class="underline" href="https://github.com/aleylara/Papyrus">Papyrus</a> (heavily modified)
-            </div>
+        <!-- Footer -->
+        <footer class="footer p-4 text-center text-sm text-zinc-600 dark:text-zinc-400 bg-neutral-100 dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-700">
+            © kubecoin.io 2025. Powered by <a href="https://getpelican.com/">Pelican</a> &amp; <a href="https://github.com/jnhghy/papyrus">Papyrus</a>.
         </footer>
     </div>
 
 
     <script>
-        // Theme toggle script (existing)
+        // Theme toggle script
         let themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
         let themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+        // Check initial theme
         if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            themeToggleLightIcon.classList.remove('hidden');
+            if(themeToggleLightIcon) themeToggleLightIcon.classList.remove('hidden');
         } else {
-            themeToggleDarkIcon.classList.remove('hidden');
+            if(themeToggleDarkIcon) themeToggleDarkIcon.classList.remove('hidden');
         }
         let themeToggleBtn = document.getElementById('theme-toggle');
-        themeToggleBtn.addEventListener('click', function () {
-            themeToggleDarkIcon.classList.toggle('hidden');
-            themeToggleLightIcon.classList.toggle('hidden');
-            if (localStorage.getItem('color-theme')) {
-                if (localStorage.getItem('color-theme') === 'light') {
-                    document.documentElement.classList.add('dark');
-                    localStorage.setItem('color-theme', 'dark');
+        if(themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', function () {
+                if(themeToggleDarkIcon) themeToggleDarkIcon.classList.toggle('hidden');
+                if(themeToggleLightIcon) themeToggleLightIcon.classList.toggle('hidden');
+                if (localStorage.getItem('color-theme')) {
+                    if (localStorage.getItem('color-theme') === 'light') {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('color-theme', 'dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('color-theme', 'light');
+                    }
                 } else {
-                    document.documentElement.classList.remove('dark');
-                    localStorage.setItem('color-theme', 'light');
+                    if (document.documentElement.classList.contains('dark')) {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('color-theme', 'light');
+                    } else {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('color-theme', 'dark');
+                    }
                 }
+            });
+        }
+    </script>
+
+    <script>
+      // This needs to be the path to the directory where stork.js and stork.wasm are located.
+      // It ensures Webpack can correctly resolve paths for any assets it might try to load.
+      window.__webpack_public_path__ = 'https://kubecoin.io/theme/js/';
+    </script>
+
+    <script src="https://kubecoin.io/theme/js/stork.js"></script>
+
+    <script>
+        // Ensure Stork is loaded and initialize is available
+        // Use a try-catch for initial access to window.stork to be safe, or check typeof
+        if (typeof window.stork !== 'undefined' && window.stork && typeof window.stork.initialize === 'function') {
+            window.stork.initialize({ wasmUrl: 'https://kubecoin.io/theme/js/stork.wasm' })
+                .then(() => {
+                    console.log("Stork initialized successfully.");
+                    if (typeof window.stork.register === 'function') {
+                        window.stork.register("sitesearch", "https://kubecoin.io/search-index.st", {
+                            onQueryUpdate: (query, results) => {
+                                const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
+                                if (outputElement) {
+                                    if (query && results && results.length > 0) {
+                                        outputElement.style.display = 'block';
+                                    } else {
+                                        outputElement.style.display = 'none';
+                                    }
+                                }
+                            },
+                            onResultSelected: (query, result) => {
+                                if (result && result.entry && result.entry.url) {
+                                    window.location.assign(result.entry.url);
+                                }
+                            },
+                            onInputCleared: () => {
+                                const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
+                                if (outputElement) {
+                                    // outputElement.style.display = 'none'; // Behavior for this can be reviewed
+                                }
+                            }
+                        });
+                        console.log("Stork registration attempted for sitesearch.");
+
+                        // UI logic for hiding dropdown (can stay here)
+                        const searchInput = document.querySelector('input[data-stork="sitesearch"]');
+                        const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
+                        if (searchInput && outputElement) {
+                            document.addEventListener('click', function(event) {
+                                const searchContainer = searchInput.closest('.relative');
+                                if (searchContainer && !searchContainer.contains(event.target)) {
+                                    outputElement.style.display = 'none';
+                                }
+                            });
+                            outputElement.addEventListener('click', function(event) {
+                                event.stopPropagation(); // Prevent clicks inside results from closing it
+                            });
+                        }
+
+                    } else {
+                        console.error("window.stork.register function not found after initialization.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error initializing Stork:", error);
+                });
+        } else {
+            let message = "Stork object (window.stork) not found or is missing the 'initialize' function. ";
+            if (typeof window.stork !== 'undefined' && window.stork) {
+                message += "window.stork does not have 'initialize'. Keys: " + Object.keys(window.stork).join(', ');
             } else {
-                if (document.documentElement.classList.contains('dark')) {
-                    document.documentElement.classList.remove('dark');
-                    localStorage.setItem('color-theme', 'light');
-                } else {
-                    document.documentElement.classList.add('dark');
-                    localStorage.setItem('color-theme', 'dark');
-                }
+                message += "window.stork is not defined (stork.js might not have loaded or executed correctly).";
             }
-        });
-    </script> 
+            console.error(message);
+        }
+    </script>
 </body>
 </html>
