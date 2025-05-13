@@ -12,7 +12,7 @@ pelican-jinja2content
 pelican-jinja-filters
 pelican-pandoc-reader
 pelican-injector
-pelican-liquidtags
+pelican_liquid_tags
 pelican-read-more
 pelican-more-categories
 pelican-nojekyll
