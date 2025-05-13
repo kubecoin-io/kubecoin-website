@@ -15,7 +15,7 @@ pelican-injector
 pelican_liquid_tags
 pelican-read-more
 pelican-more-categories
-pelican-nojekyll
+pelican_nojekyll
 pelican-thumbnailer
 pelican-yaml-metadata
 pelican-simple-footnotes
