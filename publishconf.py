@@ -23,7 +23,7 @@ PAGINATION_PATTERNS = (
     (2, '{base_name}/page/{number}/', '{base_name}/page/{number}/index.html'),
 )
 
-STATIC_PATHS = ['images', 'extra']
+STATIC_PATHS = ['images', 'extra', 'admin'] # Added 'admin'
 EXTRA_PATH_METADATA = {
     # Removed for Pagefind
     # ...
