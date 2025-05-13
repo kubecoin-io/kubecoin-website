@@ -3,7 +3,7 @@ set -e
 
 # --- Install Pagefind ---
 echo "Installing Pagefind..."
-curl -OL https://github.com/CloudCannon/pagefind/releases/download/v1.1.0/pagefind-v1.1.0-linux-x64.tar.gz
+curl -LfsS https://github.com/CloudCannon/pagefind/releases/download/v1.1.0/pagefind-v1.1.0-linux-x64.tar.gz -o pagefind-v1.1.0-linux-x64.tar.gz
 tar -xzf pagefind-v1.1.0-linux-x64.tar.gz
 mv pagefind-v1.1.0-linux-x64/pagefind $HOME/.local/bin/pagefind
 rm pagefind-v1.1.0-linux-x64.tar.gz
