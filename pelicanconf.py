@@ -17,7 +17,6 @@ PLUGIN_PATHS = ['pelican-plugins']
 PLUGINS = [
     'pelican-toc',
     'tailwindcss',
-    'markdown_include',
     'linkclass',
     'mau_reader',
     'jinja2content',
@@ -27,7 +26,6 @@ PLUGINS = [
     'liquid_tags',
     'read_more',
     'more_categories',
-    'nojekyll',
     'thumbnailer',
     'yaml_metadata',
     'simple_footnotes',
@@ -95,10 +93,20 @@ DEFAULT_PAGINATION = 10
 PAGE_EXCLUDES = ['admin']
 ARTICLE_EXCLUDES = ['admin']
 
+# Markdown Extension Configuration
+MARKDOWN = {
+    'extension_configs': {
+        'markdown.extensions.codehilite': {'css_class': 'highlight'},
+        'markdown.extensions.extra': {},
+        'markdown.extensions.meta': {},
+        'markdown_include.include': {'base_path': 'content'}, # Add markdown_include here
+    },
+    'output_format': 'html5',
+}
+
 # Tailwind CSS Plugin Configuration
-TAILWIND_INPUT_FILE = 'themes/papyrus/tailwind.css'
-TAILWIND_CONFIG_FILE = 'themes/papyrus/tailwind.config.js'
-# Output will be themes/papyrus/static/css/main.css, matching existing theme structure
+TAILWIND_INPUT_FILE = 'themes/papyrus/tailwind.css' # Path relative to project root
+TAILWIND_CONFIG_FILE = 'themes/papyrus/tailwind.config.js' # Path relative to project root
 TAILWIND_OUTPUT_FILE = 'css/main.css'
 TAILWIND_MINIFY = False  # Set to False for development (pelicanconf.py)
 TAILWIND_NODE_ENV = 'development' # Set to 'development' for development
