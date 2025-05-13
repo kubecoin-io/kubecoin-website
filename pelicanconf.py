@@ -112,3 +112,36 @@ TAILWIND_MINIFY = False  # Set to False for development (pelicanconf.py)
 TAILWIND_NODE_ENV = 'development' # Set to 'development' for development
 # When running `pelican -r`, set to True to rebuild Tailwind on changes
 # TAILWIND_WATCH = True # Consider for local development with `pelican -r`
+
+# Pelican TOC Plugin Configuration
+TOC_HEADERS = r"h[2-6]"  # Include headers h2 through h6
+TOC_RUN = 'true'  # Enable ToC generation per article (can be overridden in article metadata)
+
+# Linkclass Plugin Configuration
+LINKCLASS_CSS_CLASS = 'external-link' # Default is 'external'
+# LINKCLASS_EXTERNAL_SITES = [SITEURL] # Add your site to treat subdomains as internal if needed
+
+# Read More Plugin Configuration
+READ_MORE_LINK = '<a class="text-primary hover:underline" href="/{url}#more">Read more »</a>'
+READ_MORE_SEPARATOR = '<!-- more -->' # Default separator
+
+# Thumbnailer Plugin Configuration (Adjust paths and sizes as needed)
+# THUMBNAILER_DEFAULT_SIZE = '192x192'  # e.g., '100x100', '200xauto'
+# THUMBNAILER_SOURCE_PATH = 'images/uploads' # Relative to PATH (content folder)
+# THUMBNAILER_OUTPUT_PATH = 'images/thumbnails' # Relative to OUTPUT_PATH
+# THUMBNAILER_SQUARE = False # Set to True for square thumbnails
+
+# Webring Plugin Configuration (Provide your webring feed URL)
+# WEBRING_FEED_URL = 'YOUR_WEBRING_FEED_URL_HERE'
+# WEBRING_MY_SITE_URLS = [SITEURL] # Your site's URL(s) in the webring
+
+# Feed Filter Plugin Configuration (Example: exclude 'drafts' category from feeds)
+# FEED_FILTER_EXCLUDE_CATEGORIES = ['drafts']
+# FEED_FILTER_EXCLUDE_TAGS = []
+# FEED_FILTER_INCLUDE_CATEGORIES = []
+# FEED_FILTER_INCLUDE_TAGS = []
+
+# Injector Plugin Configuration (Example: add a custom script to head)
+# INJECTOR_ITEMS = [
+#     ("<!-- Custom Analytics -->", "head_end", "base.html"),
+# ]
