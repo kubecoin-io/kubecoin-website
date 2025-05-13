@@ -21,6 +21,15 @@ if [ -f "themes/papyrus/package.json" ]; then
 else
   echo "Warning: themes/papyrus/package.json not found. Skipping npm install for theme."
 fi
+
+# Workaround: Copy tailwind.config.js from theme to project root
+echo "Copying tailwind.config.js to project root for pelican-tailwindcss..."
+if [ -f "themes/papyrus/tailwind.config.js" ]; then
+  cp "themes/papyrus/tailwind.config.js" "tailwind.config.js"
+  echo "tailwind.config.js copied to project root."
+else
+  echo "WARNING: themes/papyrus/tailwind.config.js not found. Cannot copy."
+fi
 # --- End Node.js dependencies installation ---
 
 # Upgrade pip to latest version to eliminate warnings
