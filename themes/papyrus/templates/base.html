@@ -13,9 +13,7 @@
     <link rel="stylesheet" type="text/css" href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/main.css" />
     <link rel="stylesheet" type="text/css" href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/pygment.css" />
     <link rel="shortcut icon" href="{{ SITEURL }}/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/stork.css">
-    <link rel="stylesheet" media="screen and (prefers-color-scheme: dark)"
-        href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/stork-dark.css">
+    <link href="{{ SITEURL }}/pagefind/pagefind-ui.css" rel="stylesheet">
     {% if FEED_ALL_ATOM %}
     <link
         href="{{ FEED_DOMAIN }}/{% if FEED_ALL_ATOM_URL %}{{ FEED_ALL_ATOM_URL }}{% else %}{{ FEED_ALL_ATOM }}{% endif %}"
@@ -54,13 +52,8 @@
                         {% endif %}
                         <span>{{ SITENAME }}</span>
                     </a>
-                    <!-- Functional Stork Search Bar in Header -->
-                    <div class="mr-4 relative">
-                        <input type="text" data-stork="sitesearch" placeholder="Search..." class="px-2 py-1 border rounded dark:bg-neutral-800 dark:border-neutral-700 w-64">
-                        <div data-stork="sitesearch-output" class="absolute mt-1 w-full rounded-md shadow-lg bg-white dark:bg-zinc-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-20" style="max-height: 300px; overflow-y: auto; display: none;">
-                            <!-- Stork results will appear here. Initially hidden. -->
-                        </div>
-                    </div>
+                    <!-- Pagefind Search Bar -->
+                    <div id="search" class="mr-4 relative"></div>
                 </div>
                 <div class="flex items-center">
                     <!-- Theme Toggle Button -->
@@ -176,81 +169,11 @@
         }
     </script>
 
-    {# Set Webpack public path for Stork before it loads #}
+    <script src="{{ SITEURL }}/pagefind/pagefind-ui.js"></script>
     <script>
-      // This needs to be the path to the directory where stork.js and stork.wasm are located.
-      // It ensures Webpack can correctly resolve paths for any assets it might try to load.
-      window.__webpack_public_path__ = '{{ SITEURL }}/theme/js/';
-    </script>
-
-    {# Load Stork JS (assuming it creates a global `stork` object) #}
-    <script src="{{ SITEURL }}/theme/js/stork.js"></script>
-
-    {# Initialize and register Stork #}
-    <script>
-        // Ensure Stork is loaded and initialize is available
-        // Use a try-catch for initial access to window.stork to be safe, or check typeof
-        if (typeof window.stork !== 'undefined' && window.stork && typeof window.stork.initialize === 'function') {
-            window.stork.initialize({ wasmUrl: '{{ SITEURL }}/theme/js/stork.wasm' })
-                .then(() => {
-                    console.log("Stork initialized successfully.");
-                    if (typeof window.stork.register === 'function') {
-                        window.stork.register("sitesearch", "{{ SITEURL }}/search-index.st", {
-                            onQueryUpdate: (query, results) => {
-                                const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
-                                if (outputElement) {
-                                    if (query && results && results.length > 0) {
-                                        outputElement.style.display = 'block';
-                                    } else {
-                                        outputElement.style.display = 'none';
-                                    }
-                                }
-                            },
-                            onResultSelected: (query, result) => {
-                                if (result && result.entry && result.entry.url) {
-                                    window.location.assign(result.entry.url);
-                                }
-                            },
-                            onInputCleared: () => {
-                                const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
-                                if (outputElement) {
-                                    // outputElement.style.display = 'none'; // Behavior for this can be reviewed
-                                }
-                            }
-                        });
-                        console.log("Stork registration attempted for sitesearch.");
-
-                        // UI logic for hiding dropdown (can stay here)
-                        const searchInput = document.querySelector('input[data-stork="sitesearch"]');
-                        const outputElement = document.querySelector('[data-stork="sitesearch-output"]');
-                        if (searchInput && outputElement) {
-                            document.addEventListener('click', function(event) {
-                                const searchContainer = searchInput.closest('.relative');
-                                if (searchContainer && !searchContainer.contains(event.target)) {
-                                    outputElement.style.display = 'none';
-                                }
-                            });
-                            outputElement.addEventListener('click', function(event) {
-                                event.stopPropagation(); // Prevent clicks inside results from closing it
-                            });
-                        }
-
-                    } else {
-                        console.error("window.stork.register function not found after initialization.");
-                    }
-                })
-                .catch(error => {
-                    console.error("Error initializing Stork:", error);
-                });
-        } else {
-            let message = "Stork object (window.stork) not found or is missing the 'initialize' function. ";
-            if (typeof window.stork !== 'undefined' && window.stork) {
-                message += "window.stork does not have 'initialize'. Keys: " + Object.keys(window.stork).join(', ');
-            } else {
-                message += "window.stork is not defined (stork.js might not have loaded or executed correctly).";
-            }
-            console.error(message);
-        }
+        window.addEventListener('DOMContentLoaded', (event) => {
+            new PagefindUI({ element: "#search", showSubResults: true });
+        });
     </script>
 </body>
 </html>

@@ -3,20 +3,28 @@
 
 {% block content %}
 <article class="prose dark:prose-invert max-w-none py-8">
-  <h1 class="text-center text-3xl font-bold">Search Results</h1>
-  <p class="text-center">
-    Use the search bar in the site header to find content. Results will appear below the search bar.
-  </p>
-  {#
-    If the pelican-search plugin automatically injects a variable like {{ search_box }}
-    and it's causing an unwanted search input here, you would need to ensure this template
-    does not render it, or configure pelican-search not to provide it for this theme.
-    For now, this template is intentionally simple.
-  #}
+  <h1 class="text-center text-3xl font-bold">Search Site</h1>
+  <div id="search-ui" class="pagefind-ui"></div> {# Pagefind UI will be rendered here #}
 </article>
-<script>
-  window.stork.initialize({
-    wasmUrl: "/theme/js/stork.wasm"
+
+<script type="text/javascript">
+  window.addEventListener('DOMContentLoaded', (event) => {
+    // Initialize Pagefind UI for the search page specifically
+    // This assumes pagefind-ui.js is already loaded by base.html
+    // If base.html's PagefindUI instance is global, this might conflict or be redundant.
+    // For now, let's assume we need a specific instance for this page.
+    // The element ID in base.html is "#search", here it's "#search-ui"
+    if (window.PagefindUI) {
+      new PagefindUI({ 
+        element: "#search-ui",
+        showSubResults: true,
+        // You can customize other options here if needed for the search page
+        // For example, to change the number of results:
+        // resultsPerPage: 5 
+      });
+    } else {
+      console.error("PagefindUI not loaded.");
+    }
   });
 </script>
 {% endblock %}

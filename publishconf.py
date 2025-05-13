@@ -25,7 +25,7 @@ PAGINATION_PATTERNS = (
 
 STATIC_PATHS = ['images', 'extra']
 EXTRA_PATH_METADATA = {
-    'extra/_headers': {'path': '_headers'},
+    # Removed for Pagefind
     # ...
 }
 

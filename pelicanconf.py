@@ -14,22 +14,12 @@ ARTICLE_PATHS = ['posts']
 THEME = 'themes/papyrus'
 THEME_STATIC_PATHS = ['static']
 PLUGIN_PATHS = ['pelican-plugins']
-PLUGINS = ['pelican-toc', 'search'] # Replace 'tipue_search' with 'search'
+PLUGINS = ['pelican-toc'] # Replace 'tipue_search' with 'search'
 STATIC_PATHS = ['images', 'extra']
 DISPLAY_PAGES_ON_MENU = True
 DISPLAY_CATEGORIES_ON_MENU = False
 
 COPYRIGHT = f'© {SITENAME} {datetime.date.today().year}'
-
-# New setting to replace SEARCH_HTML_SELECTOR
-STORK_INPUT_OPTIONS = {
-    'html_selector': 'main' # This tells Stork what content to index from your articles/pages
-}
-
-STORK_CONFIG = {
-    'SEARCH_USE_CDN': False,
-    'OUTPUT_FILENAME': 'search-index.st' # Matches the generated file name
-}
 
 # --- Add/Modify this section for Favicons ---
 EXTRA_PATH_METADATA = {
@@ -48,7 +38,7 @@ EXTRA_PATH_METADATA = {
 THEME_TEMPLATES_OVERRIDES = ['templates']
 
 # Required for the Papyrus theme
-DIRECT_TEMPLATES = ['index', 'tags', 'categories', 'authors', 'archives', 'search']
+DIRECT_TEMPLATES = ['index', 'tags', 'categories', 'authors', 'archives']
 
 TIMEZONE = 'UTC'
 
