@@ -1,16 +1,9 @@
 #!/bin/bash
 set -e
 
-# --- Install Pagefind ---
-echo "Installing Pagefind..."
-curl -LfsS https://github.com/CloudCannon/pagefind/releases/download/v1.1.0/pagefind-v1.1.0-linux-x64.tar.gz -o pagefind-v1.1.0-linux-x64.tar.gz
-tar -xzf pagefind-v1.1.0-linux-x64.tar.gz
-mv pagefind-v1.1.0-linux-x64/pagefind $HOME/.local/bin/pagefind
-rm pagefind-v1.1.0-linux-x64.tar.gz
-rm -rf pagefind-v1.1.0-linux-x64
-export PATH="$HOME/.local/bin:$PATH"
-echo "Pagefind installed. Version:"
-pagefind --version
+# --- Pagefind will be installed via dependencies.txt ---
+echo "Pagefind will be installed via dependencies.txt"
+echo "Checking Pagefind version after dependencies installation..."
 # --- End Pagefind Installation ---
 
 # Upgrade pip to latest version to eliminate warnings
@@ -21,13 +14,15 @@ pip install --upgrade pip
 echo "Installing Python dependencies..."
 pip install -r dependencies.txt
 
+python3 -m pagefind --version # Moved version check to after install
+
 # Generate site with Pelican
 echo "Generating site with Pelican..."
 pelican content -o output -s publishconf.py
 
 # --- Run Pagefind ---
 echo "Running Pagefind to index site..."
-pagefind --site output
+python3 -m pagefind --site output
 # --- End Pagefind ---
 
 # Success message
