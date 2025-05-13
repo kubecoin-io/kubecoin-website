@@ -14,7 +14,26 @@ ARTICLE_PATHS = ['posts']
 THEME = 'themes/papyrus'
 THEME_STATIC_PATHS = ['static']
 PLUGIN_PATHS = ['pelican-plugins']
-PLUGINS = ['pelican-toc'] # Replace 'tipue_search' with 'search'
+PLUGINS = [
+    'pelican-toc',
+    'tailwindcss',
+    'markdown_include',
+    'linkclass',
+    'mau_reader',
+    'jinja2content',
+    'jinja_filters',
+    'pandoc_reader',
+    'injector',
+    'liquid_tags',
+    'read_more',
+    'more_categories',
+    'nojekyll',
+    'thumbnailer',
+    'yaml_metadata',
+    'simple_footnotes',
+    'webring',
+    'feed_filter'
+]
 STATIC_PATHS = ['images', 'extra', 'admin'] # Added 'admin'
 DISPLAY_PAGES_ON_MENU = True
 DISPLAY_CATEGORIES_ON_MENU = False
@@ -75,3 +94,13 @@ DEFAULT_PAGINATION = 10
 # Exclude admin directory from being processed as content
 PAGE_EXCLUDES = ['admin']
 ARTICLE_EXCLUDES = ['admin']
+
+# Tailwind CSS Plugin Configuration
+TAILWIND_INPUT_FILE = 'themes/papyrus/tailwind.css'
+TAILWIND_CONFIG_FILE = 'themes/papyrus/tailwind.config.js'
+# Output will be themes/papyrus/static/css/main.css, matching existing theme structure
+TAILWIND_OUTPUT_FILE = 'css/main.css'
+TAILWIND_MINIFY = False  # Set to False for development (pelicanconf.py)
+TAILWIND_NODE_ENV = 'development' # Set to 'development' for development
+# When running `pelican -r`, set to True to rebuild Tailwind on changes
+# TAILWIND_WATCH = True # Consider for local development with `pelican -r`

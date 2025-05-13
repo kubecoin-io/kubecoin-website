@@ -33,3 +33,10 @@ EXTRA_PATH_METADATA = {
 
 # DISQUS_SITENAME = ""
 # GOOGLE_ANALYTICS = ""
+
+# Tailwind CSS Plugin Configuration (Production)
+TAILWIND_INPUT_FILE = 'themes/papyrus/tailwind.css'
+TAILWIND_CONFIG_FILE = 'themes/papyrus/tailwind.config.js'
+TAILWIND_OUTPUT_FILE = 'css/main.css' # Output to themes/papyrus/static/css/main.css
+TAILWIND_MINIFY = True
+TAILWIND_NODE_ENV = 'production'
