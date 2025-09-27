@@ -156,7 +156,7 @@ Write-Host "Launch Podman Desktop from Start Menu to begin"
 ## Prerequisites
 
 * **Fedora Workstation 42**
-* **NVIDIA GPU with proprietary drivers:**
+* **NVIDIA GPU with proprietary drivers**
 
   ```
   sudo dnf install akmod-nvidia xorg-x11-drv-nvidia-cuda
