@@ -171,7 +171,7 @@ Write-Host "Launch Podman Desktop from Start Menu to begin"
 sudo dnf install -y podman toolbox
 ```
 
-**Install Desktop via Flatpak**
+**Install Podman Desktop via Flatpak**
 
 ```
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
