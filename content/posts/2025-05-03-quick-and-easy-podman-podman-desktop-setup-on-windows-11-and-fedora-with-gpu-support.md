@@ -38,23 +38,29 @@ Unleash the power of daemonless containers with Podman and the intuitive Podman 
 
 ## Step 1: Optimized WSL2 Setup
 
-(powershell)
+*(powershell)*
 
 **Enable WSL and install latest kernel**
 
-`wsl --install --no-distribution
-wsl --update --pre-release`
+```
+wsl --install --no-distribution
+wsl --update --pre-release
+```
 
 **Install Fedora 42**
 
-`wsl --install -d Fedora-42
-wsl --set-default Fedora-42`
+```
+wsl --install -d Fedora-42
+wsl --set-default Fedora-42
+```
 
 **Create %USERPROFILE%.wslconfig file with:**
 
-`[wsl2]
+```
+[wsl2]
 memory=10GB
-processors=6`
+processors=6
+```
 
 ## Step 2: Podman & Desktop Installation
 
@@ -62,17 +68,23 @@ processors=6`
 
 **Install Scoop package manager**
 
-`Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
-irm get.scoop.sh | iex`
+```
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+irm get.scoop.sh | iex
+```
 
 **Install Podman components**
 
-`scoop bucket add extras
-scoop install podman podman-desktop`
+```
+scoop bucket add extras
+scoop install podman podman-desktop
+```
 
 **Initialize machine with GPU pre-config**
 
-`podman machine init --cpus 4 --memory 8192 --now`
+```
+podman machine init --cpus 4 --memory 8192 --now
+```
 
 ## Step 3: GPU Acceleration Setup
 
@@ -80,16 +92,20 @@ scoop install podman podman-desktop`
 
 **Configure NVIDIA inside WSL**
 
-`podman machine ssh << 'EOL'
+```
+podman machine ssh << 'EOL'
 sudo dnf config-manager --add-repo https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo
 sudo dnf install -y nvidia-container-toolkit
 sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
-EOL`
+EOL
+```
 
 **Restart to apply changes**
 
-`podman machine stop
-podman machine start`
+```
+podman machine stop
+podman machine start
+```
 
 ## Verification & Testing
 
@@ -114,9 +130,10 @@ podman run --rm --device nvidia.com/gpu=all nvidia/cuda:12.5.1-base-ubuntu22.04 
 
 ## Automation Script (setup-podman-win.ps1)
 
-(powershell)
+*(powershell)*
 
-`param([string]$Distro = "Fedora-42")
+```
+param([string]$Distro = "Fedora-42")
 Write-Host "Installing Podman Desktop with GPU support..."
 wsl --install --no-distribution
 wsl --update --pre-release
@@ -135,7 +152,10 @@ sudo dnf module install -y nvidia-container-toolkit
 sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
 "@
 Write-Host "Podman Desktop with GPU support installed successfully!"
-Write-Host "Launch Podman Desktop from Start Menu to begin"`
+Write-Host "Launch Podman Desktop from Start Menu to begin"
+```
+
+
 
 ## Fedora Linux Installation
 
@@ -149,51 +169,66 @@ Write-Host "Launch Podman Desktop from Start Menu to begin"`
 
 ## Step 1: Podman & Desktop Installation
 
-(bash)
+*(bash)*
 
-Install Podman and dependencies
+**Install Podman and dependencies**
 
-`sudo dnf install -y podman toolbox`
+```
+sudo dnf install -y podman toolbox
+```
 
-Install Desktop via Flatpak
+**Install Desktop via Flatpak**
 
-`flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-flatpak install -y flathub io.podman_desktop.PodmanDesktop`
+```
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak install -y flathub io.podman_desktop.PodmanDesktop
+```
 
 ## Step 2: GPU Optimization
 
-(bash)
+*(bash)*
 
-Configure NVIDIA Container Toolkit
+**Configure NVIDIA Container Toolkit**
 
-`sudo dnf config-manager --add-repo https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo
-sudo dnf install -y nvidia-container-toolkit`
+```
+sudo dnf config-manager --add-repo https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo
+sudo dnf install -y nvidia-container-toolkit
+```
 
-Generate CDI spec with latest optimizations
+**Generate CDI spec with latest optimizations**
 
-`sudo nvidia-ctk cdi generate --format=yaml --output=/etc/cdi/nvidia.yaml`
+```
+sudo nvidia-ctk cdi generate --format=yaml --output=/etc/cdi/nvidia.yaml
+```
 
-Enable podman-compose support
+**Enable podman-compose support**
 
-`sudo dnf install -y podman-compose`
+```
+sudo dnf install -y podman-compose
+```
 
 ## Verification & Testing
 
-(bash)
+*(bash)*
 
-Verify GPU access
+**Verify GPU access**
 
-`podman run --rm --device nvidia.com/gpu=all nvidia/cuda:12.5.1-base-ubuntu22.04 nvidia-smi`
+```
+podman run --rm --device nvidia.com/gpu=all nvidia/cuda:12.5.1-base-ubuntu22.04 nvidia-smi
+```
 
-Test AI workload (optional)
+**Test AI workload (optional)**
 
-`podman run --rm --device nvidia.com/gpu=all pytorch/pytorch:2.2.0-cuda12.1-cudnn8-runtime python -c "import torch; print(torch.cuda.is_available())"`
+```
+podman run --rm --device nvidia.com/gpu=all pytorch/pytorch:2.2.0-cuda12.1-cudnn8-runtime python -c "import torch; print(torch.cuda.is_available())"
+```
 
 ## Automation Script (setup-podman-fedora.sh)
 
-(bash)
+*(bash)*
 
-`#!/bin/bash
+```
+#!/bin/bash
 echo "Starting Podman Desktop setup..."
 sudo dnf install -y podman podman-compose toolbox
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
@@ -208,38 +243,54 @@ EOL
 sudo dnf install -y nvidia-container-toolkit
 sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
 echo "Installation complete!"
-echo "Access GPU with: podman run --rm --device nvidia.com/gpu=all nvidia/cuda:12.5.1-base-ubuntu22.04 nvidia-smi"`
+echo "Access GPU with: podman run --rm --device nvidia.com/gpu=all nvidia/cuda:12.5.1-base-ubuntu22.04 nvidia-smi"
+```
 
 ## Performance Optimization Tips
 
 ## Windows WSL2
 
-1. GPU Memory Allocation: Add to .wslconfig:
+**GPU Memory Allocation: Add to .wslconfig:**
 
-   `[wsl2]
-   gpuMemory=2GB`
-2. Disk Performance: Store images in WSL distro:
+```
+[wsl2]
+gpuMemory=2GB
+```
 
-(powershell)
+``
 
-   `podman machine ssh
-   mkdir ~/container-storage
-   podman system connection default unix:///home/$USER/podman/podman.sock`
+**Disk Performance: Store images in WSL distro:**
+
+*(powershell)*
+
+ 
+
+```
+  podman machine ssh
+  mkdir ~/container-storage
+  podman system connection default unix:///home/$USER/podman/podman.sock
+```
 
 ## Fedora Linux
 
-1. Native OverlayFS:
+**Native OverlayFS:**
 
-(bash)
+*(bash)*
 
-  `sudo dnf install -y fuse-overlayfs
-   echo 'driver = "overlay"' | sudo tee -a /etc/containers/storage.conf`
+```
+ sudo dnf install -y fuse-overlayfs
+ echo 'driver = "overlay"' | sudo tee -a /etc/containers/storage.conf
+```
 
-2. GPU Monitoring:
 
-(bash)
 
-`sudo dnf install -y nvtop`
+**GPU Monitoring:**
+
+*(bash)*
+
+```
+sudo dnf install -y nvtop
+```
 
 ## Troubleshooting Guide
 
