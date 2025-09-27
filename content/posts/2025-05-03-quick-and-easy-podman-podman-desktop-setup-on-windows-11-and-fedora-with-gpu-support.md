@@ -253,8 +253,6 @@ echo "Access GPU with: podman run --rm --device nvidia.com/gpu=all nvidia/cuda:1
 gpuMemory=2GB
 ```
 
-``
-
 **Disk Performance: Store images in WSL distro:**
 
 *(powershell)*
