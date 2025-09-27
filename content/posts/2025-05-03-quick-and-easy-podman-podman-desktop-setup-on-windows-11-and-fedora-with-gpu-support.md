@@ -160,6 +160,7 @@ Write-Host "Launch Podman Desktop from Start Menu to begin"
 
   ```
   sudo dnf install akmod-nvidia xorg-x11-drv-nvidia-cuda
+
   sudo reboot
   ```
 
@@ -213,6 +214,18 @@ sudo dnf install -y podman-compose
 podman run --rm --device nvidia.com/gpu=all nvidia/cuda:12.5.1-base-ubuntu22.04 nvidia-smi
 ```
 
+\
+
+**Expected output:**
+
+```
++---------------------------------------------------------------------------------------+
+| NVIDIA-SMI 550.54                 Driver Version: 550.54       CUDA Version: 12.5     |
+|-----------------------------------------+----------------------+----------------------+
+...
+```
+
+\
 **Test AI workload (optional)**
 
 ```
