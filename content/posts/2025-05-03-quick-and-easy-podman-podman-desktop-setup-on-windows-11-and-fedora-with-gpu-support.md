@@ -20,7 +20,7 @@ summary: This guide explains how to quickly install Podman and Podman Desktop on
 
 Unleash the power of daemonless containers with Podman and the intuitive Podman Desktop GUI. This updated 2025 guide provides the fastest path to GPU-accelerated containers on Windows 11 (via WSL 2) and Fedora Linux. Podman offers a rootless, secure Docker alternative while maintaining CLI compatibility, and when paired with NVIDIA GPU support, becomes a powerhouse for AI/ML workloads.
 
-Key Updates for 2025:
+**Key Updates for 2025:**
 
 * NVIDIA Driver 550+ with enhanced WSL2 integration
 * Podman 5.0+ native CDI support
@@ -40,17 +40,17 @@ Key Updates for 2025:
 
 (powershell)
 
-Enable WSL and install latest kernel
+**Enable WSL and install latest kernel**
 
 `wsl --install --no-distribution
 wsl --update --pre-release`
 
-Install Fedora 42
+**Install Fedora 42**
 
 `wsl --install -d Fedora-42
 wsl --set-default Fedora-42`
 
-Create %USERPROFILE%.wslconfig file with:
+**Create %USERPROFILE%.wslconfig file with:**
 
 `[wsl2]
 memory=10GB
@@ -58,27 +58,27 @@ processors=6`
 
 ## Step 2: Podman & Desktop Installation
 
-(powershell)
+*(powershell)*
 
-Install Scoop package manager
+**Install Scoop package manager**
 
 `Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 irm get.scoop.sh | iex`
 
-Install Podman components
+**Install Podman components**
 
 `scoop bucket add extras
 scoop install podman podman-desktop`
 
-Initialize machine with GPU pre-config
+**Initialize machine with GPU pre-config**
 
 `podman machine init --cpus 4 --memory 8192 --now`
 
 ## Step 3: GPU Acceleration Setup
 
-(powershell)
+*(powershell)*
 
-Configure NVIDIA inside WSL
+**Configure NVIDIA inside WSL**
 
 `podman machine ssh << 'EOL'
 sudo dnf config-manager --add-repo https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo
@@ -86,25 +86,31 @@ sudo dnf install -y nvidia-container-toolkit
 sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
 EOL`
 
-Restart to apply changes
+**Restart to apply changes**
 
 `podman machine stop
 podman machine start`
 
 ## Verification & Testing
 
-(powershell)
+*(powershell)*
 
-Test GPU access
+**Test GPU access**
 
-`podman run --rm --device nvidia.com/gpu=all nvidia/cuda:12.5.1-base-ubuntu22.04 nvidia-smi`
+```
+podman run --rm --device nvidia.com/gpu=all nvidia/cuda:12.5.1-base-ubuntu22.04 nvidia-smi
+```
 
-Expected output:
 
-`+---------------------------------------------------------------------------------------+
+
+**Expected output:**
+
+```
++---------------------------------------------------------------------------------------+
 | NVIDIA-SMI 550.54                 Driver Version: 550.54       CUDA Version: 12.5     |
 |-----------------------------------------+----------------------+----------------------+
-...`
+...
+```
 
 ## Automation Script (setup-podman-win.ps1)
 
@@ -226,14 +232,14 @@ echo "Access GPU with: podman run --rm --device nvidia.com/gpu=all nvidia/cuda:1
 
 (bash)
 
-  ` sudo dnf install -y fuse-overlayfs
+  `sudo dnf install -y fuse-overlayfs
    echo 'driver = "overlay"' | sudo tee -a /etc/containers/storage.conf`
 
 2. GPU Monitoring:
 
 (bash)
 
-`   sudo dnf install -y nvtop`
+`sudo dnf install -y nvtop`
 
 ## Troubleshooting Guide
 
