@@ -29,10 +29,10 @@ Unleash the power of daemonless containers with Podman and the intuitive Podman 
 
 ## Prerequisites
 
-* Windows 11 23H2+ (Build 25992 or later)
-* NVIDIA GPU (RTX 2000 series+) with Driver 550+ (https://www.nvidia.com/en-us/drivers/)
-* 8GB+ RAM free for WSL
-* PowerShell admin access
+* **Windows 11 23H2+ (Build 25992 or later)**
+* **NVIDIA GPU (RTX 2000 series+) with Driver 550+ (https://www.nvidia.com/en-us/drivers/)**
+* **8GB+ RAM free for WSL**
+* **PowerShell admin access**
 
 ## Step 1: Optimized WSL2 Setup
 
@@ -155,11 +155,13 @@ Write-Host "Launch Podman Desktop from Start Menu to begin"
 
 ## Prerequisites
 
-* Fedora Workstation 42
-* NVIDIA GPU with proprietary drivers:
+* **Fedora Workstation 42**
+* **NVIDIA GPU with proprietary drivers:**
 
+  ```
   sudo dnf install akmod-nvidia xorg-x11-drv-nvidia-cuda
   sudo reboot
+  ```
 
 ## Step 1: Podman & Desktop Installation
 
