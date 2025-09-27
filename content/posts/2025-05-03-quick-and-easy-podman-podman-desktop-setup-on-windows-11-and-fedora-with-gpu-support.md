@@ -214,7 +214,7 @@ sudo dnf install -y podman-compose
 podman run --rm --device nvidia.com/gpu=all nvidia/cuda:12.5.1-base-ubuntu22.04 nvidia-smi
 ```
 
-\
+
 
 **Expected output:**
 
@@ -225,7 +225,7 @@ podman run --rm --device nvidia.com/gpu=all nvidia/cuda:12.5.1-base-ubuntu22.04 
 ...
 ```
 
-\
+
 **Test AI workload (optional)**
 
 ```
