@@ -14,8 +14,6 @@ summary: This guide explains how to quickly install Podman and Podman Desktop on
   Windows 11 (using Scoop) and Fedora Linux, and how to enable GPU acceleration
   for container workloads on both platforms.
 ---
-# Podman Desktop Setup with GPU Support (Windows 11 & Fedora - 2025)
-
 ## Introduction
 
 Unleash the power of daemonless containers with Podman and the intuitive Podman Desktop GUI. This updated 2025 guide provides the fastest path to GPU-accelerated containers on Windows 11 (via WSL 2) and Fedora Linux. Podman offers a rootless, secure Docker alternative while maintaining CLI compatibility, and when paired with NVIDIA GPU support, becomes a powerhouse for AI/ML workloads.
@@ -27,7 +25,7 @@ Unleash the power of daemonless containers with Podman and the intuitive Podman 
 * Fedora 42 compatibility
 * CUDA 12.5+ optimization
 
-## Windows 11 Installation (WSL2)
+# Windows 11 Installation (WSL2)
 
 ## Prerequisites
 
@@ -117,8 +115,6 @@ podman machine start
 podman run --rm --device nvidia.com/gpu=all nvidia/cuda:12.5.1-base-ubuntu22.04 nvidia-smi
 ```
 
-
-
 **Expected output:**
 
 ```
@@ -155,9 +151,7 @@ Write-Host "Podman Desktop with GPU support installed successfully!"
 Write-Host "Launch Podman Desktop from Start Menu to begin"
 ```
 
-
-
-## Fedora Linux Installation
+# Fedora Linux Installation
 
 ## Prerequisites
 
@@ -263,8 +257,6 @@ gpuMemory=2GB
 
 *(powershell)*
 
- 
-
 ```
   podman machine ssh
   mkdir ~/container-storage
@@ -281,8 +273,6 @@ gpuMemory=2GB
  sudo dnf install -y fuse-overlayfs
  echo 'driver = "overlay"' | sudo tee -a /etc/containers/storage.conf
 ```
-
-
 
 **GPU Monitoring:**
 
