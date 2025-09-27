@@ -1,5 +1,5 @@
 ---
-title: Podman Desktop Setup with GPU Support (Windows 11 & Fedora - 2025)
+title: Podman Desktop Setup with GPU Support (Windows 11 & Fedora Linux - 2025)
 date: 2025-05-03 05:01:00
 category: Containers
 tags:
