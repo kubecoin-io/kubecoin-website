@@ -16,9 +16,13 @@ summary: This guide explains how to quickly install Podman and Podman Desktop on
 ---
 ## Introduction
 
-Unleash the power of daemonless containers with Podman and the intuitive Podman Desktop GUI. This updated 2025 guide provides the fastest path to GPU-accelerated containers on Windows 11 (via WSL 2) and Fedora Linux. Podman offers a rootless, secure Docker alternative while maintaining CLI compatibility, and when paired with NVIDIA GPU support, becomes a powerhouse for AI/ML workloads.
+Unleash the power of daemonless containers with Podman and the intuitive Podman Desktop GUI. This guide provides the fastest path to GPU-accelerated containers on Windows 11 (via WSL 2) and Fedora Linux. Podman offers a rootless, secure Docker alternative while maintaining CLI compatibility, and when paired with NVIDIA GPU support, becomes a powerhouse for AI/ML workloads.
 
-**Key Updates for 2025:**
+![](/images/uploads/comp_illustr_1.png)
+
+
+
+**Key points :**
 
 * NVIDIA Driver 550+ with enhanced WSL2 integration
 * Podman 5.0+ native CDI support
@@ -214,8 +218,6 @@ sudo dnf install -y podman-compose
 podman run --rm --device nvidia.com/gpu=all nvidia/cuda:12.5.1-base-ubuntu22.04 nvidia-smi
 ```
 
-
-
 **Expected output:**
 
 ```
@@ -224,7 +226,6 @@ podman run --rm --device nvidia.com/gpu=all nvidia/cuda:12.5.1-base-ubuntu22.04 
 |-----------------------------------------+----------------------+----------------------+
 ...
 ```
-
 
 **Test AI workload (optional)**
 
