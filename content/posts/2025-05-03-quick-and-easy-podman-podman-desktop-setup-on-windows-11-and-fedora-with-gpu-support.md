@@ -155,7 +155,11 @@ Write-Host "Podman Desktop with GPU support installed successfully!"
 Write-Host "Launch Podman Desktop from Start Menu to begin"
 ```
 
-# Fedora Linux Installation
+![Podman Desktop - Windows 11 ](/images/uploads/screenshot-2025-09-28-060353.png "Podman Desktop - Windows 11")
+
+# \
+\
+Fedora Linux Installation
 
 ![](/images/uploads/icons8-fedora-48.png) ![](/images/uploads/icons8-linux-48.png)
 
