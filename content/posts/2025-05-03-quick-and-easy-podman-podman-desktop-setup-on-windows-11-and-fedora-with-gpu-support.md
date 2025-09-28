@@ -1,5 +1,5 @@
 ---
-title: Podman Desktop Setup with GPU Support (Windows 11 & Fedora Linux - 2025)
+title: Podman Desktop Setup with GPU Support (Windows 11 & Fedora Linux)
 date: 2025-05-03 05:01:00
 category: Containers
 tags:
@@ -9,7 +9,7 @@ tags:
   - Fedora
   - GPU
 slug: install-podman-desktop-windows-fedora-gpu
-author: Jane Doe
+author: ""
 summary: This guide explains how to quickly install Podman and Podman Desktop on
   Windows 11 (using Scoop) and Fedora Linux, and how to enable GPU acceleration
   for container workloads on both platforms.
