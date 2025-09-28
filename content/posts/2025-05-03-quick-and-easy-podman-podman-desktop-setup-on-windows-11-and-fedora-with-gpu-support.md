@@ -157,9 +157,7 @@ Write-Host "Launch Podman Desktop from Start Menu to begin"
 
 # Fedora Linux Installation
 
-![](/images/uploads/icons8-fedora-48.png)
-
-![](/images/uploads/icons8-linux-48.png)
+![](/images/uploads/icons8-fedora-48.png) ![](/images/uploads/icons8-linux-48.png)
 
 ## Prerequisites
 
@@ -310,12 +308,12 @@ sudo dnf install -y nvtop
 
 ## Conclusion
 
-This 2025 guide provides the optimal path to GPU-accelerated containers on both Windows 11 and Fedora Linux. The automation scripts simplify setup while the performance tips ensure maximum throughput for AI/ML workloads. With Podman Desktop's latest Kubernetes integration, you can seamlessly transition from local development to cluster deployment.
+This guide provides the optimal path to GPU-accelerated containers on both Windows 11 and Fedora Linux. The automation scripts simplify setup while the performance tips ensure maximum throughput for AI/ML workloads. With Podman Desktop's latest Kubernetes integration, you can seamlessly transition from local development to cluster deployment.
 
 Key Advantages:
 
-* 3x faster container launches with Fedora 42's tuned kernel
-* 40% improved GPU utilization with NVIDIA Driver 550+
+* Faster container launches with Fedora 42's kernel
+* Improved GPU utilization with NVIDIA Driver 550+
 * Unified management experience across platforms
 
 For ongoing optimization, monitor:
@@ -323,4 +321,4 @@ For ongoing optimization, monitor:
 * NVIDIA Container Toolkit GitHub: https://github.com/NVIDIA/nvidia-container-toolkit
 * Podman Desktop Releases: https://podman-desktop.io/docs/releases
 
-Pro Tip: Combine with Red Hat's Ansible Lightspeed (https://www.redhat.com/en/engage/ansible-lightspeed) for AI-assisted container orchestration
+Optional : Combine with Red Hat's Ansible Lightspeed (https://www.redhat.com/en/engage/ansible-lightspeed) for AI-assisted container orchestration
