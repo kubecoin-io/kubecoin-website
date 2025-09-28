@@ -155,10 +155,8 @@ Write-Host "Podman Desktop with GPU support installed successfully!"
 Write-Host "Launch Podman Desktop from Start Menu to begin"
 ```
 
-![Podman Desktop - Windows 11 ](/images/uploads/screenshot-2025-09-28-060353.png "Podman Desktop - Windows 11")
 
-# \
-\
+
 Fedora Linux Installation
 
 ![](/images/uploads/icons8-fedora-48.png) ![](/images/uploads/icons8-linux-48.png)
@@ -308,6 +306,12 @@ sudo dnf install -y nvtop
 | GPU not detected   | wsl --shutdown then podman machine reset           | sudo nvidia-modprobe then sudo systemctl restart nvidia-persistenced |
 | CDI errors         | podman machine ssh sudo nvidia-ctk cdi generate -f | sudo dnf update nvidia-container-toolkit                             |
 | Performance issues | podman machine init --cpus 6 --memory 12288        | Enable IOMMU in BIOS and sudo dnf update kernel                      |
+
+## Screenshots
+
+
+![Podman Desktop - Windows 11 ](/images/uploads/screenshot-2025-09-28-060353.png "Podman Desktop - Windows 11")
+
 
 ## Conclusion
 
