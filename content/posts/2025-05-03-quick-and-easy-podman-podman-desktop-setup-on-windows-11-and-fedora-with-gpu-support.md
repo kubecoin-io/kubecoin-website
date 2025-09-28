@@ -20,8 +20,6 @@ Unleash the power of daemonless containers with Podman and the intuitive Podman 
 
 ![](/images/uploads/comp_illustr_1.png)
 
-
-
 **Key points :**
 
 * NVIDIA Driver 550+ with enhanced WSL2 integration
@@ -158,6 +156,8 @@ Write-Host "Launch Podman Desktop from Start Menu to begin"
 ```
 
 # Fedora Linux Installation
+
+![](/images/uploads/icons8-fedora-48.png)
 
 ![](/images/uploads/icons8-linux-48.png)
 
