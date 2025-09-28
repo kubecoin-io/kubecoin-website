@@ -31,6 +31,8 @@ Unleash the power of daemonless containers with Podman and the intuitive Podman 
 
 # Windows 11 Installation (WSL2)
 
+![](/images/uploads/icons8-windows-11-60.png)
+
 ## Prerequisites
 
 * **Windows 11 23H2+ (Build 25992 or later)**
@@ -156,6 +158,8 @@ Write-Host "Launch Podman Desktop from Start Menu to begin"
 ```
 
 # Fedora Linux Installation
+
+![](/images/uploads/icons8-linux-48.png)
 
 ## Prerequisites
 
