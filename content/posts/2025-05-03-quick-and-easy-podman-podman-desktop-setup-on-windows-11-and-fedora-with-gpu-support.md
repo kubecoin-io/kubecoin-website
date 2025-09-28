@@ -164,11 +164,10 @@ Write-Host "Launch Podman Desktop from Start Menu to begin"
 * **Fedora Workstation 42**
 * **NVIDIA GPU with proprietary drivers**
 
-  ```
-  sudo dnf install akmod-nvidia xorg-x11-drv-nvidia-cuda
-
-  sudo reboot
-  ```
+```
+sudo dnf install akmod-nvidia xorg-x11-drv-nvidia-cuda
+sudo reboot
+```
 
 ## Step 1: Podman & Desktop Installation
 
